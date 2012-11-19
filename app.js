@@ -4,25 +4,12 @@ var express = require('express');
 var http = require('http');
 var app = express();
 
+app.set('views', __dirname + '/src/views');
 app.set('view engine', 'ejs');
 app.use(express.bodyParser());
-app.use(express.cookieParser('shhhh, very secret'));
+app.use(express.cookieParser('tototiti'));
 app.use(express.session());
-
 app.use(express.static(__dirname + '/public'));
-
-app.use(function(req, res, next) {
-  var err = req.session.error
-    , msg = req.session.success;
-  delete req.session.error;
-  delete req.session.success;
-  res.locals.message = '';
-  if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
-  if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
-  next();
-});
-
-
 
 function hash(pwd, salt, fn) {
 	var len = 128;
