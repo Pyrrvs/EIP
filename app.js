@@ -92,7 +92,22 @@ app.get('/logout', function(req, res) {
 // });
 
 app.post('/login', function(req, res) {
-
+  authenticate(req.body.username, req.body.password, function(err, user) {
+    if (user) {
+    	req.session.regenerate(function() {
+        req.session.user = user;
+        req.session.success = 'Authenticated as ' + user.name
+          + ' click to <a href="/logout">logout</a>. '
+          + ' You may now access <a href="/restricted">/restricted</a>.';
+        res.redirect('back');
+      });
+    } else {
+      req.session.error = 'Authentication failed, please check your '
+        + ' username and password.'
+        + ' (use "tj" and "foobar")';
+      res.redirect('login');
+    }
+  });
 });
 
 http.createServer(app).listen(8888);
