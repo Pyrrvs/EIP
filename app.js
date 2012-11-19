@@ -87,9 +87,9 @@ app.get('/logout', function(req, res) {
 	});
 });
 
-// app.get('/login', function(req, res) {
-// 	res.render('login');
-// });
+app.get('/login', function(req, res) {
+ 	res.render('index');
+});
 
 app.post('/login', function(req, res) {
   authenticate(req.body.username, req.body.password, function(err, user) {
