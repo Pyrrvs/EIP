@@ -1,11 +1,9 @@
 var Controller = Class.extend({
 
-	view : null,
 	model : null,
 
-	ctor : function(app, view, model) {
+	ctor : function(app, model) {
 
-		this.view = _.isString(view) ? (new (require(view))) : view;
 		this.model = _.isString(model) ? (new (require(model))) : model;
 		this.app = app;
 	},
