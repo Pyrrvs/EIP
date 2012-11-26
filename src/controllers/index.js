@@ -5,13 +5,13 @@ var Controller = kNode.Controller.extend({
 	ctor : function(app) {
 
 		this.super(app, new (require('../models/index_mysql.js'))());
-		this.addRoute('/', 'GET', this.index_page);
+		this.addRoute('/', 'GET', this.get_index);
 	},
 
-	index_page : function(req, resp) {
+	get_index : function(req, res) {
 
 
-		resp.render('index.ejs', { user: req.user });
+		res.render('index.ejs', { user: req.user });
 	}
 });
 

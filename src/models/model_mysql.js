@@ -1,4 +1,3 @@
-console.log('model');
 var db = new (require("db-mysql")).Database({
     hostname : 'localhost',
     user : 'root',

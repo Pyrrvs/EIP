@@ -1,7 +1,8 @@
-var kNode = require('../../util/kNode.js')
+var kNode = require('../../util/kNode.js');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var bcrypt = require('bcrypt');
+var fs = require('fs');
 
 var Controller = kNode.Controller.extend({
 
@@ -18,12 +19,22 @@ var Controller = kNode.Controller.extend({
 		passport.deserializeUser(this.deserialize_user);
 
 		this.addRoute('/sign_in', 'POST',
-    				passport.authenticate('local', { successRedirect: '/',
-    												succesFlash: 'Welcome !',
-    												failureRedirect: '/',
-                                                	failureFlash: true }));
+                  passport.authenticate('local', { failureRedirect: '/',
+                                                  failureFlash: true }),
+                  function(req, res) {
+                    res.redirect('/users/' + req.user.username + '/projects/new');
+                  });
+
 		this.addRoute('/sign_up', 'POST', this.register_user);
+
+    app.param('username', /^\w+$/);
+    this.addRoute('/users/:username', 'GET', this.get_profile);
 	},
+
+  get_profile : function(req, res) {
+    console.log(req.params.username);
+    res.redirect('/');
+  },
 
 	authenticate_middleware : function(username, password, done) {
     	this.model.findByName(username, function(err, user) {
@@ -54,9 +65,8 @@ var Controller = kNode.Controller.extend({
 
     	if (req.body.password != req.body.password_confirm) {
     		console.log('Password confirmation doesn\'t match password.');
-    	}
-      else {
-        new_user = {};
+    	} else {
+        var new_user = {};
         new_user.username = req.body.username;
         new_user.password = bcrypt.hashSync(req.body.password, 8);
         new_user.email = req.body.email;
@@ -64,17 +74,17 @@ var Controller = kNode.Controller.extend({
         this.model.create(new_user, function(err, result) {
           if (err) {
             console.log('Handle registration error here !');
-            res.redirect('/');
-          }
-          else {
+          } else {
             new_user.id = result.id;
+            fs.mkdir('./users/' + new_user.username, 0755, function() {
+              console.log('Directory ./users/' + new_user.username + ' created');
+            });
             req.login(new_user, function(err) {
               if (err) {
                 console.log('req.login err', err)
                 return err;
               }
-              return res.redirect('/');
-              // return res.redirect('/users/' + req.user.username);
+              return res.redirect('/users/' + req.user.username + '/projects/new');
             });
           }
         });
