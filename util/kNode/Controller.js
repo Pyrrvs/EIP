@@ -16,6 +16,16 @@ var Controller = Class.extend({
 			hook.call(self, req, resp);
 		});
 	},
+
+	addRoute : function(route, method, restrict, hook) {
+
+		var self = this;
+		this.app[method.toLowerCase()](route, restrict, function(req, resp) {
+			resp.socket.setMaxListeners(0);
+			hook.call(self, req, resp);
+		});
+	},
+
 });
 
 module.exports = Controller;

@@ -1,4 +1,4 @@
-_ = require("./kNode/underscore.js")
+_ = require("./underscore.js")
 Class = require("./kNode/Class.js")
 
 module.exports = {
