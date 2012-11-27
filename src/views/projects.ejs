@@ -7,7 +7,7 @@
 	    <% for(var i=0; i < projects.length; i++) { %>
 	  		<% if (projects[i].privacy == 'public') { %>
 		        <li>
-		            <a href='/users/<%= username %>/<%= projects[i].name %>/edit'>
+		            <a href='/users/<%= username %>/<%= projects[i].name %>'>
 		                <%= projects[i].name %>
 		            </a>
 		        </li>
@@ -17,7 +17,7 @@
 	    <% for(var i=0; i < projects.length; i++) { %>
 		    <% if (projects[i].privacy == 'private') { %>
 		        <li>
-		            <a href='/users/<%= username %>/<%= projects[i].name %>/edit'>
+		            <a href='/users/<%= username %>/<%= projects[i].name %>'>
 		                <%= projects[i].name %>
 		            </a>
 		        </li>

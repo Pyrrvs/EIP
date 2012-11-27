@@ -19,7 +19,6 @@ module.exports = kNode.Model.extend({
                         .execute(function(err, rows, cols) {
                             callback(err, rows[0]);
                         });
-        console.log('end');
     },
 
     find_by_id : function(id, callback) {

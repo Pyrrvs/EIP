@@ -5,7 +5,7 @@ var Controller = kNode.Controller.extend({
 
 	ctor : function(app) {
 		this.super(app, new (require('../models/project_mysql.js'))());
-		this.user_model = new (require('../models/user_mysql.js'))();
+		this.user_c = new (require('./user.js'))(app);
 		this.precheck_creation_perm = _.bind(this.precheck_creation_perm, this);
 		this.precheck_view_projects = _.bind(this.precheck_view_projects, this);
 
@@ -13,37 +13,51 @@ var Controller = kNode.Controller.extend({
 		this.addRoute('/users/:username/projects/new', 'GET', this.precheck_creation_perm, this.new_project_form);
 		this.addRoute('/users/:username/projects', 'GET', this.precheck_view_projects, this.get_projects);
 		this.addRoute('/users/:username/projects', 'POST', this.precheck_creation_perm, this.create_project);
+		this.addRoute('/users/:username/:project', 'GET', this.precheck_view_projects, this.get_project);
+	},
+
+	is_viewable : function(project_name, owner, viewer) {
+
 	},
 
 	precheck_view_projects : function(req, res, next) {
-		console.log('precheck_view_projects');
-		if (!req.user) {
+		if (!this.user_c.is_authenticated(req)) {
 			res.send('<h1>Authentication needed!</h1>');
 			return ;
 		}
-		this.user_model.find_by_name(req.params.username, function(err, result) {
-			console.log(err, result);
-			if (!err && !result) {
+		this.user_c.user_exists(req.params.username, function(err) {
+			if (err) {
 				res.send('<h1>User ' + req.params.username + ' doesn\'t exist!</h1>');
+				return ;
 			}
 			next();
 		});
 	},
 
 	precheck_creation_perm : function(req, res, next) {
-		if (!req.user) {
+		if (!this.user_c.is_authenticated(req)) {
 			res.send('<h1>Authentication needed!</h1>');
 			return ;
 		}
-		this.user_model.find_by_name(req.params.username, function(err, result) {
-			if (!err && !result) {
+		this.user_c.user_exists(req.params.username, function(err) {
+			if (err) {
 				res.send('<h1>User ' + req.params.username + ' doesn\'t exist!</h1>');
-			}
-			if (req.user.username != req.params.username) {
-				res.send('<h1>Access denied!</h1>');
 				return ;
+			} else if (req.user.username != req.params.username) {
+				res.send('<h1>Access denied!</h1>');
+				return;
 			}
 			next();
+		});
+	},
+
+	get_project : function(req, res) {
+		this.model.find_by_name(req.params.project, function(err, result) {
+			if (err) {
+				res.send('<h1>Get project problem:</h1><p>'+err+'</p>');
+				return ;
+			}
+			res.render('project.ejs', {project: result})			
 		});
 	},
 

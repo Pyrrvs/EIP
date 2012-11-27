@@ -32,5 +32,15 @@ module.exports = kNode.Model.extend({
                     callback(err, results);
             });
         }
+    },
+
+    find_by_name : function(project_name, callback) {
+        this.db.query().select('*')
+                        .from('projects')
+                        .where('name=?', [project_name])
+                        .limit(1)
+                        .execute(function(err, rows, cols) {
+                            callback(err, rows[0]);
+                        });
     }
 });

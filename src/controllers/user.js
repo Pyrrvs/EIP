@@ -31,6 +31,20 @@ var Controller = kNode.Controller.extend({
     this.addRoute('/users/:username', 'GET', this.get_profile);
 	},
 
+  user_exists : function(username, callback) {
+    this.model.find_by_name(username, function(err, result) {
+      if (!err && !result) {
+        callback('no such user');
+        return ;
+      }
+      callback();
+    });
+  },
+
+  is_authenticated : function(req) {
+    return (req.user)
+  },
+
   get_profile : function(req, res) {
     console.log(req.params.username);
     res.redirect('/');
