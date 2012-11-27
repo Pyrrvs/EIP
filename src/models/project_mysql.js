@@ -13,10 +13,24 @@ module.exports = kNode.Model.extend({
     create : function(new_proj, callback) {
         console.log('Creating new project', new_proj);
         this.db.query().insert('projects',
-                                ['user_id', 'name'],
-                                [new_proj.user_id, new_proj.name])
+                                ['owner_id', 'name', 'privacy'],
+                                [new_proj.owner_id, new_proj.name, new_proj.privacy])
                         .execute(function(err, result) {
                             callback(err, result);
                         });
+    },
+
+    find_by_owner : function(owner, callback, privacy) {
+        if (arguments.length == 3) {
+            this.db.query('SELECT projects.* FROM projects JOIN users ON projects.owner_id = users.id WHERE (username=? and privacy=?)', [owner, privacy])
+                .execute(function(err, results) {
+                    callback(err, results);
+            });
+        } else {
+            this.db.query('SELECT projects.* FROM projects JOIN users ON projects.owner_id = users.id WHERE username=?', [owner])
+                .execute(function(err, results) {
+                    callback(err, results);
+            });
+        }
     }
 });

@@ -8,22 +8,20 @@ var Controller = Class.extend({
 		this.app = app;
 	},
 
-	addRoute : function(route, method, hook) {
-
-		var self = this;
-		this.app[method.toLowerCase()](route, function(req, resp) {
-			resp.socket.setMaxListeners(0);
-			hook.call(self, req, resp);
-		});
-	},
-
 	addRoute : function(route, method, restrict, hook) {
 
 		var self = this;
-		this.app[method.toLowerCase()](route, restrict, function(req, resp) {
-			resp.socket.setMaxListeners(0);
-			hook.call(self, req, resp);
-		});
+		if (arguments.length == 3) {
+			this.app[method.toLowerCase()](route, function(req, resp) {
+				resp.socket.setMaxListeners(0);
+				restrict.call(self, req, resp);
+			});
+		} else {
+			this.app[method.toLowerCase()](route, restrict, function(req, resp) {
+				resp.socket.setMaxListeners(0);
+				hook.call(self, req, resp);
+			});
+		}
 	},
 
 });

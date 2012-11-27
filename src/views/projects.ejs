@@ -1,0 +1,27 @@
+<h1><%= username %>'s Projects</h1>
+<% if (projects.length == 0) { %>
+	<p>No project for the user <%= username %></p>
+<% } else { %>
+	<ul>
+		<h4>Public:</h4>
+	    <% for(var i=0; i < projects.length; i++) { %>
+	  		<% if (projects[i].privacy == 'public') { %>
+		        <li>
+		            <a href='/users/<%= username %>/<%= projects[i].name %>/edit'>
+		                <%= projects[i].name %>
+		            </a>
+		        </li>
+		    <% } %>
+		<% } %>
+	    <h4>Private:</h4>
+	    <% for(var i=0; i < projects.length; i++) { %>
+		    <% if (projects[i].privacy == 'private') { %>
+		        <li>
+		            <a href='/users/<%= username %>/<%= projects[i].name %>/edit'>
+		                <%= projects[i].name %>
+		            </a>
+		        </li>
+			<% } %>
+	    <% } %>
+	</ul>
+<% } %>

@@ -10,7 +10,7 @@ module.exports = kNode.Model.extend({
         this.db = require('./model_mysql.js');
     },
 
-    findByName : function(username, callback) {
+    find_by_name : function(username, callback) {
 
         this.db.query().select('*')
                         .from('users')
@@ -22,7 +22,7 @@ module.exports = kNode.Model.extend({
         console.log('end');
     },
 
-    findById : function(id, callback) {
+    find_by_id : function(id, callback) {
         this.db.query().select('*')
                         .from('users')
                         .where('id=?', [id])

@@ -22,7 +22,7 @@ var Controller = kNode.Controller.extend({
                   passport.authenticate('local', { failureRedirect: '/',
                                                   failureFlash: true }),
                   function(req, res) {
-                    res.redirect('/users/' + req.user.username + '/projects/new');
+                    res.redirect('/users/' + req.user.username + '/projects');
                   });
 
 		this.addRoute('/sign_up', 'POST', this.register_user);
@@ -37,7 +37,7 @@ var Controller = kNode.Controller.extend({
   },
 
 	authenticate_middleware : function(username, password, done) {
-    	this.model.findByName(username, function(err, user) {
+    	this.model.find_by_name(username, function(err, user) {
       		if (err) {
       			return done(err);
       		}
@@ -56,7 +56,7 @@ var Controller = kNode.Controller.extend({
     },
 
     deserialize_user : function(id, done) {
-    	this.model.findById(id, function(err, user) {
+    	this.model.find_by_id(id, function(err, user) {
     		done(err, user);
   		});
     },
