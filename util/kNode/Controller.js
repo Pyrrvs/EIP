@@ -8,15 +8,17 @@ var Controller = Class.extend({
 		this.app = app;
 	},
 
-	addRoute : function(route, method, restrict, hook) {
+	addRoute : function(route, method, hook, restrict) {
 
 		var self = this;
 		if (arguments.length == 3) {
+			console.log('addRoute 3 args');
 			this.app[method.toLowerCase()](route, function(req, resp) {
 				resp.socket.setMaxListeners(0);
-				restrict.call(self, req, resp);
+				hook.call(self, req, resp);
 			});
 		} else {
+			console.log('addRoute 4 args')
 			this.app[method.toLowerCase()](route, restrict, function(req, resp) {
 				resp.socket.setMaxListeners(0);
 				hook.call(self, req, resp);

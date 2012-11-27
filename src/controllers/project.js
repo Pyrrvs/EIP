@@ -10,10 +10,10 @@ var Controller = kNode.Controller.extend({
 		this.precheck_view_projects = _.bind(this.precheck_view_projects, this);
 
 		app.param('project', /^\w+$/);
-		this.addRoute('/users/:username/projects/new', 'GET', this.precheck_creation_perm, this.new_project_form);
-		this.addRoute('/users/:username/projects', 'GET', this.precheck_view_projects, this.get_projects);
-		this.addRoute('/users/:username/projects', 'POST', this.precheck_creation_perm, this.create_project);
-		this.addRoute('/users/:username/:project', 'GET', this.precheck_view_projects, this.get_project);
+		this.addRoute('/users/:username/projects/new', 'GET', this.new_project_form, this.precheck_creation_perm);
+		this.addRoute('/users/:username/projects', 'GET', this.get_projects, this.precheck_view_projects);
+		this.addRoute('/users/:username/projects', 'POST', this.create_project, this.precheck_creation_perm);
+		this.addRoute('/users/:username/:project', 'GET', this.get_project, this.precheck_view_projects);
 	},
 
 	is_viewable : function(project_name, owner, viewer) {
@@ -57,7 +57,7 @@ var Controller = kNode.Controller.extend({
 				res.send('<h1>Get project problem:</h1><p>'+err+'</p>');
 				return ;
 			}
-			res.render('project.ejs', {project: result})			
+			res.render('project.ejs', {username: req.params.username, project: result})			
 		});
 	},
 

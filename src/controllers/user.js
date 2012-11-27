@@ -18,12 +18,12 @@ var Controller = kNode.Controller.extend({
 		passport.serializeUser(this.serialize_user);
 		passport.deserializeUser(this.deserialize_user);
 
-		this.addRoute('/sign_in', 'POST',
-                  passport.authenticate('local', { failureRedirect: '/',
-                                                  failureFlash: true }),
-                  function(req, res) {
-                    res.redirect('/users/' + req.user.username + '/projects');
-                  });
+		this.addRoute('/sign_in', 'POST', function(req, res) {
+      res.redirect('/users/' + req.user.username + '/projects');
+    }, passport.authenticate('local', {
+      failureRedirect: '/',
+      failureFlash: true 
+    }));
 
 		this.addRoute('/sign_up', 'POST', this.register_user);
 

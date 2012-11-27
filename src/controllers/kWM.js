@@ -1,6 +1,6 @@
-kController = require("./util/kController")
+var kNode = require('../../util/kNode.js');
 
-var Controller = kController.extend({
+var Controller = kNode.Controller.extend({
 
     config : {
 
@@ -40,26 +40,15 @@ var Controller = kController.extend({
 
 	ctor : function(app) {
 
-		this.super(app);
-		this.addRoute("/kWorldMaker", "GET", this.getHome);
-        this.addRoute("/kWorldMaker", "POST", this.postHome);
-        this.addRoute("/kWorldMaker", "POST", this.update)
-
-        this.db = new (require("db-mysql")).Database({
-            hostname : 'epsilon-network.eu',
-            user : 'remote_lol',
-            password : 'PAvrK7Vc',
-            database : 'LoL'
-        });
-        this.db.connect(function(error) {
-            if (error)
-                console.log('Connection error: ' + error)
-        });
+		this.super(app, null);
+        this.addRoute("/users/:username/:project/WorldMaker", "GET", this.getHome);
+        this.addRoute("/users/:username/:project/WorldMaker", "POST", this.postHome);
+        this.addRoute("/users/:username/:project/WorldMaker/update", "POST", this.update)
 	},
 
     getHome : function(req, resp) {
 
-        resp.render("home.ejs");
+        resp.render("kWM.ejs");
     },    
 
     postHome : function(req, resp) {
