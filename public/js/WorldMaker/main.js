@@ -1,4 +1,10 @@
-define(["view/LevelView", "view/GameView", "view/MenuView", "Controller"], function(LevelView, GameView, MenuView, Controller) {
+require.config({ paths : {
+
+	"text" : "/js/util/text",
+	"class" : "/js/util/class",
+} })
+
+define(["LevelView", "GameView", "MenuView", "Controller"], function(LevelView, GameView, MenuView, Controller) {
 
 	_.templateSettings.variable = "rc";
 	window.controller = Controller().setUp(function() {

@@ -1,4 +1,4 @@
-define("Controller", ["util/class"], function(Class) {
+define(["class"], function(Class) {
 
 	var Controller = Class.extend({
 
@@ -6,16 +6,17 @@ define("Controller", ["util/class"], function(Class) {
 
 		setUp : function(hook) {
 
-			$.ajax("/kWorldMaker", { type : "POST", dataType : "json", success : function(data) {
+			$.ajax(window.location, { type : "POST", dataType : "json", success : function(data) {
+				console.log(42);
 				this.data = data;
 				hook();
-			}.bind(this)});
+			}.bind(this), error : function(log) { console.log(log)}});
 			return (this);
 		},
 
 		update : function(req) {
 
-			$.ajax("/kWorldMaker/update", { type : "POST", dataType : "json", data : JSON.stringify(this.data), success : function(data) {
+			$.ajax(window.location + "/update", { type : "POST", dataType : "json", data : JSON.stringify(this.data), success : function(data) {
 				console.log("Update Ok");
 			}});
 		},

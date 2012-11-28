@@ -48,11 +48,13 @@ var Controller = kNode.Controller.extend({
 
     getHome : function(req, resp) {
 
+        console.log("GET")
         resp.render("kWM.ejs");
     },    
 
     postHome : function(req, resp) {
 
+        console.log("POST")
         resp.json(this.config);
     },
 

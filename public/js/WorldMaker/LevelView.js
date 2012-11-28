@@ -1,4 +1,4 @@
-define(["util/class", "text!../../template/accordion.tpl", "text!../../template/accordion_inner_li.tpl"],
+define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner_li.tpl"],
 		function(Class, accordion, entity) {
 
 	LevelView = Class.extend({

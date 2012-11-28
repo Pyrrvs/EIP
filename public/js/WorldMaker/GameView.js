@@ -1,4 +1,4 @@
-define(["util/class", "js/kGE/kge.js"], function(Class, kge) {
+define(["class", "kGE/kge"], function(Class, kge) {
 
         var GameView = Class.extend({
 
