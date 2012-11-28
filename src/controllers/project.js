@@ -16,8 +16,16 @@ var Controller = kNode.Controller.extend({
 		this.addRoute('/users/:username/:project', 'GET', this.get_project, this.precheck_view_projects);
 	},
 
-	is_viewable : function(project_name, owner, viewer) {
+	is_viewable_by : function(project_name, owner, viewer) {
+		this.model.find_by_name_and_owner(project_name, owner, function(err, result) {
+			console.log('is_viewable_by ' + result);
+		});
+	},
 
+	is_editable_by : function(project_name, owner, callback) {
+		this.model.find_by_name_and_owner(project_name, owner, function(err, result) {
+			console.log('is_editable_by ' + result);
+		});
 	},
 
 	precheck_view_projects : function(req, res, next) {
@@ -52,7 +60,7 @@ var Controller = kNode.Controller.extend({
 	},
 
 	get_project : function(req, res) {
-		this.model.find_by_name(req.params.project, function(err, result) {
+		this.model.find_by_name_and_owner(req.params.project, req.params.username, function(err, result) {
 			if (err) {
 				res.send('<h1>Get project problem:</h1><p>'+err+'</p>');
 				return ;
