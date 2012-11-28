@@ -6,11 +6,11 @@ var Controller = kNode.Controller.extend({
 
     levels : [
         { name : "Green Hill", entities : [
-            { id : 0, class : 'Mario', model : {url : "/img/ball.png"}, position : {x : 200, y : 200}, scale : 2, rotation : 0 },
-            { id : 1, class : 'Plat1', model : {url : "/img/ball.png"}, position : {x : 400, y : 400}, scale : 1, rotation : 0 },
-            { id : 2, class : 'Plat2', model : {url : "/img/ball.png"}, position : {x : 100, y : 100}, scale : 1.5, rotation : 0 },
-            { id : 3, class : 'Soldier', model : {url : "/img/ball.png"}, position : {x : 300, y : 100}, scale : 1, rotation : 0 },
-            { id : 4, class : 'Commander', model : {url : "/img/ball.png"}, position : {x : 100, y : 300}, scale : 1, rotation : 0 },
+            { id : 0, class : 'Mario', model : {url : "/img/ball.png"}, position : {x : 200, y : 200}, scale : 1, rotation : 0 },
+            { id : 1, class : 'Plat1', model : {url : "/img/ball.png"}, position : {x : 400, y : 400}, scale : 0.5, rotation : 0 },
+            { id : 2, class : 'Plat2', model : {url : "/img/ball.png"}, position : {x : 100, y : 100}, scale : 0.75, rotation : 0 },
+            { id : 3, class : 'Soldier', model : {url : "/img/ball.png"}, position : {x : 300, y : 100}, scale : 0.5, rotation : 0 },
+            { id : 4, class : 'Commander', model : {url : "/img/ball.png"}, position : {x : 100, y : 300}, scale : 0.75, rotation : 0 },
         ] },
         { name : "Marble" },
         { name : "Spring Yard" },
