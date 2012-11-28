@@ -12,13 +12,11 @@ var Controller = Class.extend({
 
 		var self = this;
 		if (arguments.length == 3) {
-			console.log('addRoute 3 args');
 			this.app[method.toLowerCase()](route, function(req, resp) {
 				resp.socket.setMaxListeners(0);
 				hook.call(self, req, resp);
 			});
 		} else {
-			console.log('addRoute 4 args')
 			this.app[method.toLowerCase()](route, restrict, function(req, resp) {
 				resp.socket.setMaxListeners(0);
 				hook.call(self, req, resp);

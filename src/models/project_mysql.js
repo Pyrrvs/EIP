@@ -22,7 +22,7 @@ module.exports = kNode.Model.extend({
 
     find_by_owner : function(owner, callback, privacy) {
         if (arguments.length == 3) {
-            this.db.query('SELECT projects.* FROM projects JOIN users ON projects.owner_id = users.id WHERE (username=? and privacy=?)', [owner, privacy])
+            this.db.query('SELECT projects.* FROM projects JOIN users ON projects.owner_id = users.id WHERE (username=? AND privacy=?)', [owner, privacy])
                 .execute(function(err, results) {
                     callback(err, results);
             });
@@ -34,11 +34,9 @@ module.exports = kNode.Model.extend({
         }
     },
 
-    find_by_name : function(project_name, callback) {
-        this.db.query().select('*')
-                        .from('projects')
-                        .where('name=?', [project_name])
-                        .limit(1)
+    find_by_name_and_owner : function(project_name, owner, callback) {
+        this.db.query('SELECT projects.* FROM projects JOIN users ON projects.owner_id = users.id')
+                    .where('(users.username=? AND projects.name=?)', [owner, project_name])
                         .execute(function(err, rows, cols) {
                             callback(err, rows[0]);
                         });
