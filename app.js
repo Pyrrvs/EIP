@@ -21,7 +21,7 @@ app.configure(function() {
 	app.use(app.router);
 });
 
-app.param(function(name, fn){
+app.param(function(name, fn) {
   if (fn instanceof RegExp) {
     return function(req, res, next, val){
       var captures;
