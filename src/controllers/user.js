@@ -53,6 +53,7 @@ var Controller = kNode.Controller.extend({
         return ;
       }
       res.render('user.ejs', {
+        user : helper.create_user_obj(req.user),
         username : result.username,
         email : result.email,
         home : result.home,
