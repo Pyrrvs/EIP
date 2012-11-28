@@ -2,15 +2,15 @@ var kNode = require('../../util/kNode.js');
 
 var Controller = kNode.Controller.extend({
 
-    config : {
+    world : {
 
     levels : [
         { name : "Green Hill", entities : [
-            { id : 0, class : 'Mario', model : {url : "resource/ball.png"}, position : {x : 200, y : 200}, scale : 2, rotation : 0 },
-            { id : 1, class : 'Plat1', model : {url : "resource/ball.png"}, position : {x : 400, y : 400}, scale : 1, rotation : 0 },
-            { id : 2, class : 'Plat2', model : {url : "resource/ball.png"}, position : {x : 100, y : 100}, scale : 1.5, rotation : 0 },
-            { id : 3, class : 'Soldier', model : {url : "resource/ball.png"}, position : {x : 300, y : 100}, scale : 1, rotation : 0 },
-            { id : 4, class : 'Commander', model : {url : "resource/ball.png"}, position : {x : 100, y : 300}, scale : 1, rotation : 0 },
+            { id : 0, class : 'Mario', model : {url : "/img/ball.png"}, position : {x : 200, y : 200}, scale : 2, rotation : 0 },
+            { id : 1, class : 'Plat1', model : {url : "/img/ball.png"}, position : {x : 400, y : 400}, scale : 1, rotation : 0 },
+            { id : 2, class : 'Plat2', model : {url : "/img/ball.png"}, position : {x : 100, y : 100}, scale : 1.5, rotation : 0 },
+            { id : 3, class : 'Soldier', model : {url : "/img/ball.png"}, position : {x : 300, y : 100}, scale : 1, rotation : 0 },
+            { id : 4, class : 'Commander', model : {url : "/img/ball.png"}, position : {x : 100, y : 300}, scale : 1, rotation : 0 },
         ] },
         { name : "Marble" },
         { name : "Spring Yard" },
@@ -42,25 +42,23 @@ var Controller = kNode.Controller.extend({
 
 		this.super(app, null);
         this.addRoute("/users/:username/:project/WorldMaker", "GET", this.getHome);
-        this.addRoute("/users/:username/:project/WorldMaker", "POST", this.postHome);
-        this.addRoute("/users/:username/:project/WorldMaker/update", "POST", this.update)
+        this.addRoute("/users/:username/:project/WorldMaker/getWorld", "GET", this.getWorld);
+        this.addRoute("/users/:username/:project/WorldMaker/putWorld", "PUT", this.putWorld)
 	},
 
     getHome : function(req, resp) {
 
-        console.log("GET")
         resp.render("kWM.ejs");
     },    
 
-    postHome : function(req, resp) {
+    getWorld : function(req, resp) {
 
-        console.log("POST")
-        resp.json(this.config);
+        resp.json(this.world);
     },
 
-    update : function(req, resp) {
+    putWorld : function(req, resp) {
 
-        this.data = JSON.parser(req.data);
+        this.world = JSON.parser(req.data);
     },
 });
 

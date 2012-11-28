@@ -32,6 +32,7 @@ define(["class", "kGE/kge"], function(Class, kge) {
                         this.scene.layer.addChild(entity);
                         entity.id = data.id;
                         this.updateEntity(data);
+//                        entity.setBody();
                 },
 
                 setUpLevel : function(level) {

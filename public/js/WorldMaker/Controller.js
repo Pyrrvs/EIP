@@ -6,8 +6,7 @@ define(["class"], function(Class) {
 
 		setUp : function(hook) {
 
-			$.ajax(window.location, { type : "POST", dataType : "json", success : function(data) {
-				console.log(42);
+			$.ajax(window.location.pathname + "/getWorld", { type : "GET", dataType : "json", success : function(data) {
 				this.data = data;
 				hook();
 			}.bind(this), error : function(log) { console.log(log)}});
@@ -16,7 +15,7 @@ define(["class"], function(Class) {
 
 		update : function(req) {
 
-			$.ajax(window.location + "/update", { type : "POST", dataType : "json", data : JSON.stringify(this.data), success : function(data) {
+			$.ajax(window.location.pathname + "/putWorld", { type : "PUT", dataType : "json", data : JSON.stringify(this.data), success : function(data) {
 				console.log("Update Ok");
 			}});
 		},

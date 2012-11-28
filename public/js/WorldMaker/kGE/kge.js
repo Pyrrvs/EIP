@@ -53,7 +53,7 @@ define([], function() {
 	        bodyDef.type = bodyType;
         	bodyDef.position.x = this.position.x / 30;
             bodyDef.position.y = this.position.y / 30;
-			fixDef.shape = new b2CircleShape(32 / 30);
+			fixDef.shape = new b2CircleShape(this.width * this.scale / 30);
 	        this.body = this.parent.parent.world.CreateBody(bodyDef)
 	        this.body.CreateFixture(fixDef)
 		}
