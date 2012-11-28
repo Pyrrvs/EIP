@@ -41,13 +41,24 @@ var Controller = kNode.Controller.extend({
     });
   },
 
-  is_authenticated : function(req) {
-    return (req.user)
-  },
-
   get_profile : function(req, res) {
+    var is_owner = (req.user.username == req.params.username);
     console.log(req.params.username);
-    res.redirect('/');
+    this.model.find_by_name(req.params.username, function(err, result) {
+      if (err) {
+        res.send('<h1>Error when accesing ' + req.params.username + ' profile</h1><p>' + err + '</p>');
+        return ;
+      } else if (!result) {
+        res.send('<h1>User ' + req.params.username + ' doesn\'t exist!</h1>');
+        return ;
+      }
+      res.render('user.ejs', {
+        username : result.username,
+        email : result.email,
+        home : result.home,
+        is_owner : is_owner
+      });
+    });
   },
 
 	authenticate_middleware : function(username, password, done) {
@@ -84,7 +95,7 @@ var Controller = kNode.Controller.extend({
         new_user.username = req.body.username;
         new_user.password = bcrypt.hashSync(req.body.password, 8);
         new_user.email = req.body.email;
-        new_user.home = '/' + new_user.username + '/';
+        new_user.home = '/users/' + new_user.username + '/';
         this.model.create(new_user, function(err, result) {
           if (err) {
             console.log('Handle registration error here !');

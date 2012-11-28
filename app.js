@@ -1,4 +1,5 @@
 _ = require("./util/underscore.js")
+helper = require('./util/helper.js');
 var ejs = require('ejs');
 var crypto = require('crypto');
 var express = require('express');

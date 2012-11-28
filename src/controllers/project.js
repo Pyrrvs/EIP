@@ -29,7 +29,7 @@ var Controller = kNode.Controller.extend({
 	},
 
 	precheck_view_projects : function(req, res, next) {
-		if (!this.user_c.is_authenticated(req)) {
+		if (!helper.is_authenticated(req)) {
 			res.send('<h1>Authentication needed!</h1>');
 			return ;
 		}
@@ -43,7 +43,7 @@ var Controller = kNode.Controller.extend({
 	},
 
 	precheck_creation_perm : function(req, res, next) {
-		if (!this.user_c.is_authenticated(req)) {
+		if (!helper.is_authenticated(req)) {
 			res.send('<h1>Authentication needed!</h1>');
 			return ;
 		}

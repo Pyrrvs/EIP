@@ -10,8 +10,8 @@ var Controller = kNode.Controller.extend({
 
 	get_index : function(req, res) {
 
-
-		res.render('index.ejs', { user: req.user });
+		console.log(req.user);
+		res.render('index.ejs', { user : helper.create_user_obj(req.user) });
 	}
 });
 
