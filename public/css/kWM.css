@@ -94,6 +94,11 @@
     margin-top: 10px;
 }
 
+.top {
+
+    margin-top: 0px;
+}
+
 .line-top > * {
 
     display: inline-block;
@@ -149,4 +154,9 @@ input[type="number"] {
 
     width: 50px;
     padding: 0px 2px;
+}
+
+#gameView #menu .line-top {
+
+    margin: 0px;
 }

@@ -63,11 +63,18 @@ define(["class"], function(Class) {
 
 	    createEntity : function(req) {
 
-	        var level = req.level, entity = { id : this.data.id++, class : null };
+	        var level = req.level;
 	        for (var i in this.data.levels)
 	            if (this.data.levels[i].name == level)
 	                this.data.levels[i].entities.push(entity);
-	        return entity;
+	        return ({
+		        id : this.data.id++,
+		        model : null,
+		        class : null,
+		        position : { x : 0, y : 0 },
+		        scale : 1,
+		        rotation : 0,
+	        });
 	    },
 
 	    deleteEntity : function(req) {
