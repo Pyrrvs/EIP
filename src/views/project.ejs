@@ -4,12 +4,12 @@
 		<a href='/users/<%= username %>/<%= project.name %>/WorldMaker'>Edit Map</a>
 	</li>
 	<li>
-		<form method="post" action="/users/<%= username %>/<%= project.name %>/addRessource">
+		<form method="post" action="/users/<%= username %>/<%= project.name %>/addResource" enctype="multipart/form-data">
     		<label>File:</label>
-    		<input type="file" name="ressource_file">
+    		<input type="file" name="resource_file">
     		<label>Name:</label>
-    		<input type="text" name="ressource_name">
-   			<input type="submit" value="Add ressource">
+    		<input type="text" name="resource_name">
+   			<input type="submit" value="Add resource">
 		</form>
 	</li>
 </ul>

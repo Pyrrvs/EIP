@@ -39,5 +39,6 @@ require('./src/controllers/project.js')(app);
 require('./src/controllers/user.js')(app);
 require('./src/controllers/index.js')(app);
 require('./src/controllers/kWM.js')(app);
+require('./src/controllers/resource.js')(app);
 
 http.createServer(app).listen(8888);

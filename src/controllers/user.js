@@ -31,6 +31,10 @@ var Controller = kNode.Controller.extend({
     this.addRoute('/users/:username', 'GET', this.get_profile);
 	},
 
+  get_user : function(username, callback) {
+    this.model.find_by_name(username, callback);
+  },
+
   user_exists : function(username, callback) {
     this.model.find_by_name(username, function(err, result) {
       if (!err && !result) {
@@ -48,10 +52,10 @@ var Controller = kNode.Controller.extend({
     }
     this.model.find_by_name(req.params.username, function(err, result) {
       if (err) {
-        res.send('<h1>Error when accesing ' + req.params.username + ' profile</h1><p>' + err + '</p>');
+        helper.internal_server_error(res, err);
         return ;
       } else if (!result) {
-        res.send('<h1>User ' + req.params.username + ' doesn\'t exist!</h1>');
+        helper.no_such_user(res, req.params.username);
         return ;
       }
       res.render('user.ejs', {
@@ -101,7 +105,8 @@ var Controller = kNode.Controller.extend({
         new_user.home = '/users/' + new_user.username + '/';
         this.model.create(new_user, function(err, result) {
           if (err) {
-            res.send('<h1>Handle registration error here !</h1><p>' + err +'</p>');
+            helper.internal_server_error(res, err);
+            return ;
           } else {
             new_user.id = result.id;
             fs.mkdir('./users/' + new_user.username, 0755, function(err) {
@@ -111,8 +116,8 @@ var Controller = kNode.Controller.extend({
             });
             req.login(new_user, function(err) {
               if (err) {
-                res.send('<h1>Handle registration error here (req.login)!</h1><p>' + err +'</p>');
-                return err;
+                helper.internal_server_error(res, err);
+                return ;
               }
               return res.redirect('/users/' + req.user.username + '/projects/new');
             });

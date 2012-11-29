@@ -43,7 +43,7 @@ var Controller = kNode.Controller.extend({
 		}
 		this.user_c.user_exists(req.params.username, function(err) {
 			if (err) {
-				res.send('<h1>User ' + req.params.username + ' doesn\'t exist!</h1>');
+				helper.no_such_user(res, req.params.username);
 				return ;
 			}
 			next();
@@ -57,7 +57,7 @@ var Controller = kNode.Controller.extend({
 		}
 		this.user_c.user_exists(req.params.username, function(err) {
 			if (err) {
-				res.send('<h1>User ' + req.params.username + ' doesn\'t exist!</h1>');
+				helper.no_such_user(res, req.params.username);
 				return ;
 			} else if (req.user.username != req.params.username) {
 				res.send('<h1>Access denied!</h1>');
@@ -70,10 +70,10 @@ var Controller = kNode.Controller.extend({
 	get_project : function(req, res) {
 		this.model.find_by_name_and_owner(req.params.project, req.params.username, function(err, result) {
 			if (err) {
-				res.send('<h1>Get project problem:</h1><p>'+err+'</p>');
+				helper.internal_server_error(res, err);
 				return ;
 			} else if (!result) {
-				res.send('<h1>No project ' + req.params.project + ' for ' + req.params.username + '</h1>');
+				helper.no_such_project(res, req.params.project, req.params.username)
 				return ;				
 			}
 			res.render('project.ejs', {username: req.params.username, project: result})			
@@ -103,7 +103,8 @@ var Controller = kNode.Controller.extend({
 		new_proj.privacy = req.body.privacy;
 		this.model.create(new_proj, function(err, result) {
 			if (err){
-				res.send('<h1>Error during project creation process</h1><p>' + err + '</p>');
+				helper.internal_server_error(res, err);
+				return ;
 			} else {
 				new_proj.id = result.id;
 				fs.mkdir('./users/' + req.user.username + '/' + new_proj.name, 0755, function(err) {
