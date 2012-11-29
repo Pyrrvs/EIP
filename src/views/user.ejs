@@ -8,10 +8,23 @@
     <meta name="author" content="">
     <script src="/js/util/jquery-1.8.2.min.js"></script>
     <script src="/js/util/bootstrap.min.js"></script>
-    <link href="/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="/css/index.css" rel="stylesheet">
+    <link href="/css/user.css" rel="stylesheet">
   </head>
 
   <body>
     <% include top_menu.ejs %>
+    <div class="container">
+      <div class="row-fluid">
+        <div id="main-bloc" class="span10 offset1">
+          <div id="title-bloc" class="line-top">
+            <img id="avatar" src="/img/avatar.png"/>
+            <h1 id="username"><%= user.username %></h1>
+          </div>
+          <div id="toto">
+            <p>toto</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
+</html>
