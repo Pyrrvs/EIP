@@ -43,7 +43,6 @@ var Controller = kNode.Controller.extend({
 
   get_profile : function(req, res) {
     var is_owner = (req.user.username == req.params.username);
-    console.log(req.params.username);
     this.model.find_by_name(req.params.username, function(err, result) {
       if (err) {
         res.send('<h1>Error when accesing ' + req.params.username + ' profile</h1><p>' + err + '</p>');
@@ -90,7 +89,7 @@ var Controller = kNode.Controller.extend({
     register_user : function(req, res) {
 
     	if (req.body.password != req.body.password_confirm) {
-    		console.log('Password confirmation doesn\'t match password.');
+        res.send('<h1>Password confirmation doesn\'t match password.</h1>');
     	} else {
         var new_user = {};
         new_user.username = req.body.username;
@@ -99,15 +98,17 @@ var Controller = kNode.Controller.extend({
         new_user.home = '/users/' + new_user.username + '/';
         this.model.create(new_user, function(err, result) {
           if (err) {
-            console.log('Handle registration error here !');
+            res.send('<h1>Handle registration error here !</h1><p>' + err +'</p>');
           } else {
             new_user.id = result.id;
-            fs.mkdir('./users/' + new_user.username, 0755, function() {
-              console.log('Directory ./users/' + new_user.username + ' created');
+            fs.mkdir('./users/' + new_user.username, 0755, function(err) {
+              if (err) {
+                console.log('User directory creation error', err);
+              }
             });
             req.login(new_user, function(err) {
               if (err) {
-                console.log('req.login err', err)
+                res.send('<h1>Handle registration error here (req.login)!</h1><p>' + err +'</p>');
                 return err;
               }
               return res.redirect('/users/' + req.user.username + '/projects/new');
