@@ -67,7 +67,7 @@ var Controller = kNode.Controller.extend({
           email : result.email,
           home : result.home,
           is_owner : is_owner,
-          projetcts : results
+          projects : results
         });
       });
     });
