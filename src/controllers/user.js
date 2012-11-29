@@ -9,6 +9,7 @@ var Controller = kNode.Controller.extend({
 	ctor : function(app) {
 
 		this.super(app, new (require('../models/user_mysql.js'))());
+ 
 		this.authenticate_middleware = _.bind(this.authenticate_middleware, this);
 		this.serialize_user = _.bind(this.serialize_user, this);
 		this.deserialize_user = _.bind(this.deserialize_user, this);
@@ -46,10 +47,7 @@ var Controller = kNode.Controller.extend({
   },
 
   get_profile : function(req, res) {
-    var owner = false;
-    if (req.user) {
-      var is_owner = (req.user.username == req.params.username);
-    }
+    var is_owner = (req.user.username == req.params.username);
     this.model.find_by_name(req.params.username, function(err, result) {
       if (err) {
         helper.internal_server_error(res, err);
@@ -58,12 +56,19 @@ var Controller = kNode.Controller.extend({
         helper.no_such_user(res, req.params.username);
         return ;
       }
-      res.render('user.ejs', {
-        user : helper.create_user_obj(req.user),
-        username : result.username,
-        email : result.email,
-        home : result.home,
-        is_owner : is_owner
+      project_ctrl.get_project_list(req.params.username, req.user.username, function(err, results) {
+        if (err) {
+          helper.internal_server_error(res, err);
+          return ;
+        }
+        res.render('user.ejs', {
+          user : helper.create_user_obj(req.user),
+          username : result.username,
+          email : result.email,
+          home : result.home,
+          is_owner : is_owner,
+          projetcts : results
+        });
       });
     });
   },

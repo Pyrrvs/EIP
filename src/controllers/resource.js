@@ -5,14 +5,12 @@ var Controller = kNode.Controller.extend({
 
 	ctor : function(app) {
 		this.super(app, null);
-		this.user_ctrl = new (require('./user.js'))(app);
-		this.proj_ctrl = new (require('./project.js'))(app);
 		this.addRoute('/users/:username/:project/addResource', 'POST', this.upload_resource);
 	},
 
 	upload_resource : function(req, res) {
 		console.log('Resource uploaded: ', req.files);
-		this.user_ctrl.get_user(req.params.username, function(err, user) {
+		user_ctrl.get_user(req.params.username, function(err, user) {
 			if (err) {
 				helper.internal_server_error(res, err);
 				return ;

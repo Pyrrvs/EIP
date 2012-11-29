@@ -5,7 +5,6 @@ var Controller = kNode.Controller.extend({
 
 	ctor : function(app) {
 		this.super(app, new (require('../models/project_mysql.js'))());
-		this.user_c = new (require('./user.js'))(app);
 		this.precheck_creation_perm = _.bind(this.precheck_creation_perm, this);
 		this.precheck_view_projects = _.bind(this.precheck_view_projects, this);
 
@@ -41,7 +40,7 @@ var Controller = kNode.Controller.extend({
 			res.send('<h1>Authentication needed!</h1>');
 			return ;
 		}
-		this.user_c.user_exists(req.params.username, function(err) {
+		user_ctrl.user_exists(req.params.username, function(err) {
 			if (err) {
 				helper.no_such_user(res, req.params.username);
 				return ;
@@ -55,7 +54,7 @@ var Controller = kNode.Controller.extend({
 			res.send('<h1>Authentication needed!</h1>');
 			return ;
 		}
-		this.user_c.user_exists(req.params.username, function(err) {
+		user_ctrl.user_exists(req.params.username, function(err) {
 			if (err) {
 				helper.no_such_user(res, req.params.username);
 				return ;
@@ -88,6 +87,18 @@ var Controller = kNode.Controller.extend({
 		} else {
 			this.model.find_by_owner(req.params.username, function(err, results) {
 				res.render('projects.ejs', { username: req.params.username, projects: results });
+			}, 'public');	
+		}
+	},
+
+	get_project_list : function(owner, viewer, callback) {
+		if (viewer == owner) {
+			this.model.find_by_owner(owner, function(err, results) {
+				callback(err, results);
+			});
+		} else {
+			this.model.find_by_owner(owner, function(err, results) {
+				callback(err, results);
 			}, 'public');	
 		}
 	},
