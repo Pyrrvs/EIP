@@ -42,7 +42,10 @@ var Controller = kNode.Controller.extend({
   },
 
   get_profile : function(req, res) {
-    var is_owner = (req.user.username == req.params.username);
+    var owner = false;
+    if (req.user) {
+      var is_owner = (req.user.username == req.params.username);
+    }
     this.model.find_by_name(req.params.username, function(err, result) {
       if (err) {
         res.send('<h1>Error when accesing ' + req.params.username + ' profile</h1><p>' + err + '</p>');

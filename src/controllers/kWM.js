@@ -49,6 +49,7 @@ var Controller = kNode.Controller.extend({
 	},
 
     check_edit_perm : function(req, res, next) {
+        next();
         if (!helper.is_authenticated(req)) {
             res.send('<h1>Authentication needed!</h1>');
             return ;
