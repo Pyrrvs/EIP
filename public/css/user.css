@@ -6,16 +6,17 @@ body {
 }
 
 #main-bloc {
+	height: 600px;
 	margin-top: 50px;
 	border-radius: 15px;
     box-shadow: 1px 1px 5px rgba(50, 50, 50, 0.5);
-    height: 400px;
+
+    overflow: scroll;
 }
 
 #avatar {
-	height: 20%;
-	margin-top: 10px;
-	margin-left: 10px;
+	height: 80px;
+	margin: 10px 10px 10px 10px;
 	border-radius: 10px;
     box-shadow: 1px 1px 5px rgba(50, 50, 50, 0.5);
 }
@@ -23,6 +24,19 @@ body {
 #username {
 	margin-top: 25px;
 	margin-left: 50px;
+}
+
+#projects-bloc {
+	width: 40%;
+	margin: 0px 10px 10px 10px;
+}
+
+#edit-btn {
+	padding: 2px 10px 2px 10px;
+}
+
+.privacy-label {
+	margin: -27px 11px;
 }
 
 .line-top > * {
