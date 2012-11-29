@@ -1,4 +1,5 @@
 _ = require("./util/underscore.js")
+helper = require('./util/helper.js');
 var ejs = require('ejs');
 var crypto = require('crypto');
 var express = require('express');
@@ -20,7 +21,7 @@ app.configure(function() {
 	app.use(app.router);
 });
 
-app.param(function(name, fn){
+app.param(function(name, fn) {
   if (fn instanceof RegExp) {
     return function(req, res, next, val){
       var captures;

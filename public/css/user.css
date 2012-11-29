@@ -1,0 +1,31 @@
+@import url("/css/bootstrap.min.css");
+@import url("/css/bootstrap-responsive.css");
+
+body {
+	background-color: white;
+}
+
+#main-bloc {
+	margin-top: 50px;
+	border-radius: 15px;
+    box-shadow: 1px 1px 5px rgba(50, 50, 50, 0.5);
+    height: 400px;
+}
+
+#avatar {
+	height: 20%;
+	margin-top: 10px;
+	margin-left: 10px;
+	border-radius: 10px;
+    box-shadow: 1px 1px 5px rgba(50, 50, 50, 0.5);
+}
+
+#username {
+	margin-top: 25px;
+	margin-left: 50px;
+}
+
+.line-top > * {
+	vertical-align: top;
+	display: inline-block;
+}

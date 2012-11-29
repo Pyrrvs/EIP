@@ -41,13 +41,32 @@ var Controller = kNode.Controller.extend({
 	ctor : function(app) {
 
 		this.super(app, null);
-        this.addRoute("/users/:username/:project/WorldMaker", "GET", this.getHome);
-        this.addRoute("/users/:username/:project/WorldMaker/getWorld", "GET", this.getWorld);
-        this.addRoute("/users/:username/:project/WorldMaker/putWorld", "PUT", this.putWorld)
+        this.proj_contrl = new (require('./project.js'))(app);
+        this.check_edit_perm = _.bind(this.check_edit_perm, this);
+        this.addRoute("/users/:username/:project/WorldMaker", "GET", this.getHome, this.check_edit_perm);
+        this.addRoute("/users/:username/:project/WorldMaker/getWorld", "GET", this.getWorld, this.check_edit_perm);
+        this.addRoute("/users/:username/:project/WorldMaker/putWorld", "PUT", this.putWorld, this.check_edit_perm)
 	},
 
-    getHome : function(req, resp) {
+    check_edit_perm : function(req, res, next) {
+        next();
+        if (!helper.is_authenticated(req)) {
+            res.send('<h1>Authentication needed!</h1>');
+            return ;
+        }
+        this.proj_contrl.is_editable_by(req.params.project, req.params.username, req.user.username, function(err, is_editable) {
+            if (err){
+                res.send('<h1>An error occured when accessing the databse</h1><p>' + err + '</p>');
+                return ;
+            } else if (is_editable) {
+                next();
+            } else {
+                res.send('<h1>Access Denied!</h1>');
+            }
+        });
+    },
 
+    getHome : function(req, resp) {
         resp.render("kWM.ejs");
     },    
 

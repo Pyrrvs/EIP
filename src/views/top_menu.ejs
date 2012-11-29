@@ -1,0 +1,58 @@
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <a class="brand" href="#">AGB</a>
+      <div class="nav-collapse collapse">
+        <ul class="nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+
+          <li class="dropdown">
+            <% if (user) { %>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <%= user.username %> <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <div style="margin:5px;padding:0;display:inline">
+                  <button class="btn btn-inverse">Profile</button>
+                </div>
+              </ul>
+            <% } else  { %>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Log In<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <form style="margin: 0px" accept-charset="UTF-8" action="/sign_up" method="post">
+                  <div style="margin:0;padding:0;display:inline">
+                    <input name="utf8" type="hidden" value="&#x2713;" />
+                    <input name="authenticity_token" type="hidden" value="4L/A2ZMYkhTD3IiNDMTuB/fhPRvyCNGEsaZocUUpw40=" />
+                  </div>
+                  <fieldset class='textbox' style="padding:10px">
+                    <input style="margin-top: 8px" type="text" name="username" placeholder="username" />
+                    <input style="margin-top: 8px" type="password" name="password" placeholder="passsword" />
+                    <input style="margin-top: 8px" type="password" name="password_confirm" placeholder="retype passsword" />
+                    <input style="margin-top: 8px" type="email" name="email" placeholder="user@example.com" />
+                    <input class="btn btn-inverse" name="Log In" type="submit" value="Sign Up" />
+                  </fieldset>
+                </form>
+                <form style="margin: 0px" accept-charset="UTF-8" action="/sign_in" method="post">
+                  <div style="margin:0;padding:0;display:inline">
+                    <input name="utf8" type="hidden" value="&#x2713;" />
+                    <input name="authenticity_token" type="hidden" value="4L/A2ZMYkhTD3IiNDMTuB/fhPRvyCNGEsaZocUUpw40=" />
+                  </div>
+                  <fieldset class='textbox' style="padding:10px">
+                    <input style="margin-top: 8px" type="text" name="username" placeholder="username" />
+                    <input style="margin-top: 8px" type="password" name="password" placeholder="passsword" />
+                    <input class="btn btn-inverse" name="Log In" type="submit" value="Sign In" />
+                  </fieldset>
+                </form>
+              </ul>
+            <% } %>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

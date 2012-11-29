@@ -16,20 +16,28 @@ var Controller = kNode.Controller.extend({
 		this.addRoute('/users/:username/:project', 'GET', this.get_project, this.precheck_view_projects);
 	},
 
-	is_viewable_by : function(project_name, owner, viewer) {
+	is_viewable_by : function(project_name, owner, viewer, callback) {
 		this.model.find_by_name_and_owner(project_name, owner, function(err, result) {
 			console.log('is_viewable_by ' + result);
 		});
 	},
 
-	is_editable_by : function(project_name, owner, callback) {
+	is_editable_by : function(project_name, owner, viewer, callback) {
 		this.model.find_by_name_and_owner(project_name, owner, function(err, result) {
-			console.log('is_editable_by ' + result);
+			if (result) {
+				if (owner == viewer) {
+					callback(err, true);
+				} else {
+					callback(err, false);
+				}
+			} else {
+				callback(err, false);
+			}
 		});
 	},
 
 	precheck_view_projects : function(req, res, next) {
-		if (!this.user_c.is_authenticated(req)) {
+		if (!helper.is_authenticated(req)) {
 			res.send('<h1>Authentication needed!</h1>');
 			return ;
 		}
@@ -43,7 +51,7 @@ var Controller = kNode.Controller.extend({
 	},
 
 	precheck_creation_perm : function(req, res, next) {
-		if (!this.user_c.is_authenticated(req)) {
+		if (!helper.is_authenticated(req)) {
 			res.send('<h1>Authentication needed!</h1>');
 			return ;
 		}
@@ -64,6 +72,9 @@ var Controller = kNode.Controller.extend({
 			if (err) {
 				res.send('<h1>Get project problem:</h1><p>'+err+'</p>');
 				return ;
+			} else if (!result) {
+				res.send('<h1>No project ' + req.params.project + ' for ' + req.params.username + '</h1>');
+				return ;				
 			}
 			res.render('project.ejs', {username: req.params.username, project: result})			
 		});
@@ -72,14 +83,10 @@ var Controller = kNode.Controller.extend({
 	get_projects : function(req, res) {
 		if (req.user.username == req.params.username) {
 			this.model.find_by_owner(req.params.username, function(err, results) {
-
-				console.log('get projects ', err, results);
 				res.render('projects.ejs', { username: req.params.username, projects: results });
 			});
 		} else {
 			this.model.find_by_owner(req.params.username, function(err, results) {
-
-				console.log('get projects ', err, results);
 				res.render('projects.ejs', { username: req.params.username, projects: results });
 			}, 'public');	
 		}
@@ -96,19 +103,24 @@ var Controller = kNode.Controller.extend({
 		new_proj.privacy = req.body.privacy;
 		this.model.create(new_proj, function(err, result) {
 			if (err){
-				console.log('Handle project creation error here ', err);
 				res.send('<h1>Error during project creation process</h1><p>' + err + '</p>');
 			} else {
 				new_proj.id = result.id;
-				console.log('New project created with the id ' + new_proj.id);
-				fs.mkdir('./users/' + req.user.username + '/' + new_proj.name, 0755, function() {
-              		console.log('Directory ./users/' + req.user.username + '/' + new_proj.name + ' created');
-              		fs.mkdir('./users/' + req.user.username + '/' + new_proj.name + '/' + 'Resources', function() {
-              			console.log('Directory ./users/' + req.user.username + '/' + new_proj.name  + '/' + 'Resources' + ' created');
-              		});
-              		    fs.mkdir('./users/' + req.user.username + '/' + new_proj.name + '/' + 'kFiles', function() {
-              			console.log('Directory ./users/' + req.user.username + '/' + new_proj.name  + '/' + 'kFiles' + ' created');
-              		});
+				fs.mkdir('./users/' + req.user.username + '/' + new_proj.name, 0755, function(err) {
+					if (err) {
+						console.log('Project ' + new_proj.name + ' directory creation error: ', err);
+					} else {
+	              		fs.mkdir('./users/' + req.user.username + '/' + new_proj.name + '/' + 'Resources', function(err) {
+	              			if (err) {
+	              				console.log('Project ' + new_proj.name + ' subdirectory Resources creation error: ', err);
+	              			}
+	              		});
+	              		fs.mkdir('./users/' + req.user.username + '/' + new_proj.name + '/' + 'kFiles', function(err) {
+	              			if (err) {
+	              				console.log('Project ' + new_proj.name + ' subdirectory Resources creation error: ', err);
+	              			}
+	              		});
+	              	}
             	});
             	res.redirect('/users/' + req.user.username + '/projects');
 			}
