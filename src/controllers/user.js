@@ -20,7 +20,7 @@ var Controller = kNode.Controller.extend({
 		passport.deserializeUser(this.deserialize_user);
 
 		this.addRoute('/sign_in', 'POST', function(req, res) {
-      res.redirect('/users/' + req.user.username + '/projects');
+      res.redirect('/users/' + req.user.username);
     }, passport.authenticate('local', {
       failureRedirect: '/',
       failureFlash: true 
@@ -124,7 +124,7 @@ var Controller = kNode.Controller.extend({
                 helper.internal_server_error(res, err);
                 return ;
               }
-              return res.redirect('/users/' + req.user.username + '/projects/new');
+              return res.redirect('/users/' + req.user.username);
             });
           }
         });
