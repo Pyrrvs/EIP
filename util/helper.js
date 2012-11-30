@@ -3,8 +3,12 @@ module.exports = {
 		return (user ? { username : user.username, email : user.email, home : user.home } : undefined);
 	},
 
-	is_authenticated : function(req) {
-    	return (req.user)
+	check_authentication : function(req, res) {
+      if (!req.user) {
+        res.status(401).send('<h1>Authentication needed!</h1>');
+        return (false);
+      }
+    	return (true);
   	},
 
   	internal_server_error : function(res, err) {
@@ -17,5 +21,48 @@ module.exports = {
 
   	no_such_project : function(res, project, owner) {
   		res.status(404).send('<h1>No project ' + project + ' for ' + owner + '</h1>');
-  	}
+  	},
+
+    access_denied : function(res) {
+      res.status(403).send('<h1>Access denied!</h1>');
+    },
+
+    wrong_resource_type : function(res, type) {
+      res.status(409).send('<h1>Incorrect resource type: '+type+'</h1>');
+    },
+
+    project_edit_perm : function(req, res, next) {
+    if (!helper.check_authentication(req, res)) {
+      return ;
+    }
+    user_ctrl.find_by_name(req.params.username, function(err, result) {
+      if (err) {
+        helper.internal_server_error(res, err);
+        return ;
+      } else if (!result) {
+        helper.no_such_user(res, req.params.username);
+        return ;
+      } else if (req.user.username != req.params.username) {
+        helper.access_denied(res);
+        return;
+      }
+      next();
+    });
+  },
+
+  project_view_perm : function(req, res, next) {
+    if (!helper.check_authentication(req, res)) {
+      return ;
+    }
+    user_ctrl.find_by_name(req.params.username, function(err, result) {
+      if (err) {
+        helper.internal_server_error(res, err);
+        return ;
+      } else if (!result) {
+        helper.no_such_user(res, req.params.username);
+        return ;
+      }
+      next();
+    });
+  }
 }
