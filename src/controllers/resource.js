@@ -14,16 +14,16 @@ var Controller = kNode.Controller.extend({
 			resources : [
 				{ id: 1, project_id: 1, name: 'ball.png', path: '/users/Pyrrvs/pyrrvs1/Resources/ball.png', type: 'image'},
 				{ id: 2, project_id: 1, name: 'box.png', path: '/users/Pyrrvs/pyrrvs1/Resources/box.png', type: 'image'},
-				{ id: 2, project_id: 1, name: 'enemy.js', path: '/users/Pyrrvs/pyrrvs1/Resources/enemy.js', type: 'script'},
-				{ id: 2, project_id: 1, name: 'ally.png', path: '/users/Pyrrvs/pyrrvs1/Resources/ally.png', type: 'script'} 
+				{ id: 3, project_id: 1, name: 'enemy.js', path: '/users/Pyrrvs/pyrrvs1/Resources/enemy.js', type: 'script'},
+				{ id: 4, project_id: 1, name: 'ally.png', path: '/users/Pyrrvs/pyrrvs1/Resources/ally.png', type: 'script'} 
 			]
 		};
-		res.json({ resources : resources });
+		res.json(resources);
 	},
 
 	post_resource : function(req, res) {
 		console.log('Resource uploaded: ', req.files);
-		user_ctrl.get_user(req.params.username, function(err, user) {
+		user_ctrl.find_by_name(req.params.username, function(err, user) {
 			if (err) {
 				helper.internal_server_error(res, err);
 				return ;
