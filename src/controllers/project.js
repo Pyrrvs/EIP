@@ -75,17 +75,30 @@ var Controller = kNode.Controller.extend({
 				new_proj.id = result.id;
 				fs.mkdir('./users/' + req.user.username + '/' + new_proj.name, 0755, function(err) {
 					if (err) {
-						console.log('Project ' + new_proj.name + ' directory creation error: ', err);
+						helper.internal_server_error(res, err);
+						return ;
 					} else {
 	              		fs.mkdir('./users/' + req.user.username + '/' + new_proj.name + '/' + 'Resources', function(err) {
 	              			if (err) {
-	              				console.log('Project ' + new_proj.name + ' subdirectory Resources creation error: ', err);
+	              				helper.internal_server_error(res, err);
+								return ;
 	              			}
 	              		});
 	              		fs.mkdir('./users/' + req.user.username + '/' + new_proj.name + '/' + 'kFiles', function(err) {
 	              			if (err) {
-	              				console.log('Project ' + new_proj.name + ' subdirectory Resources creation error: ', err);
-	              			}
+	              				helper.internal_server_error(res, err);
+								return ;
+							}
+	              			resource_ctrl.create_world_file({
+	              			project_id: new_project.id, name: 'world.js',
+	              			path: '/users/' + req.user.username + '/' + new_proj.name + '/' + 'kFiles/world.js',
+	              			type: 'kworldmaker'
+	              			}, function(err, result) {
+	              				if (err) {
+									helper.internal_server_error(res, err);
+									return ;
+								}
+	              			});
 	              		});
 	              	}
             	});

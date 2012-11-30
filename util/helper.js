@@ -27,6 +27,10 @@ module.exports = {
       res.status(403).send('<h1>Access denied!</h1>');
     },
 
+    wrong_resource_type : function(res, type) {
+      res.status(409).send('<h1>Incorrect resource type: '+type+'</h1>');
+    },
+
     project_edit_perm : function(req, res, next) {
     if (!helper.check_authentication(req, res)) {
       return ;

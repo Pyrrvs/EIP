@@ -5,7 +5,6 @@ module.exports = kNode.Model.extend({
     db : null,
 
     ctor : function() {
-
         this.super();
         this.db = require('./model_mysql.js');
     },
@@ -13,8 +12,8 @@ module.exports = kNode.Model.extend({
     create : function(new_resource, callback) {
         console.log('Creating resource', new_resource);
         this.db.query().insert('resources',
-                                ['project_id', 'path', 'type'],
-                                [new_project.project_id, new_project.path, new_project.type])
+                                ['project_id', 'name', 'path', 'type'],
+                                [new_resource.project_id, new_resource.name, new_resource.path, new_resource.type])
                         .execute(function(err, result) {
                             callback(err, result);
                         });

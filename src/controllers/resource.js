@@ -4,7 +4,7 @@ var fs = require('fs');
 var Controller = kNode.Controller.extend({
 
 	ctor : function(app) {
-		this.super(app, new (require('../models/resource_mysql.js'))(app));
+		this.super(app, new (require('../models/resource_mysql.js'))());
 		this.addRoute('/users/:username/:project/addResource', 'POST', this.post_resource, helper.project_edit_perm);
 		this.addRoute('/users/:username/:project/resources', 'GET', this.get_resources, helper.project_edit_perm);
 	},
@@ -23,6 +23,16 @@ var Controller = kNode.Controller.extend({
 
 	post_resource : function(req, res) {
 		console.log('Resource uploaded: ', req.files);
+		var type = req.files.resource_file.type;
+		var model = this.model;
+		if (type == 'image/jpeg' || type == 'image/png' || type == 'image/gif') {
+			type = 'image';
+		} else if (type == 'text/javascript') {
+			type = 'script';
+		} else {
+			helper.wrong_resource_type(res, type);
+			return ;
+		}
 		user_ctrl.find_by_name(req.params.username, function(err, user) {
 			if (err) {
 				helper.internal_server_error(res, err);
@@ -39,16 +49,29 @@ var Controller = kNode.Controller.extend({
 						helper.internal_server_error(res, err);
 						return ;
 					}
-					// this.model.create({ project_id: project.id, path: path, type: 'image' }, function(err, callback) {
-
-					// });
+					model.create({
+					project_id: project.id,
+					name: req.body.resource_name,
+					path: path, type: type
+					}, function(err, result) {
+						if (err) {
+							helper.internal_server_error(res, err);
+							return ;							
+						}
+						res.redirect('/users/' + req.params.username);
+					});
 				});
 			});
 		});
 	},
 
-	create_resource : function(resource, callback) {
-		this.model.create(resource, callback);
+	create_world_file : function(resource, callback) {
+		this.model.create(resource, function(err, result) {
+			var ss = fs.createWriteStream(path, {flags: 'w', mode: 0644});
+			ss.on('error', function(err) { callback(err); });
+			ss.write('{ levels : [], classes : [], sprites : [], id : 5, }');
+			ss.end();
+		});
 	}
 });
 
