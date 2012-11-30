@@ -132,7 +132,6 @@ define(["class", "kGE/kge"], function(Class, kge) {
             }).next().click(function() {
                 self.scene.unscheduleUpdate();
                 self.scene.supLayer.visible = true;
-
             }).next().click(function() {
                 self.scene.unscheduleUpdate();
                 self.scene.supLayer.visible = false;                

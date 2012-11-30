@@ -8,6 +8,7 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 		tpl_entity : null,
 		currentLevel : null,
 		currentEntity : {},
+		levels : null,
 
 		init : function() {
 
