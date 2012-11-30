@@ -18,7 +18,7 @@
         <div id="main-bloc" class="span10 offset1">
           <div id="title-bloc" class="line-top">
             <img id="avatar" src="/img/avatar.png"/>
-            <h1 id="username"><%= user.username %></h1>
+            <h1 id="username"><%= username %></h1>
           </div>
 
           <div id="projects-bloc">
@@ -39,7 +39,7 @@
                     <div class="accordion-inner line-top">
                       <p> Projet qui rox du paté </p>
                       <% if (is_owner) { %>
-                        <button id="edit-btn" type="button" class="btn btn-small btn-inverse pull-right">Edit</button>
+                        <button onclick="window.location=window.location.pathname + '/<%= projects[i].name %>/WorldMaker'" id="edit-btn" type="button" class="btn btn-small btn-inverse pull-right">Edit</button>
                       <% } %>
                     </div>
                   </div>
