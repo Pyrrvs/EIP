@@ -5,10 +5,21 @@ var Controller = kNode.Controller.extend({
 
 	ctor : function(app) {
 		this.super(app, new (require('../models/resource_mysql.js'))(app));
-		this.addRoute('/users/:username/:project/addResource', 'POST', this.upload_resource, helper.precheck_edit_perm);
+		this.addRoute('/users/:username/:project/addResource', 'POST', this.post_resource, helper.project_edit_perm);
+		this.addRoute('/users/:username/:project/resources', 'GET', this.get_resources, helper.project_edit_perm);
 	},
 
-	upload_resource : function(req, res) {
+	get_resources : function(req, res) {
+		var resources = {
+			[{ id: 1, project_id: 1, name: 'ball.png', path: '/users/Pyrrvs/pyrrvs1/Resources/ball.png', type: 'image'},
+			{ id: 2, project_id: 1, name: 'box.png', path: '/users/Pyrrvs/pyrrvs1/Resources/box.png', type: 'image'},
+			{ id: 2, project_id: 1, name: 'enemy.js', path: '/users/Pyrrvs/pyrrvs1/Resources/enemy.js', type: 'script'},
+			{ id: 2, project_id: 1, name: 'ally.png', path: '/users/Pyrrvs/pyrrvs1/Resources/ally.png', type: 'script'}]
+		};
+		res.json({ resources : resources });
+	}
+
+	post_resource : function(req, res) {
 		console.log('Resource uploaded: ', req.files);
 		user_ctrl.get_user(req.params.username, function(err, user) {
 			if (err) {
