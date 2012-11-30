@@ -281,7 +281,7 @@ define(["class", "kGE/kge"], function(Class, kge) {
             if (data.model.url)
                 entity = new kge.Entity(data.model);
             else if (data.model.box)
-                entity = new Box(data.model.box[0], data.model.box[1]);
+                entity = new Box(data.model.box.w, data.model.box.h);
             this.scene.layer.addChild(entity);
             entity.id = data.id;
 
@@ -298,7 +298,7 @@ define(["class", "kGE/kge"], function(Class, kge) {
                 fixDef.shape = new b2CircleShape(data.circle / 30)
             else if (data.box) {
                 fixDef.shape = new b2PolygonShape;
-                fixDef.shape.SetAsBox(data.box[0] / 30, data.box[1] / 30);
+                fixDef.shape.SetAsBox(data.box.w / 30, data.box.h / 30);
             }
             entity.body = this.scene.world.CreateBody(bodyDef);
             entity.body.CreateFixture(fixDef);

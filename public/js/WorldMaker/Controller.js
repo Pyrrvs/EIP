@@ -9,13 +9,13 @@ define(["class"], function(Class) {
 			$.ajax(window.location.pathname + "/getWorld", { type : "GET", dataType : "json", success : function(data) {
 				this.data = data;
 				hook();
-			}.bind(this), error : function(log) { console.log(log)}});
+			}.bind(this), error : function(log) { console.log(log); }});
 			return (this);
 		},
 
 		update : function(req) {
 
-			$.ajax(window.location.pathname + "/putWorld", { type : "PUT", dataType : "json", data : JSON.stringify(this.data), success : function(data) {
+			$.ajax(window.location.pathname + "/postWorld", { type : "POST", dataType : "json", data : this.data, success : function(data) {
 				console.log("Update Ok");
 			}});
 		},

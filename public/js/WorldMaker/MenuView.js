@@ -7,8 +7,10 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		init : function() {
 
+			$("#update").click(function() {
+				controller.update();
+			});
 			this.$.find("#save").click(function(e) {
-				controller.updateEntity({ entity : JSON.stringify(this.$.find("#tab-entity").data("entity")) });
 			}.bind(this));
 			this.$.find(".entity-member").change(this.updateEntity.bind(this));
 			this.$.find("#name").change(function(e) {

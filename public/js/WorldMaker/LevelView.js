@@ -30,14 +30,14 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 			// BEBUG
 
-			var timer = setInterval(function() {
-				this.$.find(".accordion-heading").eq(0).find("a").click();
-				clearInterval(timer);
-				timer = setInterval(function() {
-					this.$.find(".accordion-inner").eq(0).find("li").first().find("a").click();
-				clearInterval(timer);
-				}.bind(this), 500);
-			}.bind(this), 500);
+			// var timer = setInterval(function() {
+			// 	this.$.find(".accordion-heading").eq(0).find("a").click();
+			// 	clearInterval(timer);
+			// 	timer = setInterval(function() {
+			// 		this.$.find(".accordion-inner").eq(0).find("li").first().find("a").click();
+			// 	clearInterval(timer);
+			// 	}.bind(this), 500);
+			// }.bind(this), 500);
 
 			// !DEBUG
 		},
