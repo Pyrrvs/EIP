@@ -17,7 +17,7 @@ module.exports = kNode.Model.extend({
                         .where('username=?', [username])
                         .limit(1)
                         .execute(function(err, rows, cols) {
-                            callback(err, (err ? rows : rows[0]));
+                            callback(err, (rows ? rows[0] : rows));
                         });
     },
 
@@ -27,7 +27,7 @@ module.exports = kNode.Model.extend({
                         .where('id=?', [id])
                         .limit(1)
                         .execute(function(err, rows, cols) {
-                            callback(err, (err ? rows : rows[0]));
+                            callback(err, (rows ? rows[0] : rows));
                         });
     },
 

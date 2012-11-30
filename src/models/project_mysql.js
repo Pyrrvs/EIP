@@ -38,7 +38,7 @@ module.exports = kNode.Model.extend({
         this.db.query('SELECT projects.* FROM projects JOIN users ON projects.owner_id = users.id')
                     .where('(users.username=? AND projects.name=?)', [owner, project_name])
                         .execute(function(err, rows, cols) {
-                            callback(err, (err ? rows : rows[0]));
+                            callback(err, (rows ? rows[0] : rows));
                         });
     }
 });

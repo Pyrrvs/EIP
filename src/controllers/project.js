@@ -49,7 +49,6 @@ var Controller = kNode.Controller.extend({
 	},
 
 	get_project : function(req, res) {
-		console.log('yo bro');
 		this.model.find_by_name_and_owner(req.params.project, req.params.username, function(err, result) {
 			if (err) {
 				helper.internal_server_error(res, err);
@@ -90,7 +89,7 @@ var Controller = kNode.Controller.extend({
 								return ;
 							}
 	              			resource_ctrl.create_world_file({
-	              			project_id: new_project.id, name: 'world.js',
+	              			project_id: new_proj.id, name: 'world.js',
 	              			path: '/users/' + req.user.username + '/' + new_proj.name + '/' + 'kFiles/world.js',
 	              			type: 'kworldmaker'
 	              			}, function(err, result) {
@@ -106,6 +105,10 @@ var Controller = kNode.Controller.extend({
 			}
 		});
 	},
+
+	new_project_form : function(req, res) {
+		res.render('new_project_form.ejs', {username: req.user.username});
+	}
 });
 
 module.exports = function(app) {

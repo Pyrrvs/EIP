@@ -21,6 +21,22 @@ var Controller = kNode.Controller.extend({
 		res.json(resources);
 	},
 
+	create_world_file : function(resource, callback) {
+		this.model.create(resource, function(err, result) {
+			fs.writeFile('./' + resource.path, '{ "levels" : [], "classes" : [], "sprites" : [], "id" : 0 }', function (err) {
+  				if (err) {
+  					callback(err);
+  					return ;
+  				}
+			});
+
+		});
+	},
+
+	find_world_file : function(project, callback) {
+		this.model.find_world_file(project, callback);
+	},
+
 	post_resource : function(req, res) {
 		console.log('Resource uploaded: ', req.files);
 		var type = req.files.resource_file.type;
@@ -62,15 +78,6 @@ var Controller = kNode.Controller.extend({
 					});
 				});
 			});
-		});
-	},
-
-	create_world_file : function(resource, callback) {
-		this.model.create(resource, function(err, result) {
-			var ss = fs.createWriteStream(path, {flags: 'w', mode: 0644});
-			ss.on('error', function(err) { callback(err); });
-			ss.write('{ levels : [], classes : [], sprites : [], id : 5, }');
-			ss.end();
 		});
 	}
 });

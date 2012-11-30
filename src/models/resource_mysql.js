@@ -25,5 +25,13 @@ module.exports = kNode.Model.extend({
                         .execute(function(err, rows, cols) {
                             callback(err, rows);
                         });
+    },
+
+    find_world_file : function(project, callback) {
+        this.db.query('SELECT resources.* FROM resources JOIN projects ON resources.project_id = projects.id')
+                    .where('(projects.name=? AND resources.type=?)', [project, 'kworldmaker'])
+                        .execute(function(err, rows, cols) {
+                            callback(err, rows ? rows[0] : rows);
+                        });        
     }
 });
