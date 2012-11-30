@@ -43,7 +43,7 @@
                         <% if (is_owner) { %>
                           <button onclick="window.location=window.location.pathname + '/<%= projects[i].name %>/WorldMaker'" id="edit-btn" type="button" class="btn btn-small btn-inverse pull-right">Edit</button>
                         <% } %>
-                        <button type="button" class="btn btn-small btn-inverse pull-right view-btn">View</button>
+                        <button id="<%= projects[i].name %>" type="button" class="btn btn-small btn-inverse pull-right view-btn">View</button>
                         <form style="margin-top: 10px;" class="line-top" method="post" action="/users/<%= username %>/<%= projects[i].name %>/addResource" enctype="multipart/form-data">
                           <label>File:</label>
                           <input type="file" name="resource_file">
@@ -60,7 +60,24 @@
             </div>
 
             <div id="file-view">
-
+<div class="tabbable tabs-left">
+              <ul class="nav nav-tabs">
+                <li class="active"><a href="#lA" data-toggle="tab">Section 1</a></li>
+                <li class=""><a href="#lB" data-toggle="tab">Section 2</a></li>
+                <li class=""><a href="#lC" data-toggle="tab">Section 3</a></li>
+              </ul>
+              <div class="tab-content">
+                <div class="tab-pane active" id="lA">
+                  <p>I'm in Section A.</p>
+                </div>
+                <div class="tab-pane" id="lB">
+                  <p>Howdy, I'm in Section B.</p>
+                </div>
+                <div class="tab-pane" id="lC">
+                  <p>What up girl, this is Section C.</p>
+                </div>
+              </div>
+            </div>
             </div>
           </div>
         </div>

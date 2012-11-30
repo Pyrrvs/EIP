@@ -32,11 +32,9 @@ body {
 }
 
 #file-view {
-	background-color: red;
-
+	/*visibility: hidden;*/
 	width: 50%;
-	margin-left: 40px;
-	height: 100px
+	margin-left: 20px;
 }
 
 #edit-btn {
