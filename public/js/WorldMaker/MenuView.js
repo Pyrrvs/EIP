@@ -14,6 +14,11 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 			this.$.find("#name").change(function(e) {
 				levelView.updateEntity($(e.target).val());
 			});
+			this.$.find("#type").click(function(e) {
+				var entity = levelView.currentEntity, type = parseInt($(e.target).attr("data-type"));
+				entity.body = type;
+				gameView.getEntityById(entity.id).body.SetType(type);
+			});			
 		},
 
 		updateEntity : function() {
@@ -42,6 +47,7 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 			this.$.find("#position-y").val(entity.position.y);
 			this.$.find("#scale").val(entity.scale);
 			this.$.find("#rotation").val(entity.rotation);
+			this.$.find("#type .btn").removeClass("active").parent().find('[data-type="' + entity.body + '"]').addClass("active");
 		},
 	});
 

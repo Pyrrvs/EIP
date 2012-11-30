@@ -14,9 +14,19 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 			this.tpl_accordion = _.template(accordion);
 			this.tpl_entity = _.template(entity);
-			var data = controller.getLevel();
-			for (var i in data)
-				this.newLevel(data[i]);
+			this.levels = controller.getLevel();
+			for (var i in this.levels)
+				this.newLevel(this.levels[i]);
+			this.$.find("#create").click(function(e) {
+				var name = $(e.target).parent().find("#name").val(), level = controller.createLevel({ level : name });
+				if (level) {
+					this.newLevel(level);
+					this.levels = controller.getLevel();
+				}
+			}.bind(this)).parent().find("#name").keydown(function(e) {
+				if (e.keyCode == 13)
+					$(e.target).parent().find("#create").click();
+			});
 
 			// BEBUG
 
@@ -26,8 +36,8 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 				timer = setInterval(function() {
 					this.$.find(".accordion-inner").eq(0).find("li").first().find("a").click();
 				clearInterval(timer);
-				}.bind(this), 300);
-			}.bind(this), 300);
+				}.bind(this), 500);
+			}.bind(this), 500);
 
 			// !DEBUG
 		},
@@ -37,8 +47,11 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 			var n = this.$.find(".accordion-group").size();
 			this.$.find("#levelList").append(this.tpl_accordion({ id : "level", name : level.name, n : n, parent : "levelList" }));
 			this.$.find(".accordion-heading").eq(n).data("level", level).find("a").click(function(e) {
-				gameView.setUpLevel($(e.target).parent().data("level"));
-				this.currentLevel = this.$.find(".accordion-heading").index($(e.target).parent());
+				var level = this.$.find(".accordion-heading").index($(e.target).parent());
+				gameView.setUpLevel($(e.target).parent().data("level"), level != this.currentLevel);
+				this.currentLevel = level;
+				this.currentEntity = {};
+				this.$.find("#levelList .accordion-inner li a").css("border-width", "0");
 			}.bind(this)).parent().find(".btn").hide().first().click(function(e) {
 				var a = $(e.target).parent().parent().find("a"), name = a.text();
 				var data = controller.createEntity({ level : name });

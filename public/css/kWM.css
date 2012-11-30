@@ -122,9 +122,9 @@
     vertical-align: middle;
 }
 
-* {
+#kWM * {
 
-    font-size: 8pt;
+    font-size: 8pt !important;
 }
 
 #name {

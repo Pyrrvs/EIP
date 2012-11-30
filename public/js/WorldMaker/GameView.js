@@ -9,6 +9,27 @@ define(["class", "kGE/kge"], function(Class, kge) {
 
     })
 
+    function Box(width, height) {
+
+        Box.superclass.constructor.call(this);
+        this.width = width;
+        this.height = height;
+    }
+
+    Box.inherit(cc.Node, {
+
+        width : null,
+        height : null,
+
+        draw : function(ctx) {
+
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = "blue";
+            ctx.strokeRect(-this.width / 2, -this.height / 2, this.width, this.height);
+        }
+    });
+
+
     function CircleSelect() {
 
         CircleSelect.superclass.constructor.apply(this, arguments);
@@ -42,14 +63,14 @@ define(["class", "kGE/kge"], function(Class, kge) {
             var n = this.radius, step = 2 * Math.PI / n / 2, start = -step, end = 0;
             ctx.lineWidth = 2;
             for (var i = 0; i < n; ++i) {
-                this._drawDashCircle(ctx, start += step, end += step, 'red');
+                this._drawDashCircle(ctx, start += step, end += step, 'white');
                 this._drawDashCircle(ctx, start += step, end += step, 'blue');
             }
             n /= 6;
             start = 0;
             step = this.radius / n / 2;
             for (var i = 0; i < n; ++i) {
-                this._drawDashLine(ctx, start, start += step, 'red');
+                this._drawDashLine(ctx, start, start += step, 'white');
                 this._drawDashLine(ctx, start, start += step, 'blue');
             }
         }
@@ -126,15 +147,28 @@ define(["class", "kGE/kge"], function(Class, kge) {
 
             this.menu.find("#entity").click();
 
-            this.menu.find("#play").click(function() {
+            this.menu.find("#play").click(function(e) {
+                if ($(e.target).hasClass("active"))
+                    return;
                 self.scene.supLayer.visible = false;
                 self.scene.scheduleUpdate();
-            }).next().click(function() {
+            }).next().click(function(e) {
+                if ($(e.target).hasClass("active"))
+                    return;
                 self.scene.unscheduleUpdate();
                 self.scene.supLayer.visible = true;
-            }).next().click(function() {
+                var entities = levelView.levels[levelView.currentLevel].entities;
+                for (var i in entities) {
+                    var entity = self.updateEntity(entities[i]), type = entity.body.GetType();
+                    entity.body.SetType(b2Body.b2_staticBody);
+                    entity.body.SetType(type);
+                }
+            }).next().click(function(e) {
+                if ($(e.target).hasClass("active"))
+                    return;
                 self.scene.unscheduleUpdate();
-                self.scene.supLayer.visible = false;                
+                self.scene.supLayer.visible = true;
+                self.scene.supLayer.updateSelect();
             });
             this.$.find("#canvasView").bind("mousewheel", function(e) {
                 if (self.menu.find("#camera").hasClass("active")) {
@@ -152,6 +186,8 @@ define(["class", "kGE/kge"], function(Class, kge) {
                 self.cameraDragging = false;
                 self.entityRotating = false;
                 self.entityDragging = false;
+                if (self.menu.find("#play").hasClass("active"))
+                    return
                 if (self.menu.find("#camera").hasClass("active")) {
                     self.pos = self.scene.layer.position.clone();
                     self.cameraDragging = true;
@@ -171,12 +207,27 @@ define(["class", "kGE/kge"], function(Class, kge) {
             }).drag(function(e, a) {
                 if (self.cameraDragging)
                     self.scene.layer.position = cc.ccp(self.pos.x + a.deltaX, self.pos.y - a.deltaY);
-                else if (self.entityRotating)
-                    $("#menuView #tab-entity #rotation").val(self.rot - cc.Point.sub(self.pos, self.scene.supLayer.selectCircle.position)
-                    .angle(cc.Point.sub(cc.Point.fromEvent(e).flipY(), self.scene.supLayer.selectCircle.position))).change();
-                else if (self.entityDragging)
-                    $("#menuView #tab-entity #position-x").val(self.pos.x + a.deltaX / self.scene.layer.scale).next().next()
-                        .val(self.pos.y - a.deltaY / self.scene.layer.scale).change();
+                else if (self.entityRotating) {
+                    var rotation = self.rot - cc.Point.sub(self.pos, self.scene.supLayer.selectCircle.position)
+                    .angle(cc.Point.sub(cc.Point.fromEvent(e).flipY(), self.scene.supLayer.selectCircle.position));
+                    if (self.menu.find("#stop").hasClass("active"))
+                        $("#menuView #tab-entity #rotation").val(rotation).change();
+                    else {
+                        var entity = self.scene.supLayer.selectedEntity;
+                        entity.rotation = rotation;
+                        entity.body.SetAngle(cc.degreesToRadians(-entity.rotation));
+                    }
+                }
+                else if (self.entityDragging) {
+                    var position = cc.ccp(self.pos.x + a.deltaX / self.scene.layer.scale, self.pos.y - a.deltaY / self.scene.layer.scale);
+                    if (self.menu.find("#stop").hasClass("active"))
+                        $("#menuView #tab-entity #position-x").val(position.x).next().next().val(position.y).change();
+                    else {
+                        var entity = self.scene.supLayer.selectedEntity;
+                        entity.position = position;
+                        entity.body.SetPosition(new b2Vec2(entity.position.x / 30, entity.position.y / 30));
+                    }
+                }
                 self.scene.supLayer.updateSelect();
             }).click(function(e) {
                 if (!self.scene.supLayer.isCircleClicked(cc.Point.fromEvent(e).flipY().scale(0.5)))
@@ -199,47 +250,82 @@ define(["class", "kGE/kge"], function(Class, kge) {
             entity.position = cc.ccp(data.position.x, data.position.y);
             entity.scale = data.scale;
             entity.rotation = data.rotation;
+            entity.body.SetPosition(new b2Vec2(entity.position.x / 30, entity.position.y / 30));
+            entity.body.SetAngle(cc.degreesToRadians(-entity.rotation));
             if (this.scene.supLayer.isSelectedEntity(entity))
                 this.scene.supLayer.updateSelect();
         },
 
-        updateEntity : function(data) {
+        getEntityById : function(id) {
 
             var entity = null;
             for (var i in this.scene.layer.children) {
                 entity = this.scene.layer.children[i];
-                if (entity.id == data.id) {
-                    this._updateEntity(entity, data);
-                    return ;
-                }
+                if (entity.id == id)
+                    return (entity);
             }
+            return (entity);
+        },
+
+        updateEntity : function(data) {
+
+            var entity = this.getEntityById(data.id);
+            this._updateEntity(entity, data);
+            return (entity);
         },
 
         newEntity : function(data) {
 
-            var entity = new kge.Entity(data.model);
+            var entity = null;
+
+            if (data.model.url)
+                entity = new kge.Entity(data.model);
+            else if (data.model.box)
+                entity = new Box(data.model.box[0], data.model.box[1]);
             this.scene.layer.addChild(entity);
             entity.id = data.id;
-            this.updateEntity(data);
-            entity.setBody(b2Body.b2_dynamicBody);
+
+            var fixDef = new b2FixtureDef;
+            var bodyDef = new b2BodyDef;
+
+            fixDef.density = 1.0;
+            fixDef.friction = 0.1;
+            fixDef.restitution = 0.6;
+            bodyDef.type = data.body;
+            bodyDef.position = new b2Vec2(entity.position.x / 30, entity.position.y / 30);
+            bodyDef.angle = cc.degreesToRadians(-entity.rotation);
+            if (data.circle)
+                fixDef.shape = new b2CircleShape(data.circle / 30)
+            else if (data.box) {
+                fixDef.shape = new b2PolygonShape;
+                fixDef.shape.SetAsBox(data.box[0] / 30, data.box[1] / 30);
+            }
+            entity.body = this.scene.world.CreateBody(bodyDef);
+            entity.body.CreateFixture(fixDef);
+            this._updateEntity(entity, data);
         },
 
-        selectEntity : function(entity) {
+        selectEntity : function(data) {
 
-            this.scene.layer.children.forEach(function(elem, i) {
-                if (elem.id == entity.id)
-                    this.scene.supLayer.select(elem);
-            }.bind(this));
+            var entity = this.getEntityById(data.id);
+            this.scene.supLayer.select(entity);
+            return (entity);
         },
 
-        setUpLevel : function(level) {
+        setUpLevel : function(level, diff) {
 
+            this.scene.supLayer.select(null);
+            if (!diff)
+                return ;
+            this.$.find("#stop").click();
+            this.scene.layer.removeChildren({ cleanup : true });
+            this.scene.layer.scale = level.camera.zoom;
             for (var i in level.entities)
-                    this.newEntity(level.entities[i])
+                this.newEntity(level.entities[i])
         },
 	});
 
-        return (function() { return new GameView } );
+    return (function() { return new GameView } );
 });
 
 // var director = cc.Director.sharedDirector

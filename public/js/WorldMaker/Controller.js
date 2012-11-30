@@ -27,7 +27,14 @@ define(["class"], function(Class) {
 
 	    createLevel : function(req) {
 
-	        this.data.levels.push({ name : req.level, entities : [] });
+	    	if (req.level == "")
+	    		return (null);
+	    	for (var i in this.data.levels)
+	    		if (this.data.levels[i].name == req.level)
+	    			return (null);
+	    	var level = { name : req.level, camera : { zoom : 1 }, entities : [] };
+	        this.data.levels.push(level);
+	        return (level);
 	    },
 
 	    deleteLevel : function(req) {
@@ -68,7 +75,7 @@ define(["class"], function(Class) {
 	            if (this.data.levels[i].name == level)
 	                this.data.levels[i].entities.push(entity);
 	        return ({
-		        id : this.data.id++,
+		        id : "defaultId" + this.data.id++,
 		        model : null,
 		        class : null,
 		        position : { x : 0, y : 0 },
