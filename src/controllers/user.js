@@ -9,6 +9,7 @@ var Controller = kNode.Controller.extend({
 	ctor : function(app) {
 
 		this.super(app, new (require('../models/user_mysql.js'))());
+ 
 		this.authenticate_middleware = _.bind(this.authenticate_middleware, this);
 		this.serialize_user = _.bind(this.serialize_user, this);
 		this.deserialize_user = _.bind(this.deserialize_user, this);
@@ -19,7 +20,7 @@ var Controller = kNode.Controller.extend({
 		passport.deserializeUser(this.deserialize_user);
 
 		this.addRoute('/sign_in', 'POST', function(req, res) {
-      res.redirect('/users/' + req.user.username + '/projects');
+      res.redirect('/users/' + req.user.username);
     }, passport.authenticate('local', {
       failureRedirect: '/',
       failureFlash: true 
@@ -30,6 +31,10 @@ var Controller = kNode.Controller.extend({
     app.param('username', /^\w+$/);
     this.addRoute('/users/:username', 'GET', this.get_profile);
 	},
+
+  get_user : function(username, callback) {
+    this.model.find_by_name(username, callback);
+  },
 
   user_exists : function(username, callback) {
     this.model.find_by_name(username, function(err, result) {
@@ -42,24 +47,28 @@ var Controller = kNode.Controller.extend({
   },
 
   get_profile : function(req, res) {
-    var owner = false;
-    if (req.user) {
-      var is_owner = (req.user.username == req.params.username);
-    }
+    var is_owner = (req.user.username == req.params.username);
     this.model.find_by_name(req.params.username, function(err, result) {
       if (err) {
-        res.send('<h1>Error when accesing ' + req.params.username + ' profile</h1><p>' + err + '</p>');
+        helper.internal_server_error(res, err);
         return ;
       } else if (!result) {
-        res.send('<h1>User ' + req.params.username + ' doesn\'t exist!</h1>');
+        helper.no_such_user(res, req.params.username);
         return ;
       }
-      res.render('user.ejs', {
-        user : helper.create_user_obj(req.user),
-        username : result.username,
-        email : result.email,
-        home : result.home,
-        is_owner : is_owner
+      project_ctrl.get_project_list(req.params.username, req.user.username, function(err, results) {
+        if (err) {
+          helper.internal_server_error(res, err);
+          return ;
+        }
+        res.render('user.ejs', {
+          user : helper.create_user_obj(req.user),
+          username : result.username,
+          email : result.email,
+          home : result.home,
+          is_owner : is_owner,
+          projects : results
+        });
       });
     });
   },
@@ -101,7 +110,8 @@ var Controller = kNode.Controller.extend({
         new_user.home = '/users/' + new_user.username + '/';
         this.model.create(new_user, function(err, result) {
           if (err) {
-            res.send('<h1>Handle registration error here !</h1><p>' + err +'</p>');
+            helper.internal_server_error(res, err);
+            return ;
           } else {
             new_user.id = result.id;
             fs.mkdir('./users/' + new_user.username, 0755, function(err) {
@@ -111,10 +121,10 @@ var Controller = kNode.Controller.extend({
             });
             req.login(new_user, function(err) {
               if (err) {
-                res.send('<h1>Handle registration error here (req.login)!</h1><p>' + err +'</p>');
-                return err;
+                helper.internal_server_error(res, err);
+                return ;
               }
-              return res.redirect('/users/' + req.user.username + '/projects/new');
+              return res.redirect('/users/' + req.user.username);
             });
           }
         });

@@ -35,9 +35,10 @@ app.param(function(name, fn) {
   }
 });
 
-require('./src/controllers/project.js')(app);
-require('./src/controllers/user.js')(app);
-require('./src/controllers/index.js')(app);
-require('./src/controllers/kWM.js')(app);
+project_ctrl = require('./src/controllers/project.js')(app);
+user_ctrl = require('./src/controllers/user.js')(app);
+index_ctrl = require('./src/controllers/index.js')(app);
+kWM_ctrl = require('./src/controllers/kWM.js')(app);
+resource_ctrl = require('./src/controllers/resource.js')(app);
 
 http.createServer(app).listen(8888);
