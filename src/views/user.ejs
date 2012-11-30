@@ -8,6 +8,7 @@
     <meta name="author" content="">
     <script src="/js/util/jquery-1.8.2.min.js"></script>
     <script src="/js/util/bootstrap.min.js"></script>
+    <script src="/js/client/user.js"></script>
     <link href="/css/user.css" rel="stylesheet">
   </head>
 
@@ -15,36 +16,51 @@
     <% include top_menu.ejs %>
     <div class="container">
       <div class="row-fluid">
-        <div id="main-bloc" class="span10 offset1">
+        <div id="main-bloc" class="span12">
           <div id="title-bloc" class="line-top">
             <img id="avatar" src="/img/avatar.png"/>
             <h1 id="username"><%= username %></h1>
           </div>
 
-          <div id="projects-bloc">
-            <div class="accordion" id="projects-accordion">
-              <% for (var i = 0; i < projects.length; i++) { %>
-                <div class="accordion-group">
-                  <div class="accordion-heading line-top">
-                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#projects-accordion" href="#collapse<%= i %>">
-                      <%= projects[i].name %>
-                    </a>
-                    <% if (projects[i].privacy == 'public') {%>
-                      <span class="label label-success pull-right privacy-label">public</span>
-                    <% } else { %>
-                      <span class="label label-important pull-right privacy-label">private</span>
-                    <% } %>
-                  </div>
-                  <div id="collapse<%= i %>" class="accordion-body collapse">
-                    <div class="accordion-inner line-top">
-                      <p> Projet qui rox du paté </p>
-                      <% if (is_owner) { %>
-                        <button onclick="window.location=window.location.pathname + '/<%= projects[i].name %>/WorldMaker'" id="edit-btn" type="button" class="btn btn-small btn-inverse pull-right">Edit</button>
+          <div class="line-top">
+            <div id="projects-bloc">
+              <div class="accordion" id="projects-accordion">
+                <% for (var i = 0; i < projects.length; i++) { %>
+                  <div class="accordion-group">
+                    <div class="accordion-heading line-top">
+                      <a class="accordion-toggle" data-toggle="collapse" data-parent="#projects-accordion" href="#collapse<%= i %>">
+                        <%= projects[i].name %>
+                      </a>
+                      <% if (projects[i].privacy == 'public') {%>
+                        <span class="label label-success pull-right privacy-label">public</span>
+                      <% } else { %>
+                        <span class="label label-important pull-right privacy-label">private</span>
                       <% } %>
                     </div>
-                  </div>
-                </div>  
-              <% } %>
+                    <div id="collapse<%= i %>" class="accordion-body collapse">
+                      <div class="accordion-inner line-top">
+                        <span> Projet qui rox du paté </span>
+                        <% if (is_owner) { %>
+                          <button onclick="window.location=window.location.pathname + '/<%= projects[i].name %>/WorldMaker'" id="edit-btn" type="button" class="btn btn-small btn-inverse pull-right">Edit</button>
+                        <% } %>
+                        <button type="button" class="btn btn-small btn-inverse pull-right view-btn">View</button>
+                        <form style="margin-top: 10px;" class="line-top" method="post" action="/users/<%= username %>/<%= projects[i].name %>/addResource" enctype="multipart/form-data">
+                          <label>File:</label>
+                          <input type="file" name="resource_file">
+                          <br/>
+                          <label>Name:</label>
+                          <input type="text" name="resource_name">
+                          <input class="btn btn-inverse" type="submit" value="Add resource">
+                        </form>
+                      </div>
+                    </div>
+                  </div>  
+                <% } %>
+              </div>
+            </div>
+
+            <div id="file-view">
+
             </div>
           </div>
         </div>

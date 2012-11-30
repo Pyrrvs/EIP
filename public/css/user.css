@@ -31,8 +31,17 @@ body {
 	margin: 0px 10px 10px 10px;
 }
 
+#file-view {
+	background-color: red;
+
+	width: 50%;
+	margin-left: 40px;
+	height: 100px
+}
+
 #edit-btn {
 	margin-bottom: 10px;
+	margin-left: 2px;
 }
 
 .privacy-label {
