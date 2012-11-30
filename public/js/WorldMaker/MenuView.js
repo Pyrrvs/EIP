@@ -18,6 +18,8 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 			});
 			this.$.find("#type").click(function(e) {
 				var entity = levelView.currentEntity, type = parseInt($(e.target).attr("data-type"));
+				if (!entity.id)
+					return;
 				entity.body = type;
 				gameView.getEntityById(entity.id).body.SetType(type);
 			});			
@@ -26,6 +28,8 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 		updateEntity : function() {
 
 			var entity = levelView.currentEntity;
+			if (!entity.id)
+				return;
 			entity.position.x = parseInt(this.$.find("#position-x").val());
 			entity.position.y = parseInt(this.$.find("#position-y").val());
 			entity.scale = parseFloat(this.$.find("#scale").val());

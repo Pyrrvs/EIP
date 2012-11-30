@@ -76,11 +76,12 @@ define(["class"], function(Class) {
 	                this.data.levels[i].entities.push(entity);
 	        return ({
 		        id : "defaultId" + this.data.id++,
-		        model : null,
+		        model : {},
 		        class : null,
 		        position : { x : 0, y : 0 },
 		        scale : 1,
 		        rotation : 0,
+		        body : 0,
 	        });
 	    },
 

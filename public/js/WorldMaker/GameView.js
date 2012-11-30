@@ -145,7 +145,7 @@ define(["class", "kGE/kge"], function(Class, kge) {
             this.scene.addChild({ child : this.scene.supLayer, z : 1 });
         	director.runWithScene(this.scene);
 
-            this.menu.find("#entity").click();
+//            this.menu.find("#entity").click();
 
             this.menu.find("#play").click(function(e) {
                 if ($(e.target).hasClass("active"))

@@ -28,6 +28,8 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 					$(e.target).parent().find("#create").click();
 			});
 
+//			this.$.find(".accordion-heading").eq(0).find("a").click();
+
 			// BEBUG
 
 			// var timer = setInterval(function() {
@@ -54,15 +56,16 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 				this.$.find("#levelList .accordion-inner li a").css("border-width", "0");
 			}.bind(this)).parent().find(".btn").hide().first().click(function(e) {
 				var a = $(e.target).parent().parent().find("a"), name = a.text();
-				var data = controller.createEntity({ level : name });
-				this.newEntity(data, this.$.find(".accordion-toggle").index(a), name);
-				$(e.target).parent().parent().parent().find("li").last().find("a").click();
+				var entity = controller.createEntity({ level : name });
+				this.newEntity(entity, this.$.find(".accordion-toggle").index(a), name);
 			}.bind(this)).next().click(function(e) {
 				controller.deleteLevel({ name : $(e.target).parent().parent().find("a").text() });
 				$(e.target).parent().parent().parent().remove();
 			});
 			this.$.find(".accordion-heading").eq(n).hover(function(e) {
-				$(e.target).parent().find(".btn").stop().show();
+				// if ($(e.target).parent().next().hasClass("in"))
+				// 	$(e.target).parent().find(".btn").first().stop().show();
+				$(e.target).parent().find(".btn").last().stop().show();
 			}, function(e) {
 				$(e.target).parent().find(".btn").stop().hide();
 			});
@@ -72,7 +75,7 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		newEntity : function(entity, n, level) {
 
-			this.$.find("#levelList ul").eq(n).append(this.tpl_entity({ name : entity.id })).find("li :last")
+			this.$.find("#levelList ul").eq(n).append(this.tpl_entity({ name : entity.id })).find("li").last()
 				.data({entity : entity, level : level}).find("a").click(function(e) {
 				this.$.find("#levelList .accordion-inner li a").css("border-width", "0");
 				var entity = $(e.target).css("border-width", "1px").parent().data("entity");
