@@ -1,19 +1,21 @@
 $('document').ready(function() {
 	$('.view-btn').click(function() {
 
-		// <li class="active"><a href="#lA" data-toggle="tab">Section 1</a></li>
-  //       <li class=""><a href="#lB" data-toggle="tab">Section 2</a></li>
-  //       <li class=""><a href="#lC" data-toggle="tab">Section 3</a></li>
-
-			// <div class="tab-pane active" id="lA">
-    		//  <p>I'm in Section A.</p>
-   //          </div>
-
 		$.ajax({
   			url: $('#username').text() + '/' + $(this).attr('id') + '/resources',
   			type: "GET",
   			success: function(data) {
+
   				for (var i = 0; i < data.resources.length; i++) {
+  					if (i == 0) {
+  						$('#file-tab').append('<li class="active"><a href="#tab-' + i + '" data-toggle="tab">' + data.resources[i].name + '</a></li>');
+  						$('#file-content').append('<div class="tab-pane active" id="tab-' + i + '">' + data.resources[i].type + '</div>');
+  					}
+  					else {
+  						$('#file-tab').append('<li class=""><a href="#tab-' + i + '" data-toggle="tab">' + data.resources[i].name + '</a></li>');
+  						$('#file-content').append('<div class="tab-pane" id="tab-' + i + '">' + data.resources[i].type + '</div>');
+  					}
+
     				console.log(data.resources[i]);
     			}
   			},
