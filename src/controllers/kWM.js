@@ -9,7 +9,7 @@ var Controller = kNode.Controller.extend({
         this.proj_contrl = new (require('./project.js'))(app);
         this.addRoute("/users/:username/:project/WorldMaker", "GET", this.getHome, helper.project_edit_perm);
         this.addRoute("/users/:username/:project/WorldMaker/getWorld", "GET", this.getWorld, helper.project_edit_perm);
-        this.addRoute("/users/:username/:project/WorldMaker/putWorld", "PUT", this.postWorld, helper.project_edit_perm);
+        this.addRoute("/users/:username/:project/WorldMaker/postWorld", "POST", this.postWorld, helper.project_edit_perm);
 
  //        this.addRoute("/users/:username/:project/WorldMaker", "GET", this.getHome);
  //        this.addRoute("/users/:username/:project/WorldMaker/getWorld", "GET", this.getWorld);
@@ -53,6 +53,26 @@ var Controller = kNode.Controller.extend({
         });
     },
 
+    postWorld : function(req, res) {
+
+        var world = req.body;
+        this.parse(world);
+        this.find_world_file(req.params.project, function(err, file){
+           if (err) {
+                helper.internal_server_error(res, err);
+                return ;
+            }
+            fs.writeFile('./' + file.path, JSON.stringify(world) , 'utf8', function(err) {
+                if (err) {
+                    console.log('writefile error', err);
+                    helper.internal_server_error(res, err);
+                    return ;
+                }
+                res.send('success');
+            }); 
+        });
+    },
+
     isNumber : function(s) {
 
         for (var i in s)
@@ -69,14 +89,6 @@ var Controller = kNode.Controller.extend({
             else if (this.isNumber(obj[i]))
                 obj[i] = parseFloat(obj[i]);
         }
-    },
-
-    postWorld : function(req, res) {
-
-        res.end();
-        this.world = req.body;
-        this.parse(this.world);
-
     },
 });
 
