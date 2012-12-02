@@ -76,7 +76,7 @@ var Controller = kNode.Controller.extend({
     isNumber : function(s) {
 
         for (var i in s)
-            if ((s[i] < '0' || s[i] > '9') && s[i] != '.')
+            if ((s[i] < '0' || s[i] > '9') && s[i] != '.' && s[i] != '-')
                 return (false);
         return (true);
     },
