@@ -1,0 +1,148 @@
+@import "./bootstrap.min.css";
+
+#worldmaker {
+
+    width: 98%;
+    margin: auto;
+    visibility: hidden;
+}
+
+#canvasView {
+
+    width: 640px;
+    height: 480px;
+}
+
+#levelView {
+
+    width: 17%;
+}
+
+.btn-tiny {
+
+    font-size: 8pt;
+    padding: 0px 5px !important;
+}
+
+.dropdown b {
+
+    margin-top: 0px;
+}
+
+.nav-list > li > a {
+
+    padding: 0px 15px;
+}
+
+.accordion {
+
+    margin-top: 10px;
+}
+
+.accordion-heading .accordion-toggle {
+
+    padding: 0px 8px;
+}
+
+.btn-accordion {
+
+    margin: -20px 2px;
+}
+
+.accordion-inner .btn {
+
+    margin: -18px 2px;
+}
+
+.accordion-inner {
+
+    padding: 0px 0px;
+}
+
+.nav-tabs > li > a {
+
+    padding: 0px 8px;
+}
+
+.inline-top {
+
+    display: inline-block;
+    vertical-align: top;
+}
+
+.tab-content {
+
+    overflow: visible !important;
+}
+
+.line-top {
+
+    margin-top: 10px;
+}
+
+.top {
+
+    margin-top: 0px;
+}
+
+.line-top > * {
+
+    display: inline-block;
+    vertical-align: top;
+}
+
+.line-top input {
+
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.line-top > :not(input) {
+
+    margin-top: 1px;
+}
+
+.inline-middle {
+
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#kWM * {
+
+    font-size: 8pt !important;
+}
+
+#name {
+
+    padding: 0px 5px;
+}
+
+.sprite {
+
+    margin-left: 5px;
+}
+
+#levelView input {
+
+    width: 67%;
+}
+
+#levelView .accordion-inner a {
+
+    border-width: 0px;
+    border-style: dashed;
+    border-radius: 15px;
+    border-color: rgb(150,150,255);
+}
+
+input[type="number"] {
+
+    width: 50px;
+    padding: 0px 2px;
+}
+
+#gameView #menu .line-top {
+
+    margin: 0px;
+}
