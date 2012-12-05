@@ -15,12 +15,14 @@ define([], function() {
 
 	        this.world.Step(dt, 10, 10);
 	        this.world.ClearForces();
-			this.layer.children.forEach(function(entity, i) {
-	            if (entity.body) {
-	                entity.position = cc.Point.scale(entity.body.GetPosition(), 30);
-		            entity.rotation = cc.radiansToDegrees(-entity.body.GetAngle());
-		        }
-	        });
+	        this.children.forEach(function(layer) {
+				layer.children.forEach(function(entity) {
+		            if (entity.body) {
+		                entity.position = cc.Point.scale(entity.body.GetPosition(), 30);
+			            entity.rotation = cc.radiansToDegrees(-entity.body.GetAngle());
+			        }
+		        });
+			});
 		}
 	});
 
