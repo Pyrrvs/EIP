@@ -4,34 +4,56 @@ module.exports = {
 	},
 
 	check_authentication : function(req, res) {
-      if (!req.user) {
-        res.status(401).send('<h1>Authentication needed!</h1>');
-        return (false);
+    if (!req.user) {
+      res.status(401).send('<h1>Authentication needed!</h1>');
+      return (false);
+    }
+  	return (true);
+	},
+
+  internal_server_error : function(res, err) {
+  	res.status(500).send('<h1>Internal error</h1><p>'+err+'</p>');
+  },
+
+	no_such_user : function(res, username) {
+		res.status(404).send('<h1>User ' + username + ' doesn\'t exist!</h1>');
+	},
+
+	no_such_project : function(res, project, owner) {
+		res.status(404).send('<h1>No project ' + project + ' for ' + owner + '</h1>');
+	},
+
+  access_denied : function(res) {
+    res.status(403).send('<h1>Access denied!</h1>');
+  },
+
+  permission_denied : function(res) {
+    res.status(403).send('<h1>Permission denied!</h1>');
+  },
+
+  wrong_resource_type : function(res, type) {
+    res.status(409).send('<h1>Incorrect resource type: ' + type + '</h1>');
+  },
+
+  bad_request : function(res, reason) {
+    res.status(400).send('<h1>Bad request</h1><p>' + reason + '</p>');
+  },
+
+  check_request_params : function(body, res, params) {
+    var status = true;
+    _.each(params, function(param) {
+      if (!status) {
+        return ;
       }
-    	return (true);
-  	},
+      if (!body[param]) {
+        helper.bad_request(res, 'No parameter ' + param + ' was found in the request.');
+        status = false;
+      }
+    });
+    return status;
+  },
 
-  	internal_server_error : function(res, err) {
-  		res.status(500).send('<h1>Internal error</h1><p>'+err+'</p>');
-  	},
-
-  	no_such_user : function(res, username) {
-  		res.status(404).send('<h1>User ' + username + ' doesn\'t exist!</h1>');
-  	},
-
-  	no_such_project : function(res, project, owner) {
-  		res.status(404).send('<h1>No project ' + project + ' for ' + owner + '</h1>');
-  	},
-
-    access_denied : function(res) {
-      res.status(403).send('<h1>Access denied!</h1>');
-    },
-
-    wrong_resource_type : function(res, type) {
-      res.status(409).send('<h1>Incorrect resource type: '+type+'</h1>');
-    },
-
-    project_edit_perm : function(req, res, next) {
+  project_edit_perm : function(req, res, next) {
     if (!helper.check_authentication(req, res)) {
       return ;
     }
@@ -64,5 +86,15 @@ module.exports = {
       }
       next();
     });
+  },
+
+  user_edit_perm : function(req, res, next) {
+    if (!helper.check_authentication(req, res)) {
+      return ;
+    } else if (req.user.username != req.params.username) {
+      helper.permission_denied(res);
+      return;
+    }
+    next();
   }
 }
