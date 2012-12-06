@@ -41,7 +41,7 @@
                       <div class="accordion-inner line-top">
                         <span> Projet super ! </span>
                         <% if (is_owner) { %>
-                          <button onclick="window.location=window.location.pathname + '/<%= projects[i].name %>/WorldMaker'" id="edit-btn" type="button" class="btn btn-small btn-inverse pull-right">Edit</button>
+                          <button onclick="window.location=window.location.pathname + '/<%= projects[i].name %>/worldmaker'" id="edit-btn" type="button" class="btn btn-small btn-inverse pull-right">Edit</button>
                         <% } %>
                         <button id="<%= projects[i].name %>" type="button" class="btn btn-small btn-inverse pull-right view-btn">View</button>
                         <form style="margin-top: 10px;" class="line-top" method="post" action="/users/<%= username %>/<%= projects[i].name %>/addResource" enctype="multipart/form-data">
