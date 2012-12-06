@@ -7,7 +7,7 @@ var Controller = kNode.Controller.extend({
 
 		this.super(app, null);
         this.proj_contrl = new (require('./project.js'))(app);
-//        this.addRoute("/users/:username/:project/worldmaker", "GET", this.getHome, helper.project_edit_perm);
+        this.addRoute("/users/:username/:project/worldmaker", "GET", this.getHome, helper.project_edit_perm);
         this.addRoute("/users/:username/:project/worldmaker/getWorld", "GET", this.getWorld, helper.project_edit_perm);
         this.addRoute("/users/:username/:project/worldmaker/postWorld", "POST", this.postWorld, helper.project_edit_perm);
 	},
