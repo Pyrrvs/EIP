@@ -6,7 +6,6 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 		el : $("#tab-entity"),
 
 		events : {
-
 			"validate #id" : "changeEntity",
 			"change .entity-member" : "changeEntity",
 			"click #body-type" : "changeEntity",
@@ -15,14 +14,20 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 		initialize : function() {
 
 			window.global.bind("change:entity", this.selectedEntityChanged, this);
+			window.global.bind("change:run", this.runChanged, this);
+		},
+
+		runChanged : function(global, run) {
+
+			run == "play" ? this.$("*").attr("disabled", "") : this.$("*").removeAttr("disabled");
 		},
 
 		changeEntity : function(e) {
 
 			var entity = window.global.get("entity"), opts = { silent : true };
-			if (!entity || window.global.get("run") == "play")
-				return ;
-			entity.id = this.$("#id").val();
+			if (!entity)
+				return;
+			entity.set("id", this.$("#id").val());
 			entity.set("class", this.$("#class button").first().text(), opts);
 			entity.set("position", cc.ccp(parseFloat(this.$("#position-x").val()),
 				parseFloat(this.$("#position-y").val())), opts);
@@ -45,7 +50,6 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		entityChanged : function(entity, opts) {
 
-			console.log("entityChanged") // BUG SUR CHANGEMENT DE TYPE
 			this.$("#id").val(entity.get("id"));
 			this.$("#class button").first().text(entity.get("class"));
 			this.$("#position-x").val(entity.get("position").x);
@@ -63,8 +67,14 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		initialize : function() {
 
+			$("#postWorld").click(this.postWorld);
 			this.$('#tabs a[href="#tab-classes"]').tab("show");
 			window.global.bind("change:entity", this.showTabEntity, this);
+		},
+
+		postWorld : function() {
+
+			window.controller.postWorld();			
 		},
 
 		showTabEntity : function(global, entity) {

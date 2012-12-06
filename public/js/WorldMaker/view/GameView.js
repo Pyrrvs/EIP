@@ -11,12 +11,12 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
     function Box(width, height) {
 
-        Box.superclass.constructor.call(this);
+        Box.superclass.constructor.call(this, new cc.Rect(0, 0, width, height));
         this.width = width;
         this.height = height;
     }
 
-    Box.inherit(cc.Node, {
+    Box.inherit(kge.Entity, {
 
         width : null,
         height : null,
@@ -185,9 +185,15 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             if (window.global.get("run") == "stop") {
                 this.save.reset();
                 window.global.get("level").get("entities").each(function(entity) {
-                    this.save.push(entity.clone());
+                    var s = entity.clone();
+                    // deep copy of attributes
+                    s.attributes = $.extend(true, {}, entity.attributes);
+                    this.save.push(s);
                 }.bind(this));
             }
+            this.gameLayer.children.forEach(function(entity) {
+                entity.body.SetAwake(true);
+            })
             this.scene.scheduleUpdate();
             window.global.set("run", "play");
         },
@@ -213,6 +219,8 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             if (window.global.get("run") == "stop")
                 return ;
             this.scene.unscheduleUpdate();
+            if (!window.global.get("level"))
+                return ;
             window.global.get("level").get("entities").each(function(entity) {
                 entity.attributes = this.save._byId[entity.get("id")].attributes;
             }.bind(this));
@@ -334,31 +342,6 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         addEntity : function(model) {
 
-            var data = model.attributes, entity = null, fixDef = new b2FixtureDef, bodyDef = new b2BodyDef;
-
-            if (data.model.url)
-                entity = new kge.Entity(data.model);
-            else if (data.model.box)
-                entity = new Box(data.model.box.w, data.model.box.h);
-            this.gameLayer.addChild(entity);
-            entity.id = data.id;
-            entity.model = model;
-            fixDef.density = 1.0;
-            fixDef.friction = 0.1;
-            fixDef.restitution = 0.6;
-            bodyDef.type = data.body.type;
-            bodyDef.position = new b2Vec2(entity.position.x / 30, entity.position.y / 30);
-            bodyDef.angle = cc.degreesToRadians(-entity.rotation);
-            if (data.body.circle)
-                fixDef.shape = new b2CircleShape(data.body.circle / 30)
-            else if (data.body.box) {
-                fixDef.shape = new b2PolygonShape;
-                fixDef.shape.SetAsBox(data.body.box.w / 30, data.body.box.h / 30);
-            }
-            entity.body = this.scene.world.CreateBody(bodyDef);
-            entity.body.CreateFixture(fixDef);
-            model.entity = entity;
-            this.entityUpdated(model);
         },
 
         cameraChanged : function(camera) {
@@ -367,19 +350,53 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             this.gameLayer.scale = camera.get("zoom");
         },
 
+        entityAdded : function(model) {
+
+            var data = model.attributes, entity = null, fixDef = new b2FixtureDef, bodyDef = new b2BodyDef;
+
+            if (data.model.box)
+                entity = new Box(data.model.box.w, data.model.box.h);
+            else
+                entity = new kge.Entity(data.model);
+            this.gameLayer.addChild(entity);
+            entity.id = data.id;
+            entity.model = model;
+            fixDef.density = 1.0;
+            fixDef.friction = 0.1;
+            fixDef.restitution = 0.6;
+            bodyDef.type = data.body.type;
+            bodyDef.position = new b2Vec2(entity.position.x / 30.0, entity.position.y / 30.0);
+            bodyDef.angle = cc.degreesToRadians(-entity.rotation);
+            if (data.body.circle)
+                fixDef.shape = new b2CircleShape(data.body.circle / 30.0)
+            else if (data.body.box) {
+                fixDef.shape = new b2PolygonShape;
+                fixDef.shape.SetAsBox(data.body.box.w / 30.0, data.body.box.h / 30.0);
+            }
+            entity.body = this.scene.world.CreateBody(bodyDef);
+            entity.body.CreateFixture(fixDef);
+            model.entity = entity;
+            this.entityUpdated(model);
+        },
+
+        entityRemoved : function(entity, entities) {
+
+            this.gameLayer.removeChild({ child : entity.entity, cleanup : true });
+        },        
+
         levelChanged : function(global, level) {
 
             this.gameLayer.removeChildren({ cleanup : true });
             if (level) {
                 level.get("camera").unbind("change", this.cameraChanged, this);
                 level.get("camera").bind("change", this.cameraChanged, this);
-                this.cameraChanged(level.get("camera"));
                 level.get("entities").unbind("add", this.entityAdded, this);
                 level.get("entities").unbind("remove", this.entityRemoved, this);
                 level.get("entities").bind("add", this.entityAdded, this);
                 level.get("entities").bind("remove", this.entityRemoved, this);
+                this.cameraChanged(level.get("camera"));
                 level.get("entities").each(function(elem) {
-                    this.addEntity(elem);
+                    this.entityAdded(elem);
                 }.bind(this));
             } else
                 this.$("#stop").click();

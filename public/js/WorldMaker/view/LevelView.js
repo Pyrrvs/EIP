@@ -36,9 +36,9 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 			level.get("entities").bind("add", this.entityAdded, this);
 			level.get("entities").bind("remove", this.entityRemoved, this);
 			var n = window.levels.size() - 1, el = null;
-			this.$("#levelList").append(this.tpl_accordion({ id : "level", name : level.get("name"), n : n, parent : "levelList" }));
-			el = this.$("#levelList .accordion-group").eq(n);
-			el.find(".accordion-heading .btn").hide();
+			this.$("#levelList").append(this.tpl_accordion({ id : "level",
+				name : level.get("name"), n : n, parent : "levelList" }));
+			this.$("#levelList .accordion-group").eq(n).find(".accordion-heading .btn").hide();
 		},
 
 		createLevel : function() {
@@ -92,10 +92,21 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 		selectedEntityChanged : function(global, entity) {
 
 			var i = null, j = null;
-			this.$("#levelList ul a").css("border-width", "0px");
+			this.$("#levelList ul a").css("background-color", "");
 			if (entity && (i = window.levels.indexOf(window.global.get("level"))) != -1
-				&& (j = window.global.get("level").get("entities").indexOf(entity)) != -1)
-				this.$("#levelList ul").eq(i).find("a").eq(j).css("border-width", "1px");
+				&& (j = window.global.get("level").get("entities").indexOf(entity)) != -1) {
+				entity.unbind("change:id", this.entityIdChanged, this);
+				entity.bind("change:id", this.entityIdChanged, this);
+				this.$("#levelList ul").eq(i).find("a").eq(j).css("background-color", "rgba(150, 150, 255, 0.2)");
+			}
+		},
+
+		entityIdChanged : function(entity, id) {
+
+			var i = null, j = null;
+			if (entity && (i = window.levels.indexOf(window.global.get("level"))) != -1
+				&& (j = window.global.get("level").get("entities").indexOf(entity)) != -1)			
+				this.$("#levelList ul").eq(i).find("a").eq(j).text(entity.id);
 		},
 
 		selectedLevelChanged : function(global, level) {

@@ -13,7 +13,7 @@ define([], function() {
 		initialize : function() {
 
 			if (!this.get("id"))
-				this.set("id", window.defaultId++);
+				this.set("id", "" + window.defaultId++);
 		},
 
 		defaults : function() { return {
@@ -22,7 +22,8 @@ define([], function() {
 			position : cc.ccp(0, 0),
 			scale : 1,
 			rotation : 0,
-			body : new BodyModel,
+			model : {},
+			body : { type : 0, box : { w : 0, h : 0 } }
 		}},
 	});
 

@@ -34,18 +34,12 @@ define([], function() {
 	Entity.inherit(cc.Sprite, {
 
 		body : null,
-		shape : null,
 
-		setBody : function(bodyType) {
+		cleanup : function() {
 
-			var fixDef = new b2FixtureDef;
-			var bodyDef = new b2BodyDef;
-
-	        bodyDef.type = bodyType;
-        	bodyDef.position.x = this.position.x / 30;
-            bodyDef.position.y = this.position.y / 30;
-			fixDef.shape = new b2CircleShape(32 / 30);
-	        (this.body = this.parent.parent.world.CreateBody(bodyDef)).CreateFixture(fixDef);
+			if (this.body)
+				this.parent.parent.world.DestroyBody(this.body);
+			Entity.superclass.cleanup.call(this);
 		}
 	});
 

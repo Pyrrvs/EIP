@@ -2,12 +2,11 @@ define(["class"], function(Class) {
 
 	var Controller = Class.extend({
 
-		data : null,
-
 		getWorld : function(callback) {
 
 			$.ajax(window.location.pathname + "/getWorld", { type : "GET", dataType : "json", success : function(data) {
 				var world = data, level = null, model = null, entities;
+				console.log(JSON.stringify(data));
 				window.defaultId = data.id;
 				for (var i in world.levels) {
 					level = world.levels[i];
@@ -22,11 +21,17 @@ define(["class"], function(Class) {
 			return (this);
 		},
 
-		updateWorld : function(req) {
+		postWorld : function(req) {
 
-			$.ajax(window.location.pathname + "/postWorld", { type : "POST", dataType : "json", data : this.data, success : function(data) {
-				console.log("Update Ok");
-			}});
+			var data = {
+				levels : window.levels.toJSON(),
+				id : window.defaultId,
+			};
+
+			console.log(JSON.stringify(data));
+			$.ajax(window.location.pathname + "/postWorld", { type : "POST", dataType : "json", data : data, success : function(res) {
+				console.log(res);
+			}, error : function(log) { console.log(log); }});
 		},
 	});
 
