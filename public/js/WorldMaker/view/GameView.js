@@ -186,7 +186,6 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                 this.save.reset();
                 window.global.get("level").get("entities").each(function(entity) {
                     var s = entity.clone();
-                    // deep copy of attributes
                     s.attributes = $.extend(true, {}, entity.attributes);
                     this.save.push(s);
                 }.bind(this));
@@ -275,14 +274,14 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                 return ;
             if (this.dragging.type == "camera")
                 window.global.get("level").get("camera").set("position",
-                cc.ccp(this.dragging.position.x + a.deltaX, this.dragging.position.y - a.deltaY));
+                cc.ccp(Math.floor(this.dragging.position.x + a.deltaX), Math.floor(this.dragging.position.y - a.deltaY)));
             else if (this.dragging.type == "rotation") {
-                var rotation = this.dragging.rotation - cc.Point.sub(this.dragging.position, this.uiLayer.selectCircle.position)
-                .angle(cc.Point.sub(cc.Point.fromEvent(e).flipY(), this.uiLayer.selectCircle.position));
+                var rotation = Math.floor(this.dragging.rotation - cc.Point.sub(this.dragging.position, this.uiLayer.selectCircle.position)
+                .angle(cc.Point.sub(cc.Point.fromEvent(e).flipY(), this.uiLayer.selectCircle.position)));
                 window.global.get("entity").set("rotation", rotation);
             } else if (this.dragging.type == "entity") {
-                var position = cc.ccp(this.dragging.position.x + a.deltaX / this.gameLayer.scale,
-                                    this.dragging.position.y - a.deltaY / this.gameLayer.scale);
+                var position = cc.ccp(Math.floor(this.dragging.position.x + a.deltaX / this.gameLayer.scale),
+                                    Math.floor(this.dragging.position.y - a.deltaY / this.gameLayer.scale));
                 window.global.get("entity").set("position", position);
             }
         },
@@ -302,11 +301,11 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             if (window.global.get("mode") == "camera") {
                 var scale = this.gameLayer.scale + e.originalEvent.wheelDeltaY * 0.0001;
                 scale = scale < 0.1 ? 0.1 : scale > 5 ? 5 : scale;
-                window.global.get("level").get("camera").set("zoom", scale);
+                window.global.get("level").get("camera").set("zoom", Math.floor(scale * 1000) / 1000);
             } else if (window.global.get("mode") == "entity" && window.global.get("entity")) {
                 var scale = window.global.get("entity").get("scale") + e.originalEvent.wheelDeltaY * 0.0001;
                 scale = scale < 0.1 ? 0.1 : scale > 5.0 ? 5.0 : scale;
-                window.global.get("entity").set("scale", parseFloat(scale.toFixed(3)));
+                window.global.get("entity").set("scale", Math.floor(scale * 1000) / 1000);
             }
             return (false);
         },
@@ -324,9 +323,11 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         entityChanged : function(global, entity) {
 
             if (entity) {
+                this.$("#entity").click();
                 entity.unbind("change", this.entityUpdated, this);
                 entity.bind("change", this.entityUpdated, this);
-            }
+            } else
+                this.$("#camera").click();
         },
 
         entityUpdated : function(entityModel) {
@@ -346,8 +347,8 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         cameraChanged : function(camera) {
 
-            this.gameLayer.position = camera.get("position").clone();
             this.gameLayer.scale = camera.get("zoom");
+            this.gameLayer.position = camera.get("position").clone();
         },
 
         entityAdded : function(model) {
@@ -387,7 +388,10 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         levelChanged : function(global, level) {
 
             this.gameLayer.removeChildren({ cleanup : true });
+            this.$("#stop").click();
             if (level) {
+                this.$("#canvasView canvas").show();
+                this.$("*").removeAttr("disabled");
                 level.get("camera").unbind("change", this.cameraChanged, this);
                 level.get("camera").bind("change", this.cameraChanged, this);
                 level.get("entities").unbind("add", this.entityAdded, this);
@@ -398,8 +402,10 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                 level.get("entities").each(function(elem) {
                     this.entityAdded(elem);
                 }.bind(this));
-            } else
-                this.$("#stop").click();
+            } else {
+                this.$("#canvasView canvas").hide();
+                this.$("*").attr("disabled", "");
+            }
         },
 	});
 

@@ -8,8 +8,10 @@ require.config({ paths : {
 define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/MenuView", "view/GameView"], function() {
 
 	window.controller.getWorld(function() {
-		// $("#levelView .accordion-heading a").first().click().parent().parent().find("li a").first().click();
-		// $("#gameView #entity").click();
+		// debug
+		$("#levelView .accordion-heading a").first().click();
+		setTimeout(function() {	$("#levelView .accordion-body").first().find("li a").first().click(); }, 200);
+		// !debug
 	})
 	$("#worldmaker").css("visibility", "visible").hide().fadeIn(500);
 });

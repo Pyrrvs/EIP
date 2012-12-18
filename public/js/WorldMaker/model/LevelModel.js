@@ -14,7 +14,8 @@ define(["model/EntityModel"], function() {
 		initialize : function(attr) {
 
 			if (typeof attr.camera != CameraModel)
-				this.set("camera", new CameraModel({ zoom : attr.camera.zoom }), { silent : true });
+				this.set("camera", new CameraModel({ zoom : attr.camera.zoom,
+					position : cc.Point.fromObject(attr.camera.position) }), { silent : true });
 		},
 
 		defaults : function() { return {

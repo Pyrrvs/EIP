@@ -2,7 +2,7 @@
   <div class="accordion-heading">
     <a class="accordion-toggle" data-toggle="collapse" data-parent="#<%= g.parent %>" href="#collapse-<%= g.id %>-<%= g.n %>"><%= g.name %></a>
     <div class="pull-right btn-accordion">
-      <button class="btn btn-success btn-tiny label">new</button>
+      <button id="create" class="btn btn-success btn-tiny label">new</button>
       <button id="delete" class="btn btn-danger btn-tiny label">delete</button>
     </div>
     </div>

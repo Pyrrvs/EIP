@@ -15,12 +15,12 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 			"mouseleave .accordion-heading" : "hideButton",
 			"open .accordion-heading" : "selectLevel",
 			"close .accordion-heading" : "deselectLevel",
-			"click .accordion-heading .btn:first" : "createEntity",
+			"click .accordion-heading #create" : "createEntity",
 			"click .accordion-heading #delete" : "deleteLevel",
 			"click .accordion-inner li a" : "selectEntity",
 			"mouseenter .accordion-inner li" : "showButton",
 			"mouseleave .accordion-inner li" : "hideButton",
-			"click .accordion-inner li .btn" : "deleteEntity",
+			"click .accordion-inner #delete" : "deleteEntity",
 		},
 
 		initialize : function() {

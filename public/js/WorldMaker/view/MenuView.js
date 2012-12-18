@@ -6,6 +6,7 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 		el : $("#tab-entity"),
 
 		events : {
+
 			"validate #id" : "changeEntity",
 			"change .entity-member" : "changeEntity",
 			"click #body-type" : "changeEntity",
@@ -15,6 +16,7 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 			window.global.bind("change:entity", this.selectedEntityChanged, this);
 			window.global.bind("change:run", this.runChanged, this);
+			window.global.bind("change:layer", this.layerChanged, this);
 		},
 
 		runChanged : function(global, run) {
@@ -67,19 +69,21 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		initialize : function() {
 
-			$("#postWorld").click(this.postWorld);
+			$("#postWorld").click(window.controller.postWorld);
+			this.$('#tabs a[href="#tab-entity"]').parent().addClass("disabled");
 			this.$('#tabs a[href="#tab-classes"]').tab("show");
-			window.global.bind("change:entity", this.showTabEntity, this);
+			window.global.bind("change:entity", this.selectedEntityChanged, this);
 		},
 
-		postWorld : function() {
+		selectedEntityChanged : function(global, entity) {
 
-			window.controller.postWorld();			
-		},
-
-		showTabEntity : function(global, entity) {
-
-			this.$('#tabs a[href="#tab-' + (entity ? "entity" : "classes") + '"]').tab("show");
+			if (entity) {
+				this.$('#tabs a[href="#tab-entity"]').parent().removeClass("disabled");
+				this.$('#tabs a[href="#tab-entity"]').tab("show");
+			} else {
+				this.$('#tabs a[href="#tab-entity"]').parent().addClass("disabled");
+				this.$('#tabs a[href="#tab-classes"]').tab("show");
+			}
 		},
 	});
 

@@ -4,10 +4,10 @@
     <title>WorldMaker</title>
     <script src="/js/util/jquery-1.8.2.min.js"></script>
     <script src="/js/util/jquery.event.drag-2.2.js"></script>
-    <script src="/js/util/jquery.input-validate.js"></script>
+    <script src="/js/util/jquery.utils.js"></script>
     <script src="/js/util/underscore.js"></script>
     <script src="/js/util/backbone-min.js"></script>
-    <script src="/js/util/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/js/util/bootstrap.js"></script>
     <script src="/js/WorldMaker/kGE/src/cocos2d.js" defer></script>
     <script src="/js/WorldMaker/kGE/src/box2d.js" defer></script>
     <link href="/css/worldmaker.css" type="text/css" rel="stylesheet"/>
@@ -29,7 +29,7 @@
       <!-- LevelView -->
       <div id="levelView" class="inline-top well well-small">
         <div class="line-top">
-          <input id="name" type="text" placeholder="Name"></input>
+          <input id="name" class="input-thin" type="text" placeholder="name"></input>
           <button id="create" class="btn btn-tiny btn-success">create</button>
         </div>
         <div id="levelList" class="accordion"></div>
@@ -59,54 +59,123 @@
         <ul id="tabs" class="nav nav-tabs">
           <li><a href="#tab-entity" data-toggle="tab">entity</a></li>
           <li><a href="#tab-classes" data-toggle="tab">classes</a></li>
-          <li><a href="#tab-class" data-toggle="tab">class</a></li>
           <li><a href="#tab-models" data-toggle="tab">models</a></li>
-          <li><a href="#tab-physics" data-toggle="tab">physic</a></li>
+          <li><a href="#tab-physics" data-toggle="tab">physics</a></li>
         </ul>
         <div class="tab-content">
 
           <!-- TabEntity -->
           <div class="tab-pane" id="tab-entity">
-            <div class="line-top">
-              <input id="id" type="text" placeholder="ID"></input>
-            </div>
-            <div class="line-top">
-              <label>class : </label>
-              <div id="class" class="btn-group">
-                <button class="btn btn-info btn-tiny">Class</button>
-                <button class="btn btn-info btn-tiny dropdown-toggle" data-toggle="dropdown">
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu"></ul>
+
+            <!-- SectionCharac -->
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#collapse-charac">characteristics</a>
+              </div>
+              <div class="accordion-body collapse in" id="collapse-charac">
+                <div class="accordion-inner">
+                  <div class="line-top semi-top">
+                    <span class="label-input">id : </span>
+                    <input id="id" class="input-thin pull-right" type="text" placeholder="id"></input>
+                  </div>
+                  <div class="line-top">
+                    <span>class : </span>
+                    <div id="class" class="btn-group pull-right">
+                      <button class="btn btn-info btn-tiny">none</button>
+                      <button class="btn btn-info btn-tiny dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu"></ul>
+                    </div>
+                  </div>
+                  <div class="line-top">
+                    <span class="label-input">x : </span>
+                    <input id="position-x" class="entity-member" type="number" step="5"></input>
+                    <input id="scale" class="entity-member pull-right" type="number" step="0.1"></input>
+                    <span class="pull-right label-input">scale : </span>
+                  </div>
+                  <div class="line-top">
+                    <span class="label-input">y : </span>
+                    <input id="position-y" class="entity-member" type="number" step="5"></input>
+                    <input id="rotation"  class="entity-member pull-right" type="number" step="5"></input>
+                    <span class="pull-right label-input">rotation : </span>
+                  </div>
+                  <div class="line-top semi-bot">
+                    <span>type : </span>
+                    <div id="body-type" class="btn-group pull-right" data-toggle="buttons-radio">
+                      <button data-type="2" class="btn btn-tiny btn-info active">dynamic</button>
+                      <button data-type="0" class="btn btn-tiny btn-info">static</button>
+                      <button data-type="1" class="btn btn-tiny btn-info">kinematic</button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="line-top">
-              <label>x : </label>
-              <input id="position-x" class="entity-member" type="number" step="5"></input>
-              <label>y : </label>
-              <input id="position-y" class="entity-member" type="number" step="5"></input>
-            </div>
-            <div class="line-top">
-              <label>rotation : </label>
-              <input id="rotation"  class="entity-member" type="number" step="5"></input>
-              <label>scale : </label>
-              <input id="scale" class="entity-member" type="number" step="0.1"></input>
-            </div>
-            <div class="line-top">
-              <label>type : </label>
-              <div id="body-type" class="btn-group" data-toggle="buttons-radio">
-                <button data-type="2" class="btn btn-tiny btn-info active">dynamic</button>
-                <button data-type="0" class="btn btn-tiny btn-info">static</button>
-                <button data-type="1" class="btn btn-tiny btn-info">kinematic</button>
+            <!-- !SectionCharac -->
+
+            <!-- SectionModel -->
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#collapse-model">model</a>
+              </div>
+              <div class="accordion-body collapse in" id="collapse-model">
+                <div class="accordion-inner">
+                  <div class="line-top top bot">
+                    <span>models : </span>
+                    <div id="models" class="btn-group pull-right">
+                      <button class="btn btn-info btn-tiny">none</button>
+                      <button class="btn btn-info btn-tiny dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu"></ul>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+            <!-- !SectionModel -->
+
+            <!-- SectionPhysic -->
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#collapse-physic">physic</a>
+              </div>
+              <div class="accordion-body collapse in" id="collapse-physic">
+                <div class="accordion-inner">
+                  <div class="line-top top">
+                    <span>physics : </span>
+                    <div id="physics" class="btn-group pull-right">
+                      <button class="btn btn-info btn-tiny">none</button>
+                      <button class="btn btn-info btn-tiny dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu"></ul>
+                    </div>
+                  </div>
+                  <div id="attach" class="well well-small">
+                    <div class="line-top top bot">
+                      <span>attach : </span>
+                      <input class="pull-right" checked="" type="checkbox"></input>
+                      <span class="label-input pull-right">scale :</span>
+                    </div>
+                    <div class="line-top top bot">
+                      <div></div>
+                      <input class="pull-right" checked="" type="checkbox"></input>
+                      <span class="label-input pull-right">rotation :</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>  
+            <!-- !SectionPhysic -->
+
           </div>
           <!-- !TabEntity -->
 
           <div class="tab-pane" id="tab-classes">
             <div class="line-top">
               <input id="name" type="text" placeholder="Name"></input>
-              <button id="create" class="btn label btn-success">create</button>
+              <button id="create" class="btn span btn-success">create</button>
             </div>
             <div id="groupsList" class="accordion"></div>
           </div>
@@ -114,20 +183,20 @@
           <div class="tab-pane" id="tab-class">
             <div class="line-top">
               <input id="name" type="text" placeholder="Name"></input>
-              <button id="reset" class="btn label btn-success">reset</button>
+              <button id="reset" class="btn span btn-success">reset</button>
             </div>
             <div class="line-top">
               <div id="group" class="dropdown">
-                <button class="btn btn-info label dropdown-toggle" role="button" data-toggle="dropdown">
+                <button class="btn btn-info span dropdown-toggle" role="button" data-toggle="dropdown">
                   <span>group</span>
                   <b class="caret"></b>
                 </button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel"></ul>
+                <ul class="dropdown-menu" role="menu" aria-spanledby="dspan"></ul>
               </div>
             </div>
             <div class="line-top pull-right">
-              <button id="new" class="btn label btn-success">edit</button>
-              <button id="new" class="btn label btn-success">create</button>
+              <button id="new" class="btn span btn-success">edit</button>
+              <button id="new" class="btn span btn-success">create</button>
             </div>
           </div>
 

@@ -190,6 +190,11 @@ define([], function() {
 		return (cc.ccp(e.offsetX, e.offsetY))
 	};
 
+	cc.Point.fromObject = function(obj) {
+
+		return (cc.ccp(obj.x, obj.y));
+	};
+
 	return ({
 
 		DynamicScene : DynamicScene,

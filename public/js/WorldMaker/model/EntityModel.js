@@ -13,7 +13,8 @@ define([], function() {
 		initialize : function() {
 
 			if (!this.get("id"))
-				this.set("id", "" + window.defaultId++);
+				this.set("id", window.defaultId++, { silent : true });
+			this.set("id", this.get("id") + "");
 		},
 
 		defaults : function() { return {

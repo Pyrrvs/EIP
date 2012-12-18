@@ -4,10 +4,9 @@ define(["class"], function(Class) {
 
 		getWorld : function(callback) {
 
-			$.ajax(window.location.pathname + "/getWorld", { type : "GET", dataType : "json", success : function(data) {
-				var world = data, level = null, model = null, entities;
-				console.log(JSON.stringify(data));
-				window.defaultId = data.id;
+			$.ajax(window.location.pathname + "/getWorld", { type : "GET", dataType : "json", success : function(world) {
+				var level = null, model = null, entities = null;
+				window.defaultId = world.id;
 				for (var i in world.levels) {
 					level = world.levels[i];
 					window.levels.push({ name : level.name, camera : level.camera });
@@ -23,13 +22,13 @@ define(["class"], function(Class) {
 
 		postWorld : function(req) {
 
-			var data = {
-				levels : window.levels.toJSON(),
-				id : window.defaultId,
+			var d = {
+				"levels" : window.levels.toJSON(),
+				"id" : window.defaultId,
 			};
 
-			console.log(JSON.stringify(data));
-			$.ajax(window.location.pathname + "/postWorld", { type : "POST", dataType : "json", data : data, success : function(res) {
+			$.ajax(window.location.pathname + "/postWorld", { type : "POST", dataType : "json",
+				data : JSON.parse(JSON.stringify(d)), success : function(res) {
 				console.log(res);
 			}, error : function(log) { console.log(log); }});
 		},
