@@ -1,34 +1,52 @@
 define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
-    function GameLayer() {
+    function Entity() {
 
-        GameLayer.superclass.constructor.apply(this, arguments)
-    }
+        Entity.superclass.constructor.apply(this, arguments)
+    };
 
-    GameLayer.inherit(cc.Layer, {
+    Entity.physicLayer = {
 
-    })
+        circle : function(ctx) {
 
-    function Box(width, height) {
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(this.contentSize.width / 2, this.contentSize.height / 2,
+                this.body.GetFixtureList().GetShape().GetRadius() * 30 / this.scale + 1, 0, 2 * Math.PI, false);
+            ctx.strokeStyle = 'red';
+            ctx.stroke();            
+        },
 
-        Box.superclass.constructor.call(this, new cc.Rect(0, 0, width, height));
-        this.width = width;
-        this.height = height;
-    }
+        box : function(ctx) {
 
-    Box.inherit(kge.Entity, {
+            var width = this.model.get("body").get("fixture").get("shape").w,
+                height = this.model.get("body").get("fixture").get("shape").h;
 
-        width : null,
-        height : null,
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.strokeStyle = "red";
+            ctx.strokeRect(-1, -1, width + 1, height + 1);
+        },
+
+        polygon : function(ctx) {
+
+            // TODO
+        },
+    };
+
+    Entity.inherit(kge.Entity, {
+
+        physicLayer : null,
+        modelLayer : null,
 
         draw : function(ctx) {
 
-            ctx.lineWidth = 5;
-            ctx.strokeStyle = "blue";
-            ctx.strokeRect(-this.width / 2, -this.height / 2, this.width, this.height);
-        }
+            if (this.modelLayer)
+                Entity.superclass.draw.apply(this, arguments);
+            if (this.physicLayer)
+                this.physicLayer(ctx);
+        },
     });
-
 
     function CircleSelect() {
 
@@ -60,8 +78,8 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         draw : function(ctx) {
 
-            var n = this.radius, step = 2 * Math.PI / n / 2, start = -step, end = 0;
-            ctx.lineWidth = 2;
+            var n = this.radius * this.parent.scale, step = 2 * Math.PI / n / 2, start = -step, end = 0;
+            ctx.lineWidth = 2 / this.parent.scale;
             for (var i = 0; i < n; ++i) {
                 this._drawDashCircle(ctx, start += step, end += step, 'white');
                 this._drawDashCircle(ctx, start += step, end += step, 'blue');
@@ -73,18 +91,28 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                 this._drawDashLine(ctx, start, start += step, 'white');
                 this._drawDashLine(ctx, start, start += step, 'blue');
             }
-        }
+        },
+
+        update : function() {
+
+            var entity = window.global.get("entity");
+            if (!entity) return ;
+            entity = entity.entity;
+            var box = entity.boundingBox, size = box.size, pos = box.origin;
+            this.radius = Math.sqrt(Math.pow(size.width, 2) + Math.pow(size.height, 2)) / 2;
+            this.rotation = entity.rotation;
+            this.position.x = pos.x + size.width / 2;
+            this.position.y = pos.y + size.height / 2;
+        },
     });
 
     function UILayer() {
 
         UILayer.superclass.constructor.apply(this, arguments)
-        this.selectCircle = new CircleSelect
-        this.selectCircle.visible = false;
-        this.addChild(this.selectCircle);
+        this.addChild(this.selectCircle = new CircleSelect);
 
         window.global.bind("change:level", this.levelChanged, this);
-        window.global.bind("change:entity", this.entitySelected, this);
+        window.global.bind("change:entity", this.entitySelectedChanged, this);
         window.global.bind("change:run", this.runChanged, this);
     }
 
@@ -92,52 +120,55 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         selectCircle : null,
 
-        update : function() {
-
-            var entity = window.global.get("entity");
-            if (!entity) return ;
-            var box = entity.entity.worldBoundingBox, size = box.size, pos = box.origin,
-                len = size.width > size.height ? size.width : size.height;
-            this.selectCircle.radius = Math.sqrt(2 * len * len) / 2;
-            this.selectCircle.rotation = entity.entity.rotation;
-            this.selectCircle.position.x = pos.x + len / 2;
-            this.selectCircle.position.y = pos.y + len / 2;
-        },
-
         runChanged : function(global, run) {
 
             if (run == "play") {
-                this.visible = false;
+                this.selectCircle.visible = false;
             } else if (run == "stop") {
-                this.visible = true;
+                this.selectCircle.update();
+                this.entityEnabledChanged();
             } else if (run == "pause") {
-                this.visible = true;
-                this.update();
+                this.selectCircle.update();
+                this.entityEnabledChanged();
             }
+        },
+
+        update : function(camera) {
+
+            this.scale = camera.get("zoom");
+            this.position = camera.get("position").clone();
         },
 
         levelChanged : function(global, level) {
 
             if (level) {
-                level.get("camera").unbind("change", this.update, this);
-                level.get("camera").bind("change", this.update, this);
+                level.get("camera").rebind("change", this.update, this, true);
             }
-            this.selectCircle.visible = false;
         },
 
-        entitySelected : function(global, entity) {
+        entityEnabledChanged : function(entity) {
+
+            entity = entity || window.global.get("entity");
+            if (entity && entity.get("enabled")) {
+                this.selectCircle.update();
+                this.selectCircle.visible = true;
+            } else
+                this.selectCircle.visible = false;
+        },
+
+        entitySelectedChanged : function(global, entity) {
 
             if (entity) {
-                entity.unbind("change", this.update, this);
-                entity.bind("change", this.update, this);
-                this.update(entity);
-            }
-            this.selectCircle.visible = !!entity;
+                entity.rebind("change", this.selectCircle.update, this.selectCircle);
+                entity.rebind("change:enabled", this.entityEnabledChanged, this);
+                this.entityEnabledChanged(entity);
+            } else
+                this.selectCircle.visible = false;
         },
 
         isCircleClicked : function(pos) {
 
-            return (window.global.get("entity") && Math.abs(pos.dist(this.selectCircle.position) - this.selectCircle.radius) < 4);
+            return (window.global.get("entity") && Math.abs(pos.dist(this.selectCircle.position) - this.selectCircle.radius) < 5 / this.scale);
         },
     })
 
@@ -145,6 +176,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         el : $("#gameView"),
         dragging : { type : null, position : new cc.Point(0, 0), rotation : 0 },
+        disabled : null,
         scene : null,
         uiLayer : null,
         gameLayer : null,
@@ -165,13 +197,13 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         initialize : function() {
 
-            window.global.bind("change:entity", this.entityChanged, this);
+            window.global.bind("change:entity", this.selectedEntityChanged, this);
             window.global.bind("change:level", this.levelChanged, this);
 
             cc.Director.sharedDirector.attachInView(document.getElementById("canvasView"));
             cc.Director.sharedDirector.displayFPS = true
             this.scene = new kge.DynamicScene;
-            this.gameLayer = new GameLayer;
+            this.gameLayer = new cc.Layer;
             this.scene.addChild({ child : this.gameLayer, z : 0 });
             this.uiLayer = new UILayer;
             this.scene.addChild({ child : this.uiLayer, z : 1 });
@@ -227,7 +259,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             if (entity)
                 entity.trigger("change", entity, {});
             this.gameLayer.children.forEach(function(entity) {
-                this.entityUpdated(entity.model);
+                this.entityChanged(entity.model);
                 var type = entity.body.GetType();
                 entity.body.SetType(0);
                 entity.body.SetType(type);
@@ -254,17 +286,19 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                 this.dragging.position = this.gameLayer.position.clone();
                 this.dragging.type = "camera";
             } else if (window.global.get("mode") == "entity") {
-                var position = cc.Point.fromEvent(e).flipY(), entity = null;
+                var position = this.transformPointEvent(e), entity = null;
                 if (this.uiLayer.isCircleClicked(position)) {
                     this.dragging.position = position;
                     this.dragging.type = "rotation";
                     this.dragging.rotation = window.global.get("entity").entity.rotation;
+                } else if ((entity = window.global.get("entity"))) {
+                    this.dragging.position = entity.entity.position.clone();
+                    this.dragging.type = "entity";
                 } else if ((entity = this.isEntityClicked(position))) {
                     this.dragging.position = entity.position.clone();
                     this.dragging.type = "entity";
                     window.global.set("entity", entity.model);
-                } else
-                    window.global.set("entity", null);
+                }
             }
         },
 
@@ -277,7 +311,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                 cc.ccp(Math.floor(this.dragging.position.x + a.deltaX), Math.floor(this.dragging.position.y - a.deltaY)));
             else if (this.dragging.type == "rotation") {
                 var rotation = Math.floor(this.dragging.rotation - cc.Point.sub(this.dragging.position, this.uiLayer.selectCircle.position)
-                .angle(cc.Point.sub(cc.Point.fromEvent(e).flipY(), this.uiLayer.selectCircle.position)));
+                .angle(cc.Point.sub(this.transformPointEvent(e), this.uiLayer.selectCircle.position)));
                 window.global.get("entity").set("rotation", rotation);
             } else if (this.dragging.type == "entity") {
                 var position = cc.ccp(Math.floor(this.dragging.position.x + a.deltaX / this.gameLayer.scale),
@@ -286,11 +320,16 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             }
         },
 
+        transformPointEvent : function(e) {
+
+            return (this.uiLayer.convertToNodeSpace(cc.Point.fromEvent(e).flipY()));
+        },
+
         click : function(e) {
 
             if (window.global.get("run") == "play")
                 return ;
-            var entity = this.isEntityClicked(cc.Point.fromEvent(e).flipY());
+            var entity = this.isEntityClicked(this.transformPointEvent(e));
             window.global.set("entity", entity ? entity.model : null);                
         },
 
@@ -314,35 +353,104 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
             var entity = null;
             this.gameLayer.children.forEach(function(elem, i, children) {
-                if (cc.rectContainsPoint(elem.worldBoundingBox, position))
+                if (cc.rectContainsPoint(elem.boundingBox, position))
                     entity = elem;
             });
             return (entity);
         },
 
-        entityChanged : function(global, entity) {
+        entityEnabledChanged : function(entity) {
+
+            var data = entity.attributes;
+
+            entity = entity.entity;
+            if (!data.enabled) {
+                entity.body.SetActive(false);
+                this.disabled[entity.id] = entity;
+                this.gameLayer.removeChild({ child : entity, cleanup : false });
+            } else {
+                entity.body.SetActive(true);
+                this.gameLayer.addChild(entity);
+                delete this.disabled[entity.id];
+            }
+        },
+
+        selectedEntityChanged : function(global, entity) {
 
             if (entity) {
                 this.$("#entity").click();
-                entity.unbind("change", this.entityUpdated, this);
-                entity.bind("change", this.entityUpdated, this);
+                entity.rebind("change", this.entityChanged, this);
+                entity.rebind("change:enabled", this.entityEnabledChanged, this);
+                entity.get("body").rebind("change", this.entityBodyChanged, this);
+                entity.get("body").get("fixture").rebind("change", this.entityFixtureChanged, this);
+                entity.get("model").rebind("change", this.entityModelChanged, this);
             } else
                 this.$("#camera").click();
         },
 
-        entityUpdated : function(entityModel) {
+        updateEntityShape : function(entity, fixture) {
 
-            var entity = entityModel.entity, data = entityModel.attributes;
-            entity.position = cc.ccp(data.position.x, data.position.y);
+            var fix = entity.body.GetFixtureList();
+
+            if (!fix)
+                return;
+            if (fixture.shape_type == "circle")
+                fix.GetShape().SetRadius(fixture.shape.r * entity.scale / 30);
+            else if (fixture.shape_type == "box")
+                fix.GetShape().m_radius = 0.01;
+        },
+
+        entityChanged : function(model) {
+
+            var entity = model.entity, data = model.attributes;
+            entity.id = data.id;
+            entity.position = data.position.clone();
             entity.scale = data.scale;
             entity.rotation = data.rotation;
-            entity.body.SetType(data.body.type);
-            entity.body.SetPosition(new b2Vec2(entity.position.x / 30, entity.position.y / 30));
+            this.updateEntityShape(entity, data.body.get("fixture").attributes);
+            entity.body.SetPosition(entity.position.toB2(30));
             entity.body.SetAngle(cc.degreesToRadians(-entity.rotation));
         },
 
-        addEntity : function(model) {
+        entityBodyChanged : function(body, entity) {
 
+            entity = entity instanceof Entity ? entity : window.global.get("entity").entity;
+            body = body.attributes;
+            entity.body.SetType(body.type);
+            entity.physicLayer = entity.model.get("body").get("shown") ? Entity.physicLayer[body.fixture.get("shape_type")] : null;
+        },
+
+        entityFixtureChanged : function(fixture, entity) {
+
+            entity = entity instanceof Entity ? entity : window.global.get("entity").entity;
+            fixture = fixture.attributes;
+            var fix = entity.body.GetFixtureList();
+            if (fix == null) {
+                var fixdef = new b2FixtureDef;
+                if (fixture.shape_type == "circle")
+                    fixdef.shape = new b2CircleShape(fixture.shape.r * entity.scale / 30.0)
+                else if (fixture.shape_type == "box") {
+                    fixdef.shape = new b2PolygonShape;
+                    fixdef.shape.SetAsBox(fixture.shape.w * entity.scale / 30.0 / 2, fixture.shape.h * entity.scale / 30.0 / 2);
+                } else if (fixture.shape_type == "polygon") {
+                    fixdef.shape = new b2PolygonShape;
+                    fixdef.shape.SetAsBox(fixture.shape.w / 30.0, fixture.shape.h / 30.0);
+                }
+                fix = entity.body.CreateFixture(fixdef);
+            }            
+            fix.SetDensity(fixture.density);
+            fix.SetFriction(fixture.friction);
+            fix.SetRestitution(fixture.restitution);
+            if (entity.id == "crate")
+                entity.scale = 0.5;
+        },
+
+        entityModelChanged : function(model, entity) {
+
+            entity = entity instanceof Entity ? entity : window.global.get("entity").entity;
+            model = model.attributes;
+            entity.setUrl(model.path);
+            entity.modelLayer = model.shown;
         },
 
         cameraChanged : function(camera) {
@@ -353,31 +461,15 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         entityAdded : function(model) {
 
-            var data = model.attributes, entity = null, fixDef = new b2FixtureDef, bodyDef = new b2BodyDef;
-
-            if (data.model.box)
-                entity = new Box(data.model.box.w, data.model.box.h);
-            else
-                entity = new kge.Entity(data.model);
+            var entity = new Entity;
             this.gameLayer.addChild(entity);
-            entity.id = data.id;
             entity.model = model;
-            fixDef.density = 1.0;
-            fixDef.friction = 0.1;
-            fixDef.restitution = 0.6;
-            bodyDef.type = data.body.type;
-            bodyDef.position = new b2Vec2(entity.position.x / 30.0, entity.position.y / 30.0);
-            bodyDef.angle = cc.degreesToRadians(-entity.rotation);
-            if (data.body.circle)
-                fixDef.shape = new b2CircleShape(data.body.circle / 30.0)
-            else if (data.body.box) {
-                fixDef.shape = new b2PolygonShape;
-                fixDef.shape.SetAsBox(data.body.box.w / 30.0, data.body.box.h / 30.0);
-            }
-            entity.body = this.scene.world.CreateBody(bodyDef);
-            entity.body.CreateFixture(fixDef);
+            entity.body = this.scene.world.CreateBody(new b2BodyDef);
             model.entity = entity;
-            this.entityUpdated(model);
+            this.entityChanged(model);
+            this.entityBodyChanged(model.get("body"), entity);
+            this.entityModelChanged(model.get("model"), entity);
+            this.entityFixtureChanged(model.get("body").get("fixture"), entity);
         },
 
         entityRemoved : function(entity, entities) {
@@ -388,17 +480,14 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         levelChanged : function(global, level) {
 
             this.gameLayer.removeChildren({ cleanup : true });
+            this.disabled = {};
             this.$("#stop").click();
             if (level) {
                 this.$("#canvasView canvas").show();
                 this.$("*").removeAttr("disabled");
-                level.get("camera").unbind("change", this.cameraChanged, this);
-                level.get("camera").bind("change", this.cameraChanged, this);
-                level.get("entities").unbind("add", this.entityAdded, this);
-                level.get("entities").unbind("remove", this.entityRemoved, this);
-                level.get("entities").bind("add", this.entityAdded, this);
-                level.get("entities").bind("remove", this.entityRemoved, this);
-                this.cameraChanged(level.get("camera"));
+                level.get("camera").rebind("change", this.cameraChanged, this, true);
+                level.get("entities").rebind("add", this.entityAdded, this);
+                level.get("entities").rebind("remove", this.entityRemoved, this);
                 level.get("entities").each(function(elem) {
                     this.entityAdded(elem);
                 }.bind(this));

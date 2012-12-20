@@ -35,6 +35,19 @@ define([], function() {
 
 		body : null,
 
+		setUrl : function(url) {
+
+			if (!url) {
+				this.textureAtlas = null;
+	            this.rect = new cc.Rect(0, 0, 0, 0);
+	        } else {
+		        this.textureAtlas = new cc.TextureAtlas({ url : url });
+	            cc.addListener(this.textureAtlas, 'load', function () {
+	                this.rect = new cc.Rect(0, 0, this.textureAtlas.texture.size.width, this.textureAtlas.texture.size.height)
+	            }.bind(this));
+	        }
+		},
+
 		cleanup : function() {
 
 			if (this.body)
@@ -164,6 +177,12 @@ define([], function() {
 
 			this.y = cc.Director.sharedDirector.winSize.height - this.y;
 			return (this);
+		},
+
+		toB2 : function(v) {
+
+			v = v || 1;
+			return (new b2Vec2(this.x / v, this.y / v));
 		},
     };
 

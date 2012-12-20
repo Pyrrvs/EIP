@@ -10952,7 +10952,7 @@ Sprite.inherit(Node, /** @lends cocos.nodes.Sprite# */{
     }
 
   , draw: function (ctx) {
-        if (!this.quad) {
+        if (!this.quad || !this.textureAtlas) {
             return
         }
         this.textureAtlas.drawQuad(ctx, this.quad)

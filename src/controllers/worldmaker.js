@@ -83,6 +83,11 @@ var Controller = kNode.Controller.extend({
         return (true);
     },
 
+    isBoolean : function(s) {
+
+        return (s == "true" || s == "false");
+    },
+
     parse : function(obj) {
 
         for (var i in obj) {
@@ -90,6 +95,8 @@ var Controller = kNode.Controller.extend({
                 this.parse(obj[i]);
             else if (this.isNumber(obj[i]))
                 obj[i] = parseFloat(obj[i]);
+            else if (this.isBoolean(obj[i]))
+                obj[i] = obj[i] == "true" ? true : false;
         }
     },
 });
