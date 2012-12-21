@@ -16,10 +16,19 @@ define([], function() {
 
 	var FixtureModel = Backbone.Model.extend({
 
+		initialize : function(attr) {
+
+			attr = this.attributes;
+			if (attr.shape_type == "polygon" && attr.shape.v.length && !(attr.shape.v[0] instanceof b2Vec2)) {
+				attr.shape.v = b2Vec2.verticesFromArray(attr.shape.v, 1);
+				this.set("shape", attr.shape);
+			}
+		},
+
 		defaults : function() { return {
 
             density : 1.0,
-            friction : 0.1,
+            friction : 1,
             restitution : 0.5,
             shape_type : null,
             shape : null,
@@ -33,9 +42,10 @@ define([], function() {
 
 	var BodyModel = Backbone.Model.extend({
 
-		initialize : function() {
+		initialize : function(attr) {
 
-			this.set("fixture", new FixtureModel(this.get("fixture")));
+			attr = this.attributes;
+			this.set("fixture", new FixtureModel(attr.fixture));
 		},
 
 		defaults : function() { return {

@@ -2,9 +2,17 @@ define(["model/EntityModel"], function() {
 
 	var CameraModel = Backbone.Model.extend({
 
+		initialize : function(attr) {
+
+			attr = this.attributes;
+			if (!(attr.position instanceof cc.Point))
+				this.set("position", cc.Point.fromObject(attr.position));
+		},
+
 		defaults : function() { return {
 
-			zoom : 1,
+			scale : 1,
+			rotation : 0,
 			position : cc.ccp(0, 0)
 		}}
 	})
@@ -14,13 +22,12 @@ define(["model/EntityModel"], function() {
 		initialize : function(attr) {
 
 			if (!(attr.camera instanceof CameraModel))
-				this.set("camera", new CameraModel({ zoom : attr.camera.zoom,
-					position : cc.Point.fromObject(attr.camera.position) }), { silent : true });
+				this.set("camera", new CameraModel(attr.camera), { silent : true });
 		},
 
 		defaults : function() { return {
 
-			name : null,
+			id : null,
 			camera : new CameraModel,
 			entities : new window.EntityCollection,
 		}},
@@ -41,10 +48,10 @@ define(["model/EntityModel"], function() {
 
 		model : LevelModel,
 
-		addLevel : function(name) {
+		addLevel : function(id) {
 
-			if (name != "" && !this.where({ name : name }).length)
-				this.add(new this.model({ name : name }));
+			if (id != "" && !this.where({ id : id }).length)
+				this.add(new this.model({ id : id }));
 		}
 	});
 

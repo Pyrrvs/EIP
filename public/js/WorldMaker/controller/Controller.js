@@ -9,7 +9,7 @@ define(["class"], function(Class) {
 				window.defaultId = world.id;
 				for (var i in world.levels) {
 					level = world.levels[i];
-					window.levels.push({ name : level.name, camera : level.camera });
+					window.levels.push({ id : level.id, camera : level.camera });
 					model = window.levels.last();
 					entities = model.get("entities");
 					for (var i in level.entities)
@@ -27,6 +27,7 @@ define(["class"], function(Class) {
 				"id" : window.defaultId,
 			};
 
+			console.log(d);
 			$.ajax(window.location.pathname + "/postWorld", { type : "POST", dataType : "json",
 				data : JSON.parse(JSON.stringify(d)), success : function(res) {
 				console.log(res);

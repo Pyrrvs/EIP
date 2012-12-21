@@ -167,7 +167,7 @@ define([], function() {
 		rotate : function(angle) {
 
 			var v = this.clone();
-			//	   angle = Math.radians(angle);
+			angle = cc.degreesToRadians(angle);
 			this.x = v.x * Math.cos(angle) - v.y  * Math.sin(angle);
 			this.y = v.x * Math.sin(angle) + v.y  * Math.cos(angle);
 			return (this);
@@ -183,6 +183,13 @@ define([], function() {
 
 			v = v || 1;
 			return (new b2Vec2(this.x / v, this.y / v));
+		},
+
+		floor : function() {
+
+			this.x = Math.floor(this.x);
+			this.y = Math.floor(this.y);
+			return (this);
 		},
     };
 
@@ -204,9 +211,20 @@ define([], function() {
 		return (cc.ccp(v.x * value, v.y * value));
 	};
 
+	cc.Point.fromB2 = function(v1, v) {
+
+		v = v || 1;
+		return (cc.ccp(v1.x * v, v1.y * v));
+	};
+
 	cc.Point.fromEvent = function(e) {
 
 		return (cc.ccp(e.offsetX, e.offsetY))
+	};
+
+	cc.Point.fromSize = function(s) {
+
+		return (cc.ccp(s.width, s.height));
 	};
 
 	cc.Point.fromObject = function(obj) {
@@ -214,10 +232,29 @@ define([], function() {
 		return (cc.ccp(obj.x, obj.y));
 	};
 
+	b2Vec2.verticesFromArray = function(array, scale) {
+
+        var vertices = []
+        for (var i in array)
+            vertices.push(new b2Vec2(array[i].x * scale, array[i].y * scale));
+        return (vertices);
+	};
+
+	b2Vec2.scaleVertices = function(array, scale) {
+
+		return (_.map(array, function(v) {
+			return (new b2Vec2(v.x * scale, v.y * scale));
+		}));
+	};
+
+	Math.range = function(v, min, max) {
+
+		return (v < min ? min : v > max ? max : v);
+	};
+
 	return ({
 
 		DynamicScene : DynamicScene,
 		Entity : Entity,
 	});
-
 })
