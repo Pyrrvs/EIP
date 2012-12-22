@@ -9,8 +9,10 @@ define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/Men
 
 	window.controller.getWorld(function() {
 		// debug
-		$("#levelView .accordion-heading a").first().click();
-		setTimeout(function() {	$("#levelView .accordion-body").first().find("li a").first().click(); }, 200);
+		setTimeout(function() {
+			$("#levelView .accordion-heading a").first().click();
+			setTimeout(function() {	$("#levelView .accordion-body").first().find("li a").first().click(); }, 200);
+		});
 		// !debug
 	})
 	$("#worldmaker").css("visibility", "visible").hide().fadeIn(500);

@@ -252,6 +252,16 @@ define([], function() {
 		return (v < min ? min : v > max ? max : v);
 	};
 
+	Math.minimize = function(v, min) {
+
+		return (v < min ? min : v);
+	};
+
+	Math.maximize = function(v, max) {
+
+		return (v > max ? max : v);
+	};
+
 	return ({
 
 		DynamicScene : DynamicScene,

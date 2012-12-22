@@ -23,6 +23,14 @@ define(["model/EntityModel"], function() {
 
 			if (!(attr.camera instanceof CameraModel))
 				this.set("camera", new CameraModel(attr.camera), { silent : true });
+			if (!(attr.entities instanceof window.EntityCollection)) {
+				var entities = new window.EntityCollection;
+				_.each(attr.entities, function(entity) {
+					entities.push(entity);
+				});
+				this.set("entities", entities, { silent : true });
+			}
+
 		},
 
 		defaults : function() { return {

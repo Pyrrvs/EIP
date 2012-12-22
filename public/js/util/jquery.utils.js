@@ -25,4 +25,10 @@ $(function() {
 
 		$(nameClass).hide().parent().find(nameClass + '[data-type="' + $(e.target).data("type") + '"]').show().trigger("change");
 	});
+
+	$("body").on("change", 'input[type="number"]', function(e) {
+
+		if (_.isNaN(parseInt($(e.target).val())))
+			$(e.target).val(0);
+	});
 });

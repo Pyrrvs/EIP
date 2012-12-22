@@ -33,8 +33,10 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 			fixture.unbind("change", this.entityFixtureChanged, this);
 			var $type = this.$('.shape-type[data-type="' + fixture.get("type") + '"]');
 			fixture.set("position", cc.ccp(parseFloat($type.find("#position-x").val()), parseFloat($type.find("#position-y").val())), opts);
-			if (fixture.get("type") == b2Shape.e_circleShape)
+			if (fixture.get("type") == b2Shape.e_circleShape) {
+				$type.find("#radius").val(Math.minimize($type.find("#radius").val(), 0.1));
 				fixture.set("shape", $type.find("#radius").val(), opts);
+			}
 			fixture.change();
 			fixture.bind("change", this.entityFixtureChanged, this);
 		},
@@ -43,36 +45,34 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 			var entity = window.global.get("entity"), opts = { silent : true };
 			entity.unbind("change", this.entityChanged, this);
-			entity.set("enabled", this.$("#enable").attr("checked"));
+			entity.set("enabled", !!this.$("#enable").attr("checked"));
 			entity.set("id", this.$("#id").val());
 			entity.set("class", this.$("#class button").first().text(), opts);
 			entity.set("position", cc.ccp(parseFloat(this.$("#position-x").val()), parseFloat(this.$("#position-y").val())), opts);
 			entity.set("rotation", parseFloat(this.$("#rotation").val()), opts);
 			entity.set("scale", parseFloat(this.$("#scale").val()), opts);
 			entity.get("body").set("type", parseInt(this.$('#body-type input:checked').attr("data-type")));
-			entity.get("body").set("shown", this.$("#show-body-layer").attr("checked"));
-			entity.get("model").set("shown", this.$("#show-model-layer").attr("checked"));
+			entity.get("body").set("shown", !!this.$("#show-body-layer").attr("checked"));
+			entity.get("model").set("shown", !!this.$("#show-model-layer").attr("checked"));
             entity.change();
 			entity.bind("change", this.entityChanged, this);
 		},
 
 		selectedEntityChanged : function(global, entity) {
 
-			if (entity) {
-				entity.rebind("change", this.entityChanged, this, true);
-				entity.get("body").get("fixture").rebind("change", this.entityFixtureChanged, this, true);
-				entity.get("body").rebind("change:shown", this.entityShownChanged, this);
-				entity.get("model").rebind("change:shown", this.entityShownChanged, this, true);
-			}
+			if (!entity) return;
+			entity.rebind("change", this.entityChanged, this, true);
+			entity.get("body").get("fixture").rebind("change", this.entityFixtureChanged, this, true);
+			entity.get("body").rebind("change:shown", this.entityShownChanged, this);
+			entity.get("model").rebind("change:shown", this.entityShownChanged, this, true);
 		},
 
 		entityShownChanged : function(body, shown) {
 
 			var entity = window.global.get("entity"), opts = { silent : true };
-			if (entity) {
-				this.$("#show-model-layer").attr("checked", entity.get("model").get("shown"));
-				this.$("#show-body-layer").attr("checked", entity.get("body").get("shown"));
-			}
+			if (!entity) return;
+			this.$("#show-model-layer").attr("checked", entity.get("model").get("shown"));
+			this.$("#show-body-layer").attr("checked", entity.get("body").get("shown"));
 		},
 
 		entityChanged : function(entity, opts) {
@@ -147,10 +147,9 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		selectedLevelChanged : function(global, level) {
 
-			if (level) {
-				window.global.get("level").rebind("change", this.levelChanged, this, true);
-				window.global.get("level").get("camera").rebind("change", this.cameraChanged, this, true);
-			}
+			if (!level) return;
+			window.global.get("level").rebind("change", this.levelChanged, this, true);
+			window.global.get("level").get("camera").rebind("change", this.cameraChanged, this, true);
 		},
 
 		levelChanged : function(level, opts) {
@@ -206,10 +205,7 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		modeChanged : function(global, mode) {
 
-			if (mode == "camera")
-				this.$('#tabs a[href="#tab-level"]').tab("show");
-			else if (mode == "entity")
-				this.$('#tabs a[href="#tab-entity"]').tab("show");
+			this.$('#tabs a[href="#tab-' + (mode == "camera" ? "level" : "entity") + '"]').tab("show");
 		},
 	});
 

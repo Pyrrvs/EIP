@@ -1,19 +1,5 @@
 define([], function() {
 
-	Backbone.Model.prototype.rebind = function(a, b, c, d) {
-
-		this.unbind(a, b, c);
-		this.bind(a, b, c);
-		if (d)
-			b.call(c, this);
-	};
-
-	Backbone.Collection.prototype.rebind = function(a, b, c) {
-
-		this.unbind(a, b, c);
-		this.bind(a, b, c);
-	};
-
 	var FixtureModel = Backbone.Model.extend({
 
 		initialize : function(attr) {
@@ -55,8 +41,6 @@ define([], function() {
 			shown : true,
 			type : 0,
 			fixture : new FixtureModel,
-
-//			multi fixtures
 //			fixtures : new FixtureCollection,
 		}}
 	});
@@ -77,14 +61,12 @@ define([], function() {
 			this.set("body", new BodyModel(attr.body));
 			this.set("model", new ModelModel(attr.model));
 			this.set("position", cc.Point.fromObject(attr.position));
-			if (!attr.id)
-				this.set("id", window.defaultId++);
-			this.set("id", this.get("id") + "");
+			this.set("id", attr.id);
 		},
 
 		defaults : function() { return {
 
-			id : null,
+			id : "noname" + window.defaultId++,
 			enabled : "checked",
 			position : cc.ccp(0, 0),
 			scale : 1,

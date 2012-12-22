@@ -5,16 +5,9 @@ define(["class"], function(Class) {
 		getWorld : function(callback) {
 
 			$.ajax(window.location.pathname + "/getWorld", { type : "GET", dataType : "json", success : function(world) {
-				var level = null, model = null, entities = null;
 				window.defaultId = world.id;
-				for (var i in world.levels) {
-					level = world.levels[i];
-					window.levels.push({ id : level.id, camera : level.camera });
-					model = window.levels.last();
-					entities = model.get("entities");
-					for (var i in level.entities)
-						entities.add(level.entities[i]);
-				}
+				for (var i in world.levels)
+					window.levels.push(world.levels[i]);
 				callback();
 			}.bind(this), error : function(log) { console.log(log); }});
 			return (this);

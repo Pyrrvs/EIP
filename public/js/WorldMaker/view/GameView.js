@@ -9,17 +9,21 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         function(ctx) {
 
+            var fixture = this.body.GetFixtureList();
+            if (!fixture) return;
             ctx.lineWidth = 2 / this.scale / this.parent.scale;
             ctx.beginPath();
             ctx.arc(this.contentSize.width / 2, this.contentSize.height / 2,
-                this.body.GetFixtureList().GetShape().GetRadius() * 30 / this.scale + 1, 0, 2 * Math.PI, false);
+                fixture.GetShape().GetRadius() * 30 / this.scale + 1, 0, 2 * Math.PI, false);
             ctx.strokeStyle = 'red';
-            ctx.stroke();            
+            ctx.stroke();           
         },
 
         function(ctx) {
 
-            var shape = this.body.GetFixtureList().GetShape(), vertices = shape.GetVertices(),
+            var fixture = this.body.GetFixtureList();
+            if (!fixture) return;
+            var shape = fixture.GetShape(), vertices = shape.GetVertices(),
                 v = null, s = cc.Point.fromSize(this.contentSize).scale(0.5), scale = 30 / this.scale;
             ctx.lineWidth = 2 / this.scale / this.parent.scale;
             ctx.beginPath();
@@ -200,8 +204,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         clickPlay : function() {
 
-            if (window.global.get("run") == "play")
-                return ;
+            if (window.global.get("run") == "play") return ;
             if (window.global.get("run") == "stop") {
                 this.save.entities.reset();
                 this.save.camera = window.global.get("level").get("camera").clone();
@@ -220,8 +223,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         clickPause : function() {
 
-            if (window.global.get("run") == "pause")
-                return ;
+            if (window.global.get("run") == "pause") return ;
             if (window.global.get("run") == "stop")
                 this.clickPlay();
             var opts = { silent : true };
@@ -236,11 +238,9 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         clickStop : function() {
 
-            if (window.global.get("run") == "stop")
-                return ;
+            if (window.global.get("run") == "stop") return ;
             this.scene.unscheduleUpdate();
-            if (!window.global.get("level"))
-                return ;
+            if (!window.global.get("level")) return ;
             var camera = window.global.get("level").get("camera");
             camera.attributes = this.save.camera.attributes;
             camera.trigger("change", camera, {});
@@ -272,8 +272,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         dragstart : function(e) {
 
             this.dragging.type = null;
-            if (window.global.get("run") == "play")
-                return ;
+            if (window.global.get("run") == "play") return ;
             if (window.global.get("mode") == "camera") {
                 this.dragging.position = this.gameLayer.position.clone();
                 this.dragging.type = "camera";
@@ -296,8 +295,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         drag : function(e, a) {
 
-            if (window.global.get("run") == "play")
-                return ;
+            if (window.global.get("run") == "play") return ;
             if (this.dragging.type == "camera")
                 window.global.get("level").get("camera").set("position", cc.Point.add(this.dragging.position,
                     cc.ccp(a.deltaX, -a.deltaY)).floor());
@@ -306,6 +304,8 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                     cc.Point.sub(this.dragging.position, this.uiLayer.selectCircle.position)
                     .angle(cc.Point.sub(this.transformPointEvent(e), this.uiLayer.selectCircle.position))));
             else if (this.dragging.type == "entity")
+                // window.global.get("entity").entity.position = cc.Point.add(this.dragging.position,
+                //     cc.ccp(a.deltaX, -a.deltaY).rotate(this.uiLayer.rotation).scale(1 / this.uiLayer.scale).floor());
                 window.global.get("entity").set("position", cc.Point.add(this.dragging.position,
                     cc.ccp(a.deltaX, -a.deltaY).rotate(this.uiLayer.rotation).scale(1 / this.uiLayer.scale).floor()));
         },
@@ -317,8 +317,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         click : function(e) {
 
-            if (window.global.get("run") == "play")
-                return ;
+            if (window.global.get("run") == "play") return ;
             var entity = this.isEntityClicked(this.transformPointEvent(e));
             window.global.set("entity", entity ? entity.model : null);                
         },
@@ -355,8 +354,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
             var fix = entity.body.GetFixtureList(), scale = entity.scale / 30.0;
 
-            if (!fix)
-                return;
+            if (!fix) return;
             if (fixture.type == b2Shape.e_circleShape)
                 fix.GetShape().SetRadius(fixture.shape * scale);
             else if (fixture.type == b2Shape.e_polygonShape)
@@ -381,12 +379,11 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             var data = entity.attributes;
 
             entity = entity.entity;
+            entity.body.SetActive(data.enabled);
             if (!data.enabled) {
-                entity.body.SetActive(false);
                 this.disabled[entity.id] = entity;
                 this.gameLayer.removeChild({ child : entity, cleanup : false });
             } else {
-                entity.body.SetActive(true);
                 this.gameLayer.addChild(entity);
                 delete this.disabled[entity.id];
             }
@@ -411,6 +408,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                     fixdef.shape = new b2CircleShape(fixture.shape * scale);
                 else if (fixture.type == b2Shape.e_polygonShape)
                     fixdef.shape = b2PolygonShape.AsArray(b2Vec2.scaleVertices(fixture.shape, scale), fixture.shape.length);
+                else return;
                 fix = entity.body.CreateFixture(fixdef);
             } else
                 this.updateEntityShape(entity, fixture);
@@ -440,7 +438,6 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         entityAdded : function(model) {
 
             var entity = new Entity;
-            this.gameLayer.addChild(entity);
             entity.body = this.scene.world.CreateBody(new b2BodyDef);
             entity.model = model;
             model.entity = entity;
@@ -461,22 +458,15 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         levelChanged : function(global, level) {
 
-            this.gameLayer.removeChildren({ cleanup : true });
             this.disabled = {};
+            this.$("*").attr("disabled", !level);
+            this.$("#canvasView canvas").toggle(!!level);
+            this.gameLayer.removeChildren({ cleanup : true });
             this.$("#stop").click();
-            if (level) {
-                this.$("#canvasView canvas").show();
-                this.$("*").removeAttr("disabled");
-                level.get("camera").rebind("change", this.cameraChanged, this, true);
-                level.get("entities").rebind("add", this.entityAdded, this);
-                level.get("entities").rebind("remove", this.entityRemoved, this);
-                level.get("entities").each(function(elem) {
-                    this.entityAdded(elem);
-                }.bind(this));
-            } else {
-                this.$("#canvasView canvas").hide();
-                this.$("*").attr("disabled", "");
-            }
+            if (!level) return;
+            level.get("camera").rebind("change", this.cameraChanged, this, true);
+            level.get("entities").rebind("add", this.entityAdded, this, true);
+            level.get("entities").rebind("remove", this.entityRemoved, this);
         },
 	});
 
