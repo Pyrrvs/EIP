@@ -5,9 +5,9 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         Entity.superclass.constructor.apply(this, arguments)
     };
 
-    Entity.physicLayer = {
+    Entity.physicLayer = [
 
-        circle : function(ctx) {
+        function(ctx) {
 
             ctx.lineWidth = 2 / this.scale / this.parent.scale;
             ctx.beginPath();
@@ -17,7 +17,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             ctx.stroke();            
         },
 
-        polygon : function(ctx) {
+        function(ctx) {
 
             var shape = this.body.GetFixtureList().GetShape(), vertices = shape.GetVertices(),
                 v = null, s = cc.Point.fromSize(this.contentSize).scale(0.5), scale = 30 / this.scale;
@@ -34,7 +34,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             ctx.lineTo(v.x, v.y);
             ctx.stroke();
         },
-    };
+    ];
 
     Entity.inherit(kge.Entity, {
 
@@ -164,11 +164,11 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         el : $("#gameView"),
         dragging : { type : null, position : new cc.Point(0, 0), rotation : 0 },
+        save : { entities : new EntityCollection, camera : new CameraModel },
         disabled : null,
         scene : null,
         uiLayer : null,
         gameLayer : null,
-        save : new EntityCollection,
 
         events : {
 
@@ -203,11 +203,12 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             if (window.global.get("run") == "play")
                 return ;
             if (window.global.get("run") == "stop") {
-                this.save.reset();
+                this.save.entities.reset();
+                this.save.camera = window.global.get("level").get("camera").clone();
                 window.global.get("level").get("entities").each(function(entity) {
                     var s = entity.clone();
                     s.attributes = $.extend(true, {}, entity.attributes);
-                    this.save.push(s);
+                    this.save.entities.push(s);
                 }.bind(this));
             }
             this.gameLayer.children.forEach(function(entity) {
@@ -240,8 +241,11 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             this.scene.unscheduleUpdate();
             if (!window.global.get("level"))
                 return ;
+            var camera = window.global.get("level").get("camera");
+            camera.attributes = this.save.camera.attributes;
+            camera.trigger("change", camera, {});
             window.global.get("level").get("entities").each(function(entity) {
-                entity.attributes = this.save._byId[entity.get("id")].attributes;
+                entity.attributes = this.save.entities._byId[entity.get("id")].attributes;
             }.bind(this));
             var entity = window.global.get("entity");
             if (entity)
@@ -353,10 +357,10 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
             if (!fix)
                 return;
-            if (fixture.shape_type == "circle")
-                fix.GetShape().SetRadius(fixture.shape.r * scale);
-            else if (fixture.shape_type == "polygon")
-                fix.GetShape().SetAsArray(b2Vec2.scaleVertices(fixture.shape.v, scale), fixture.shape.v.length);
+            if (fixture.type == b2Shape.e_circleShape)
+                fix.GetShape().SetRadius(fixture.shape * scale);
+            else if (fixture.type == b2Shape.e_polygonShape)
+                fix.GetShape().SetAsArray(b2Vec2.scaleVertices(fixture.shape, scale), fixture.shape.length);
         },
 
         entityChanged : function(model) {
@@ -366,7 +370,8 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             entity.position = data.position.clone();
             entity.scale = data.scale;
             entity.rotation = data.rotation;
-            this.updateEntityShape(entity, data.body.get("fixture").attributes);
+            if (model.hasChanged("scale"))
+                this.updateEntityShape(entity, data.body.get("fixture").attributes);
             entity.body.SetPosition(entity.position.toB2(30));
             entity.body.SetAngle(cc.degreesToRadians(-entity.rotation));
         },
@@ -392,7 +397,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             var entity = body.entity;
             body = body.attributes;
             entity.body.SetType(body.type);
-            entity.physicLayer = body.shown ? Entity.physicLayer[body.fixture.get("shape_type")] : null;
+            entity.physicLayer = body.shown ? Entity.physicLayer[body.fixture.get("type")] : null;
         },
 
         entityFixtureChanged : function(fixture) {
@@ -402,12 +407,13 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             var fix = entity.body.GetFixtureList(), scale = entity.scale / 30.0;
             if (fix == null) {
                 var fixdef = new b2FixtureDef;
-                if (fixture.shape_type == "circle")
-                    fixdef.shape = new b2CircleShape(fixture.shape.r * scale);
-                else if (fixture.shape_type == "polygon")
-                    fixdef.shape = b2PolygonShape.AsArray(b2Vec2.scaleVertices(fixture.shape.v, scale), fixture.shape.v.length);
+                if (fixture.type == b2Shape.e_circleShape)
+                    fixdef.shape = new b2CircleShape(fixture.shape * scale);
+                else if (fixture.type == b2Shape.e_polygonShape)
+                    fixdef.shape = b2PolygonShape.AsArray(b2Vec2.scaleVertices(fixture.shape, scale), fixture.shape.length);
                 fix = entity.body.CreateFixture(fixdef);
-            }
+            } else
+                this.updateEntityShape(entity, fixture);
             fix.SetDensity(fixture.density);
             fix.SetFriction(fixture.friction);
             fix.SetRestitution(fixture.restitution);
@@ -442,10 +448,10 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             model.get("body").entity = entity;
             model.get("body").get("fixture").entity = entity;
             model.rebind("change", this.entityChanged, this, true);
-            model.rebind("change:enabled", this.entityEnabledChanged, this, true);
-            model.get("body").rebind("change", this.entityBodyChanged, this, true);
             model.get("body").get("fixture").rebind("change", this.entityFixtureChanged, this, true);
+            model.get("body").rebind("change", this.entityBodyChanged, this, true);
             model.get("model").rebind("change", this.entityModelChanged, this, true);
+            model.rebind("change:enabled", this.entityEnabledChanged, this, true);
         },
 
         entityRemoved : function(entity, entities) {

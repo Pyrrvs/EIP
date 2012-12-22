@@ -163,17 +163,36 @@
                   <div class="line-top">
                     <span>type : </span>
                     <div id="body-type" class="pull-right radio-group">
-                      <span class="label-input">dynamic</span><input type="radio" id="body-type" data-type="2"/>
-                      <span class="label-input">static</span><input type="radio" id="body-type" data-type="0"/>
-                      <span class="label-input">kinematic</span><input type="radio" id="body-type" data-type="1"/>
+                      <span class="label-input">dynamic</span><input type="radio" name="body-type" data-type="2"/>
+                      <span class="label-input">static</span><input type="radio" name="body-type" data-type="0"/>
+                      <span class="label-input">kinematic</span><input type="radio" name="body-type" data-type="1"/>
                     </div>
                   </div>
                   <div class="line-top top semi-bot">
                     <span>shape : </span>
-                    <div id="body-layer" class="pull-right radio-group">
-                      <span class="label-input">circle</span><input type="radio" id="body-layer"/>
-                      <span class="label-input">box</span><input type="radio" id="body-layer"/>
-                      <span class="label-input">polygon</span><input type="radio" id="body-layer"/>
+                    <div id="shape-type" class="pull-right radio-group">
+                      <span class="label-input">circle</span><input type="radio" class="tab" name="shape-type" data-type="0"/>
+                      <span class="label-input">polygon</span><input type="radio" class="tab" name="shape-type" data-type="1"/>
+                    </div>
+                  </div>
+                  <div id="circle" class="shape-type" data-type="0">
+                    <div class="line-top">
+                      <span class="label-input">x : </span>
+                      <input id="position-x" class="entity-member" type="number" step="5"></input>
+                      <input id="radius" class="entity-member pull-right" type="number" step="1"></input>
+                      <span class="pull-right label-input">radius : </span>
+                    </div>
+                    <div class="line-top semi-bot">
+                      <span class="label-input">y : </span>
+                      <input id="position-y" class="entity-member" type="number" step="5"></input>
+                    </div>
+                  </div>
+                  <div id="polygon" class="shape-type" data-type="1">
+                    <div class="line-top">
+                      <span class="label-input">x : </span>
+                      <input id="position-x" class="entity-member" type="number" step="5"></input>
+                      <input id="position-y" class="entity-member pull-right" type="number" step="5"></input>
+                      <span class="label-input pull-right">y : </span>
                     </div>
                   </div>
                 </div>

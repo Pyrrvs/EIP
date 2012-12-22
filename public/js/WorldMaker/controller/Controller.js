@@ -27,7 +27,6 @@ define(["class"], function(Class) {
 				"id" : window.defaultId,
 			};
 
-			console.log(d);
 			$.ajax(window.location.pathname + "/postWorld", { type : "POST", dataType : "json",
 				data : JSON.parse(JSON.stringify(d)), success : function(res) {
 				console.log(res);

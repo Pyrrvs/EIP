@@ -19,7 +19,8 @@ define([], function() {
 		initialize : function(attr) {
 
 			attr = this.attributes;
-			if (attr.shape_type == "polygon" && attr.shape.v.length && !(attr.shape.v[0] instanceof b2Vec2)) {
+			this.set("position", cc.Point.fromObject(attr.position));
+			if (attr.type == "polygon" && attr.shape.v.length && !(attr.shape.v[0] instanceof b2Vec2)) {
 				attr.shape.v = b2Vec2.verticesFromArray(attr.shape.v, 1);
 				this.set("shape", attr.shape);
 			}
@@ -30,8 +31,9 @@ define([], function() {
             density : 1.0,
             friction : 1,
             restitution : 0.5,
-            shape_type : null,
+            type : null,
             shape : null,
+            position : cc.ccp(0, 0),
 		}}
 	});
 

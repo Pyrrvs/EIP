@@ -8,13 +8,16 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 		events : {
 
 			"validate #id" : "changeEntity",
-			"change .entity-member" : "changeEntity",
-			"click #body-type" : "changeEntity",
+			"change #collapse-charac .entity-member" : "changeEntity",
+			'click #body-type input[type="radio"]' : "changeEntity",
 			'click input[type="checkbox"]' : "changeEntity",
+			'click #shape-type input[type="radio"]' : "changeEntity",
+			"change #collapse-body .entity-member" : "changeEntityFixture",
 		},
 
 		initialize : function() {
 
+			this.$(".shape-type").hide();
 			window.global.bind("change:entity", this.selectedEntityChanged, this);
 			window.global.bind("change:run", this.runChanged, this);
 		},
@@ -24,9 +27,22 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 			this.$("*").attr("disabled", run == "play")
 		},
 
+		changeEntityFixture : function(e) {
+
+			var entity = window.global.get("entity"), opts = { silent : true }, fixture = entity.get("body").get("fixture");
+			fixture.unbind("change", this.entityFixtureChanged, this);
+			var $type = this.$('.shape-type[data-type="' + fixture.get("type") + '"]');
+			fixture.set("position", cc.ccp(parseFloat($type.find("#position-x").val()), parseFloat($type.find("#position-y").val())), opts);
+			if (fixture.get("type") == b2Shape.e_circleShape)
+				fixture.set("shape", $type.find("#radius").val(), opts);
+			fixture.change();
+			fixture.bind("change", this.entityFixtureChanged, this);
+		},
+
 		changeEntity : function(e) {
 
 			var entity = window.global.get("entity"), opts = { silent : true };
+			entity.unbind("change", this.entityChanged, this);
 			entity.set("enabled", this.$("#enable").attr("checked"));
 			entity.set("id", this.$("#id").val());
 			entity.set("class", this.$("#class button").first().text(), opts);
@@ -37,12 +53,14 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 			entity.get("body").set("shown", this.$("#show-body-layer").attr("checked"));
 			entity.get("model").set("shown", this.$("#show-model-layer").attr("checked"));
             entity.change();
+			entity.bind("change", this.entityChanged, this);
 		},
 
 		selectedEntityChanged : function(global, entity) {
 
 			if (entity) {
 				entity.rebind("change", this.entityChanged, this, true);
+				entity.get("body").get("fixture").rebind("change", this.entityFixtureChanged, this, true);
 				entity.get("body").rebind("change:shown", this.entityShownChanged, this);
 				entity.get("model").rebind("change:shown", this.entityShownChanged, this, true);
 			}
@@ -51,8 +69,10 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 		entityShownChanged : function(body, shown) {
 
 			var entity = window.global.get("entity"), opts = { silent : true };
-			this.$("#show-model-layer").attr("checked", entity.get("model").get("shown"));
-			this.$("#show-body-layer").attr("checked", entity.get("body").get("shown"));
+			if (entity) {
+				this.$("#show-model-layer").attr("checked", entity.get("model").get("shown"));
+				this.$("#show-body-layer").attr("checked", entity.get("body").get("shown"));
+			}
 		},
 
 		entityChanged : function(entity, opts) {
@@ -65,7 +85,17 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 			this.$("#rotation").val(entity.get("rotation"));
 			this.$("#scale").val(entity.get("scale"));
 			this.$('#body-type input[data-type="' + entity.get("body").get("type") + '"]').attr("checked", true);
-			this.$('#body-type :not(input[data-type="' + entity.get("body").get("type") + '"])').attr("checked", false);
+		},
+
+		entityFixtureChanged : function(fixture) {
+
+			fixture = fixture.attributes;
+			var $type = this.$(".shape-type").hide().parent().find('.shape-type[data-type="' + fixture.type + '"]').show();
+			this.$('#shape-type input[data-type="' + fixture.type + '"]').attr("checked", true);
+			$type.find("#position-x").val(fixture.position.x);
+			$type.find("#position-y").val(fixture.position.y);
+			if (fixture.type == b2Shape.e_circleShape)
+				$type.find("#radius").val(fixture.shape);
 		},
 	});
 

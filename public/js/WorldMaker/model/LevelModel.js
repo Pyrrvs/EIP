@@ -1,6 +1,6 @@
 define(["model/EntityModel"], function() {
 
-	var CameraModel = Backbone.Model.extend({
+	window.CameraModel = Backbone.Model.extend({
 
 		initialize : function(attr) {
 
