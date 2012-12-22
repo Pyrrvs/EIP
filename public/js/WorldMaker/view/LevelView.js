@@ -47,7 +47,9 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		showButton : function(e) {
 
-			$(e.target).parent().find(".btn").show();
+			if ($(e.target).parent().hasClass("entity") || window.global.get("level")
+				== window.levels.where({ id : $(e.target).parent().find("a").text() })[0])
+				$(e.target).parent().find(".btn").show();
 		},
 
 		hideButton : function(e) {
@@ -58,11 +60,14 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 		deselectLevel : function(e, target) {
 
 			window.global.set("level", null);
+			$(target).parent().find(".btn").hide();
 		},
 
 		selectLevel : function(e, target) {
 
 			window.global.set("level", window.levels.where({ id : $(target).text() })[0]);
+			if ($(target).css("color") == "#005580")
+				$(target).parent().find(".btn").show();
 		},
 
 		createEntity : function(e) {

@@ -209,8 +209,8 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                 this.save.entities.reset();
                 this.save.camera = window.global.get("level").get("camera").clone();
                 window.global.get("level").get("entities").each(function(entity) {
-                    var s = entity.clone();
-                    s.attributes = $.extend(true, {}, entity.attributes);
+                    entity.set("id", entity.get("id"));
+                    var s = entity.deepClone(true);
                     this.save.entities.push(s);
                 }.bind(this));
             }
@@ -236,6 +236,12 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             window.global.set("run", "pause");
         },
 
+        ////////////////////////////////////////
+        //                                    //
+        //  TODO HANDLE DISABLE WHEN PLAYING  //
+        //                                    //
+        ////////////////////////////////////////
+
         clickStop : function() {
 
             if (window.global.get("run") == "stop") return ;
@@ -251,8 +257,13 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             if (entity)
                 entity.trigger("change", entity, {});
             this.gameLayer.children.forEach(function(entity) {
-                this.entityChanged(entity.model);
-                var type = entity.body.GetType();
+                var model = entity.model, type = null;
+                this.entityChanged(model);
+                this.entityEnabledChanged(model);
+                this.entityBodyChanged(model.get("body"));
+                this.entityFixtureChanged(model.get("body").get("fixture"));
+                this.entityModelChanged(model.get("model"));
+                type = entity.body.GetType();
                 entity.body.SetType(0);
                 entity.body.SetType(type);
             }.bind(this));
@@ -304,8 +315,6 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                     cc.Point.sub(this.dragging.position, this.uiLayer.selectCircle.position)
                     .angle(cc.Point.sub(this.transformPointEvent(e), this.uiLayer.selectCircle.position))));
             else if (this.dragging.type == "entity")
-                // window.global.get("entity").entity.position = cc.Point.add(this.dragging.position,
-                //     cc.ccp(a.deltaX, -a.deltaY).rotate(this.uiLayer.rotation).scale(1 / this.uiLayer.scale).floor());
                 window.global.get("entity").set("position", cc.Point.add(this.dragging.position,
                     cc.ccp(a.deltaX, -a.deltaY).rotate(this.uiLayer.rotation).scale(1 / this.uiLayer.scale).floor()));
         },

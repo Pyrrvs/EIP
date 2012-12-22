@@ -38,6 +38,13 @@
     height: 480px;
 }
 
+.btn-micro {
+
+    padding: 0px;
+    font-size: 7pt;
+    height: 15px;
+}
+
 .icon-add {
 
     background: url("/img/icon-add.png") no-repeat top left;    
@@ -48,9 +55,13 @@
     background: url("/img/icon-delete.png") no-repeat top left;
 }
 
-.btn-icon {
+.accordion-group a {
 
-    overflow: auto;
+    text-decoration: none;
+}
+
+.btn-icon, .btn-icon-tiny {
+
     padding: 0px;
     width: 22px;
     height: 22px;
@@ -59,25 +70,17 @@
     border-radius: 10px;
 }
 
-.btn-icon:hover {
+.btn-icon:hover, .btn-icon-tiny:hover {
 
     background-position: 0px 0px;
+    box-shadow: 0px 0px 2px gray;
 }
 
 .btn-icon-tiny {
 
-    overflow: auto;
-    padding: 0px;
     width: 16px;
     height: 16px;
     background-size: 14px 14px;
-    background-position: 0px 0px;
-    border-radius: 10px;
-}
-
-.btn-icon-tiny:hover {
-
-    background-position: 0px 0px;
 }
 
 .btn-tiny {
