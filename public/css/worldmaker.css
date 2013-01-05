@@ -269,3 +269,15 @@ input[type="radio"] {
 
     margin-left: 5px;
 }
+
+.fixture {
+
+    padding-bottom: 0px;
+    margin-bottom: 5px;
+}
+
+#fixtures {
+
+    max-height: 300px;
+    overflow: scroll;
+}

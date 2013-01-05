@@ -30,7 +30,6 @@ define(["model/EntityModel"], function() {
 				});
 				this.set("entities", entities, { silent : true });
 			}
-
 		},
 
 		defaults : function() { return {

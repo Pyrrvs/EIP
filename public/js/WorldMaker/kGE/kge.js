@@ -234,14 +234,28 @@ define([], function() {
 
 	b2Vec2.verticesFromArray = function(array, scale) {
 
-        var vertices = []
-        for (var i in array)
-            vertices.push(new b2Vec2(array[i].x * scale, array[i].y * scale));
+        var vertices = [];
+        scale = scale || 1;
+        _.each(array, function(elem) {
+            vertices.push(new b2Vec2(elem.x * scale, elem.y * scale));
+        });
+        return (vertices);
+	};
+
+	b2Vec2.verticesFromCollection = function(array, scale, pos) {
+
+        var vertices = [];
+        scale = scale || 1;
+        pos = pos || cc.ccp(0, 0);
+        array.each(function(elem) {
+            vertices.push(new b2Vec2((elem.get("x") + pos.x) * scale, (elem.get("y") + pos.y) * scale));
+        });
         return (vertices);
 	};
 
 	b2Vec2.scaleVertices = function(array, scale) {
 
+        scale = scale || 1;
 		return (_.map(array, function(v) {
 			return (new b2Vec2(v.x * scale, v.y * scale));
 		}));

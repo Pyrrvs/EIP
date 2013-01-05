@@ -6,9 +6,11 @@ define([], function() {
 
 			attr = this.attributes;
 			this.set("position", cc.Point.fromObject(attr.position));
-			if (attr.type == "polygon" && attr.shape.v.length && !(attr.shape.v[0] instanceof b2Vec2)) {
-				attr.shape.v = b2Vec2.verticesFromArray(attr.shape.v, 1);
-				this.set("shape", attr.shape);
+			if (attr.type == b2Shape.e_polygonShape) {
+				var vertices = new Backbone.Collection;
+				_.each(attr.shape, function(elem) { vertices.push(elem); });
+				this.set("shape", vertices);
+				vertices.fixture = this;
 			}
 		},
 
@@ -32,16 +34,17 @@ define([], function() {
 
 		initialize : function(attr) {
 
+			var fixtures = new FixtureCollection;
 			attr = this.attributes;
-			this.set("fixture", new FixtureModel(attr.fixture));
+			_.each(attr.fixtures, function(elem) { fixtures.push(new FixtureModel(elem)); });
+			this.set("fixtures", fixtures);
 		},
 
 		defaults : function() { return {
 
-			shown : true,
 			type : 0,
-			fixture : new FixtureModel,
-//			fixtures : new FixtureCollection,
+			shown : true,
+			fixtures : new FixtureCollection,
 		}}
 	});
 

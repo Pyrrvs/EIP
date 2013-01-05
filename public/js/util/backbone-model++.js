@@ -1,9 +1,11 @@
 Backbone.Model.prototype.rebind = function(a, b, c, d) {
 
-  this.unbind(a, b, c);
+  try {
+    this.unbind(a, b, c);
+  } catch (e) {}
   this.bind(a, b, c);
   if (d)
-    b.call(c, this);
+    b.call(c, this, true);
 };
 
 Backbone.Collection.prototype.rebind = function(a, b, c, d) {
@@ -13,7 +15,7 @@ Backbone.Collection.prototype.rebind = function(a, b, c, d) {
   if (d && a == "add") {
     var self = this;
     this.each(function(model) {
-      b.call(c, model, self)
+      b.call(c, model, self, true)
     });
   }
 };

@@ -1,9 +1,13 @@
-define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner_li.tpl", "model/LevelModel"],
-		function(Class, accordion, _class) {
+define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner_li.tpl", "text!/template/vertice.tpl",
+	"text!/template/circle.tpl", "text!/template/polygon.tpl", "model/LevelModel"],
+	function(Class, tpl_accordion, tpl_class, tpl_vertice, tpl_circle, tpl_polygon) {
 
 	var EntityTabView = Backbone.View.extend({
 
 		el : $("#menuView #tab-entity"),
+		tpl_vertice : _.template(tpl_vertice),
+		tpl_circle : _.template(tpl_circle),
+		tpl_polygon : _.template(tpl_polygon),
 
 		events : {
 
@@ -11,13 +15,11 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 			"change #collapse-charac .entity-member" : "changeEntity",
 			'click #body-type input[type="radio"]' : "changeEntity",
 			'click input[type="checkbox"]' : "changeEntity",
-			'click #shape-type input[type="radio"]' : "changeEntity",
 			"change #collapse-body .entity-member" : "changeEntityFixture",
 		},
 
 		initialize : function() {
 
-			this.$(".shape-type").hide();
 			window.global.bind("change:entity", this.selectedEntityChanged, this);
 			window.global.bind("change:run", this.runChanged, this);
 		},
@@ -29,13 +31,18 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		changeEntityFixture : function(e) {
 
-			var entity = window.global.get("entity"), opts = { silent : true }, fixture = entity.get("body").get("fixture");
+			var entity = window.global.get("entity"), opts = { silent : true }, $fixture = $(e.target).closest(".fixture"),
+				fixture = entity.get("body").get("fixtures").at($.inArray($fixture[0], this.$(".fixture")));
 			fixture.unbind("change", this.entityFixtureChanged, this);
-			var $type = this.$('.shape-type[data-type="' + fixture.get("type") + '"]');
-			fixture.set("position", cc.ccp(parseFloat($type.find("#position-x").val()), parseFloat($type.find("#position-y").val())), opts);
+			fixture.set("position", cc.ccp(parseFloat($fixture.find("#position-x").val()), parseFloat($fixture.find("#position-y").val())), opts);
 			if (fixture.get("type") == b2Shape.e_circleShape) {
-				$type.find("#radius").val(Math.minimize($type.find("#radius").val(), 0.1));
-				fixture.set("shape", $type.find("#radius").val(), opts);
+				$fixture.find("#radius").val(Math.minimize($fixture.find("#radius").val(), 0.1));
+				fixture.set("shape", $fixture.find("#radius").val(), opts);
+			} else if (fixture.get("type") == b2Shape.e_polygonShape) {
+				var vertice = $(e.target).closest(".vertice")[0], pos = $(vertice).find("input");
+				if (vertice)
+					fixture.get("shape").at($.inArray(vertice, $fixture.find(".vertice")))
+						.set({ x : parseFloat(pos.val()), y : parseFloat(pos.next().val()) });
 			}
 			fixture.change();
 			fixture.bind("change", this.entityFixtureChanged, this);
@@ -61,8 +68,10 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 		selectedEntityChanged : function(global, entity) {
 
 			if (!entity) return;
+			this.$("#fixtures *").remove();
 			entity.rebind("change", this.entityChanged, this, true);
-			entity.get("body").get("fixture").rebind("change", this.entityFixtureChanged, this, true);
+            entity.get("body").get("fixtures").rebind("add", this.fixtureAdded, this, true);
+            entity.get("body").get("fixtures").rebind("remove", this.fixtureRemoved, this);
 			entity.get("body").rebind("change:shown", this.entityShownChanged, this);
 			entity.get("model").rebind("change:shown", this.entityShownChanged, this, true);
 		},
@@ -87,15 +96,48 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 			this.$('#body-type input[data-type="' + entity.get("body").get("type") + '"]').attr("checked", true);
 		},
 
+		fixtureAdded : function(fixture, fixtures) {
+
+			if (fixture.get("type") == b2Shape.e_circleShape)
+				this.$("#fixtures").append(this.tpl_circle());
+			else if (fixture.get("type") == b2Shape.e_polygonShape) {
+				this.$("#fixtures").append(this.tpl_polygon());
+				fixture.get("shape").fixtures = fixtures;
+				fixture.get("shape").rebind("add", this.verticeAdded, this, true);
+				fixture.get("shape").rebind("remove", this.verticeRemoved, this);
+			}
+			fixture.fixtures = fixtures;
+			fixture.rebind("change", this.entityFixtureChanged, this, true);
+		},
+
+		fixtureRemoved : function(fixture) {
+
+			// TODO
+		},
+
+		verticeAdded : function(vertice, vertices) {
+
+			this.$(".fixture").eq(vertices.fixtures.indexOf(vertices.fixtures.where({ shape : vertices })[0]))
+				.append(this.tpl_vertice({ x : vertice.get("x"), y : vertice.get("y") }));
+		},
+
+		verticeRemoved : function(vertice) {
+
+			// TODO
+		},
+
 		entityFixtureChanged : function(fixture) {
 
+			var $fixture = this.$(".fixture").eq(fixture.fixtures.indexOf(fixture));
 			fixture = fixture.attributes;
-			var $type = this.$(".shape-type").hide().parent().find('.shape-type[data-type="' + fixture.type + '"]').show();
-			this.$('#shape-type input[data-type="' + fixture.type + '"]').attr("checked", true);
-			$type.find("#position-x").val(fixture.position.x);
-			$type.find("#position-y").val(fixture.position.y);
+			$fixture.find("#position-x").eq(0).val(fixture.position.x);
+			$fixture.find("#position-y").eq(0).val(fixture.position.y);
 			if (fixture.type == b2Shape.e_circleShape)
-				$type.find("#radius").val(fixture.shape);
+				$fixture.find("#radius").val(fixture.shape);
+			else if (fixture.type == b2Shape.e_polygonShape)
+				fixture.shape.each(function(elem, i) {
+					$fixture.find(".vertice").eq(i).find("position-x").val(elem.get("x")).parent().find("position-y").val(elem.get("y"));
+				});
 		},
 	});
 

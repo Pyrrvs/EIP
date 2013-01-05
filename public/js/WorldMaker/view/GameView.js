@@ -22,21 +22,6 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         function(ctx) {
 
             var fixture = this.body.GetFixtureList();
-            if (!fixture) return;
-            var shape = fixture.GetShape(), vertices = shape.GetVertices(),
-                v = null, s = cc.Point.fromSize(this.contentSize).scale(0.5), scale = 30 / this.scale;
-            ctx.lineWidth = 2 / this.scale / this.parent.scale;
-            ctx.beginPath();
-            ctx.strokeStyle = "red";
-            v = cc.Point.fromB2(vertices[0], scale).add(s);
-            ctx.moveTo(v.x, v.y);
-            for (var i = 1; i < vertices.length; ++i) {
-                v = cc.Point.fromB2(vertices[i], scale).add(s);
-                ctx.lineTo(v.x, v.y);
-            }
-            v = cc.Point.fromB2(vertices[0], scale).add(s);
-            ctx.lineTo(v.x, v.y);
-            ctx.stroke();
         },
     ];
 
@@ -49,8 +34,30 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
             if (this.modelLayer)
                 Entity.superclass.draw.apply(this, arguments);
-            if (this.physicLayer)
-                this.physicLayer(ctx);
+            if (this.model.get("body").get("shown"))
+                for (var fixture = this.body.GetFixtureList(); fixture; fixture = fixture.GetNext()) {
+                    var shape = fixture.GetShape(), type = shape.GetType(), scale = 30 / this.scale;
+                    ctx.beginPath();
+                    if (type == b2Shape.e_circleShape) {
+                        ctx.lineWidth = 2 / this.scale / this.parent.scale;
+                        ctx.arc(this.contentSize.width / 2 + shape.m_p.x * 30, this.contentSize.height / 2 + shape.m_p.y * 30,
+                            shape.GetRadius() * scale, 0, 2 * Math.PI);
+                        ctx.strokeStyle = "red";
+                    } else if (type == b2Shape.e_polygonShape) {
+                        var vertices = shape.GetVertices(), v = null, s = cc.Point.fromSize(this.contentSize).scale(0.5);
+                        ctx.lineWidth = 2 / this.scale / this.parent.scale;
+                        ctx.strokeStyle = "red";
+                        v = cc.Point.fromB2(vertices[0], scale).add(s);
+                        ctx.moveTo(v.x, v.y);
+                        for (var i = 1; i < vertices.length; ++i) {
+                            v = cc.Point.fromB2(vertices[i], scale).add(s);
+                            ctx.lineTo(v.x, v.y);
+                        }
+                        v = cc.Point.fromB2(vertices[0], scale).add(s);
+                        ctx.lineTo(v.x, v.y);
+                    }
+                    ctx.stroke();
+                }
         },
     });
 
@@ -236,12 +243,6 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             window.global.set("run", "pause");
         },
 
-        ////////////////////////////////////////
-        //                                    //
-        //  TODO HANDLE DISABLE WHEN PLAYING  //
-        //                                    //
-        ////////////////////////////////////////
-
         clickStop : function() {
 
             if (window.global.get("run") == "stop") return ;
@@ -250,23 +251,22 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             var camera = window.global.get("level").get("camera");
             camera.attributes = this.save.camera.attributes;
             camera.trigger("change", camera, {});
-            window.global.get("level").get("entities").each(function(entity) {
-                entity.attributes = this.save.entities._byId[entity.get("id")].attributes;
-            }.bind(this));
-            var entity = window.global.get("entity");
-            if (entity)
-                entity.trigger("change", entity, {});
-            this.gameLayer.children.forEach(function(entity) {
-                var model = entity.model, type = null;
+            window.global.get("level").get("entities").each(function(model) {
+                model.attributes = this.save.entities._byId[model.get("id")].attributes;
+                var entity = model.entity, type = null;
                 this.entityChanged(model);
                 this.entityEnabledChanged(model);
                 this.entityBodyChanged(model.get("body"));
-                this.entityFixtureChanged(model.get("body").get("fixture"));
+                model.get("body").get("fixtures").each(function(fixture, __, fixtures) {
+                    this.entityFixtureChanged(fixture, fixtures);
+                }.bind(this));
                 this.entityModelChanged(model.get("model"));
                 type = entity.body.GetType();
                 entity.body.SetType(0);
                 entity.body.SetType(type);
             }.bind(this));
+            if (window.global.get("entity"))
+                window.global.get("entity").trigger("change", window.global.get("entity"), {});
             window.global.set("run", "stop");
         },
 
@@ -359,28 +359,24 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             this.$(entity ? "#entity" : "#camera").click();
         },
 
-        updateEntityShape : function(entity, fixture) {
+        updateBody : function(entity) {
 
-            var fix = entity.body.GetFixtureList(), scale = entity.scale / 30.0;
-
-            if (!fix) return;
-            if (fixture.type == b2Shape.e_circleShape)
-                fix.GetShape().SetRadius(fixture.shape * scale);
-            else if (fixture.type == b2Shape.e_polygonShape)
-                fix.GetShape().SetAsArray(b2Vec2.scaleVertices(fixture.shape, scale), fixture.shape.length);
+            entity.body.SetPosition(entity.position.toB2(30));
+            entity.body.SetAngle(cc.degreesToRadians(-entity.rotation));
         },
 
-        entityChanged : function(model) {
+        entityChanged : function(model, init) {
 
             var entity = model.entity, data = model.attributes;
             entity.id = data.id;
             entity.position = data.position.clone();
             entity.scale = data.scale;
             entity.rotation = data.rotation;
-            if (model.hasChanged("scale"))
-                this.updateEntityShape(entity, data.body.get("fixture").attributes);
-            entity.body.SetPosition(entity.position.toB2(30));
-            entity.body.SetAngle(cc.degreesToRadians(-entity.rotation));
+            if (model.hasChanged("scale") || init)
+                data.body.get("fixtures").each(function(fixture) {
+                    this.entityFixtureShapeChanged(fixture);
+                }.bind(this));
+            this.updateBody(entity);
         },
 
         entityEnabledChanged : function(entity) {
@@ -403,27 +399,28 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             var entity = body.entity;
             body = body.attributes;
             entity.body.SetType(body.type);
-            entity.physicLayer = body.shown ? Entity.physicLayer[body.fixture.get("type")] : null;
         },
 
         entityFixtureChanged : function(fixture) {
 
-            var entity = fixture.entity;
-            fixture = fixture.attributes;
-            var fix = entity.body.GetFixtureList(), scale = entity.scale / 30.0;
-            if (fix == null) {
-                var fixdef = new b2FixtureDef;
-                if (fixture.type == b2Shape.e_circleShape)
-                    fixdef.shape = new b2CircleShape(fixture.shape * scale);
-                else if (fixture.type == b2Shape.e_polygonShape)
-                    fixdef.shape = b2PolygonShape.AsArray(b2Vec2.scaleVertices(fixture.shape, scale), fixture.shape.length);
-                else return;
-                fix = entity.body.CreateFixture(fixdef);
-            } else
-                this.updateEntityShape(entity, fixture);
-            fix.SetDensity(fixture.density);
-            fix.SetFriction(fixture.friction);
-            fix.SetRestitution(fixture.restitution);
+            var fix = fixture.fixture;
+            if (fixture.get("type") == b2Shape.e_circleShape)
+                fix.GetShape().m_p = fixture.get("position").toB2(30);
+            else if (fixture.get("type") == b2Shape.e_polygonShape)
+                this.entityFixtureShapeChanged(fixture);
+            fix.SetDensity(fixture.get("density"));
+            fix.SetFriction(fixture.get("friction"));
+            fix.SetRestitution(fixture.get("restitution"));
+            this.updateBody(fix.GetBody().entity);
+        },
+
+        entityFixtureShapeChanged : function(fixture) {
+
+            var fix = fixture.fixture, shape = fix.GetShape(), scale = fix.GetBody().entity.scale / 30;
+            if (fixture.get("type") == b2Shape.e_circleShape)
+                shape.SetRadius(fixture.get("shape") * scale);
+            else if (fixture.get("type") == b2Shape.e_polygonShape)
+                shape.SetAsVector(b2Vec2.verticesFromCollection(fixture.get("shape"), scale, fixture.get("position")));
         },
 
         entityModelChanged : function(model) {
@@ -432,6 +429,44 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             model = model.attributes;
             entity.setUrl(model.path);
             entity.modelLayer = model.shown;
+        },
+
+        verticeChanged : function(vertice, changed) {
+
+            this.entityFixtureShapeChanged(vertice.fixture);
+        },
+
+        verticeAdded : function(vertice, vertices, init) {
+
+            vertice.fixture = vertices.fixture;
+            vertice.rebind("change", this.verticeChanged, this, !init);
+        },
+
+        verticeRemoved : function(vertice) {
+
+            // TODO
+        },
+
+        fixtureAdded : function(fixture, fixtures) {
+
+            var fixdef = new b2FixtureDef;
+            if (fixture.get("type") == b2Shape.e_circleShape) {
+                fixdef.shape = new b2CircleShape(1);
+                fixture.fixture = fixtures.body.CreateFixture(fixdef);
+            } else if (fixture.get("type") == b2Shape.e_polygonShape) {
+                fixdef.shape = b2PolygonShape.AsBox(1, 1);
+                fixture.fixture = fixtures.body.CreateFixture(fixdef);
+                fixture.get("shape").fixture = fixture;
+                fixture.get("shape").rebind("add", this.verticeAdded, this, true);
+                fixture.get("shape").rebind("remove", this.verticeRemoved, this);
+            }
+            fixture.rebind("change:shape", this.entityFixtureShapeChanged, this)
+            fixture.rebind("change", this.entityFixtureChanged, this, true);
+        },
+
+        fixtureRemoved : function(fixture) {
+
+            fixture.fixture.GetBody().DestroyFixture(fixture.fixture);
         },
 
         cameraChanged : function(camera) {
@@ -446,15 +481,17 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         entityAdded : function(model) {
 
-            var entity = new Entity;
+            var entity = new Entity, fixture = null;
             entity.body = this.scene.world.CreateBody(new b2BodyDef);
+            entity.body.entity = entity;
             entity.model = model;
             model.entity = entity;
             model.get("model").entity = entity;
             model.get("body").entity = entity;
-            model.get("body").get("fixture").entity = entity;
+            model.get("body").get("fixtures").body = entity.body;
+            model.get("body").get("fixtures").rebind("add", this.fixtureAdded, this, true);
+            model.get("body").get("fixtures").rebind("remove", this.fixtureRemoved, this);
             model.rebind("change", this.entityChanged, this, true);
-            model.get("body").get("fixture").rebind("change", this.entityFixtureChanged, this, true);
             model.get("body").rebind("change", this.entityBodyChanged, this, true);
             model.get("model").rebind("change", this.entityModelChanged, this, true);
             model.rebind("change:enabled", this.entityEnabledChanged, this, true);
