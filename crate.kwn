@@ -1,1 +1,0 @@
-{"id":"crate","enabled":"checked","position":{"x":309,"y":51},"scale":0.5,"rotation":-47,"model":{"shown":"checked","path":"/img/crate.jpg"},"body":{"shown":"checked","type":0,"fixture":{"density":1,"friction":0.1,"restitution":0.5,"type":1,"shape":{"v":[{"x":-64,"y":-64},{"x":64,"y":-64},{"x":64,"y":64},{"x":-64,"y":64}]},"position":{"x":0,"y":0}}},"class":"Circle"}]}
