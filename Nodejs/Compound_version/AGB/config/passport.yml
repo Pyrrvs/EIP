@@ -1,0 +1,8 @@
+development:
+  baseURL: 'http://localhost:3000/users'
+  redirURL: '/'
+  local: yes
+production:
+  baseURL: 'http://agb.epsilon-network.eu/users'
+  redirURL: '/'
+  local: yes

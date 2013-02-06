@@ -1,0 +1,27 @@
+{ "name": "AGB"
+, "version": "0.0.1"
+, "engines": ["node >= 0.4.0"]
+, "main": "server.js"
+, "dependencies":
+  { "ejs":              "*"
+  , "ejs-ext":          "< 0.1.2"
+  , "express":          "~3.x"
+  , "railway":          ">= 0.2.6"
+  , "jugglingdb":       ">= 0.1.0"
+  , "coffee-script":    ">= 1.1.1"
+  , "connect-flash":    "*"
+  , "oauth":            "*"  
+  , "yaml":             "*"
+  , "passport":		"*"
+  , "passport-local":	"*"
+  , "railway-passport":	"*"
+  },
+  "devDependencies":
+  { "mocha":            "*"
+  , "sinon":            "*"
+  , "semicov":          "*"
+  }
+, "scripts":
+  { "test": "nodeunit test/*/*"
+  }
+}
