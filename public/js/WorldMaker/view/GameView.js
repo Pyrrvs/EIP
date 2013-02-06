@@ -5,26 +5,6 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         Entity.superclass.constructor.apply(this, arguments)
     };
 
-    Entity.physicLayer = [
-
-        function(ctx) {
-
-            var fixture = this.body.GetFixtureList();
-            if (!fixture) return;
-            ctx.lineWidth = 2 / this.scale / this.parent.scale;
-            ctx.beginPath();
-            ctx.arc(this.contentSize.width / 2, this.contentSize.height / 2,
-                fixture.GetShape().GetRadius() * 30 / this.scale + 1, 0, 2 * Math.PI, false);
-            ctx.strokeStyle = 'red';
-            ctx.stroke();           
-        },
-
-        function(ctx) {
-
-            var fixture = this.body.GetFixtureList();
-        },
-    ];
-
     Entity.inherit(kge.Entity, {
 
         physicLayer : null,
@@ -32,20 +12,20 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         draw : function(ctx) {
 
-            if (this.modelLayer)
+            if (this.model.get("model").get("shown"))
                 Entity.superclass.draw.apply(this, arguments);
             if (this.model.get("body").get("shown"))
                 for (var fixture = this.body.GetFixtureList(); fixture; fixture = fixture.GetNext()) {
                     var shape = fixture.GetShape(), type = shape.GetType(), scale = 30 / this.scale;
                     ctx.beginPath();
                     if (type == b2Shape.e_circleShape) {
-                        ctx.lineWidth = 2 / this.scale / this.parent.scale;
+                        ctx.lineWidth = 1.5 / this.scale / this.parent.scale;
                         ctx.arc(this.contentSize.width / 2 + shape.m_p.x * 30, this.contentSize.height / 2 + shape.m_p.y * 30,
                             shape.GetRadius() * scale, 0, 2 * Math.PI);
                         ctx.strokeStyle = "red";
                     } else if (type == b2Shape.e_polygonShape) {
                         var vertices = shape.GetVertices(), v = null, s = cc.Point.fromSize(this.contentSize).scale(0.5);
-                        ctx.lineWidth = 2 / this.scale / this.parent.scale;
+                        ctx.lineWidth = 1.5 / this.scale / this.parent.scale;
                         ctx.strokeStyle = "red";
                         v = cc.Point.fromB2(vertices[0], scale).add(s);
                         ctx.moveTo(v.x, v.y);
@@ -108,7 +88,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         update : function() {
 
-            var entity = window.global.get("entity");
+            var entity = App.global.get("entity");
             if (!entity) return ;
             entity = entity.entity;
             var box = entity.boundingBox, size = box.size, pos = box.origin;
@@ -124,8 +104,8 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         UILayer.superclass.constructor.apply(this, arguments)
         this.addChild(this.selectCircle = new CircleSelect);
 
-        window.global.bind("change:entity", this.entitySelectedChanged, this);
-        window.global.bind("change:run", this.runChanged, this);
+        App.global.bind("change:entity", this.entitySelectedChanged, this);
+        App.global.bind("change:run", this.runChanged, this);
     }
 
     UILayer.inherit(cc.Layer, {
@@ -147,7 +127,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         entityEnabledChanged : function(entity) {
 
-            entity = entity || window.global.get("entity");
+            entity = entity || App.global.get("entity");
             if (entity && entity.get("enabled")) {
                 this.selectCircle.update();
                 this.selectCircle.visible = true;
@@ -167,7 +147,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         isCircleClicked : function(pos) {
 
-            return (window.global.get("entity") && Math.abs(pos.dist(this.selectCircle.position) - this.selectCircle.radius) < 5 / this.scale);
+            return (App.global.get("entity") && Math.abs(pos.dist(this.selectCircle.position) - this.selectCircle.radius) < 5 / this.scale);
         },
     })
 
@@ -175,7 +155,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         el : $("#gameView"),
         dragging : { type : null, position : new cc.Point(0, 0), rotation : 0 },
-        save : { entities : new EntityCollection, camera : new CameraModel },
+        save : { entities : new App.EntityCollection, camera : new App.CameraModel },
         disabled : null,
         scene : null,
         uiLayer : null,
@@ -196,8 +176,8 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         initialize : function() {
 
-            window.global.bind("change:entity", this.selectedEntityChanged, this);
-            window.global.bind("change:level", this.levelChanged, this);
+            App.global.bind("change:entity", this.selectedEntityChanged, this);
+            App.global.bind("change:level", this.levelChanged, this);
 
             cc.Director.sharedDirector.attachInView(document.getElementById("canvasView"));
             cc.Director.sharedDirector.displayFPS = true
@@ -211,11 +191,11 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         clickPlay : function() {
 
-            if (window.global.get("run") == "play") return ;
-            if (window.global.get("run") == "stop") {
+            if (App.global.get("run") == "play") return ;
+            if (App.global.get("run") == "stop") {
                 this.save.entities.reset();
-                this.save.camera = window.global.get("level").get("camera").clone();
-                window.global.get("level").get("entities").each(function(entity) {
+                this.save.camera = App.global.get("level").get("camera").clone();
+                App.global.get("level").get("entities").each(function(entity) {
                     entity.set("id", entity.get("id"));
                     var s = entity.deepClone(true);
                     this.save.entities.push(s);
@@ -225,13 +205,13 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                 entity.body.SetAwake(true);
             })
             this.scene.scheduleUpdate();
-            window.global.set("run", "play");
+            App.global.set("run", "play");
         },
 
         clickPause : function() {
 
-            if (window.global.get("run") == "pause") return ;
-            if (window.global.get("run") == "stop")
+            if (App.global.get("run") == "pause") return ;
+            if (App.global.get("run") == "stop")
                 this.clickPlay();
             var opts = { silent : true };
             this.scene.unscheduleUpdate();
@@ -240,18 +220,18 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                 entity.model.set("rotation", entity.rotation, opts);
                 entity.model.change();
             });
-            window.global.set("run", "pause");
+            App.global.set("run", "pause");
         },
 
         clickStop : function() {
 
-            if (window.global.get("run") == "stop") return ;
+            if (App.global.get("run") == "stop") return ;
             this.scene.unscheduleUpdate();
-            if (!window.global.get("level")) return ;
-            var camera = window.global.get("level").get("camera");
+            if (!App.global.get("level")) return ;
+            var camera = App.global.get("level").get("camera");
             camera.attributes = this.save.camera.attributes;
             camera.trigger("change", camera, {});
-            window.global.get("level").get("entities").each(function(model) {
+            App.global.get("level").get("entities").each(function(model) {
                 model.attributes = this.save.entities._byId[model.get("id")].attributes;
                 var entity = model.entity, type = null;
                 this.entityChanged(model);
@@ -265,57 +245,57 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                 entity.body.SetType(0);
                 entity.body.SetType(type);
             }.bind(this));
-            if (window.global.get("entity"))
-                window.global.get("entity").trigger("change", window.global.get("entity"), {});
-            window.global.set("run", "stop");
+            if (App.global.get("entity"))
+                App.global.get("entity").trigger("change", App.global.get("entity"), {});
+            App.global.set("run", "stop");
         },
 
         clickCamera : function() {
 
-            window.global.set("mode", "camera");
+            App.global.set("mode", "camera");
         },
 
         clickEntity : function() {
 
-            window.global.set("mode", "entity");
+            App.global.set("mode", "entity");
         },
 
         dragstart : function(e) {
 
             this.dragging.type = null;
-            if (window.global.get("run") == "play") return ;
-            if (window.global.get("mode") == "camera") {
+            if (App.global.get("run") == "play") return ;
+            if (App.global.get("mode") == "camera") {
                 this.dragging.position = this.gameLayer.position.clone();
                 this.dragging.type = "camera";
-            } else if (window.global.get("mode") == "entity") {
+            } else if (App.global.get("mode") == "entity") {
                 var position = this.transformPointEvent(e), entity = null;
                 if (this.uiLayer.isCircleClicked(position)) {
                     this.dragging.position = position;
                     this.dragging.type = "rotation";
-                    this.dragging.rotation = window.global.get("entity").entity.rotation;
-                } else if ((entity = window.global.get("entity"))) {
+                    this.dragging.rotation = App.global.get("entity").entity.rotation;
+                } else if ((entity = App.global.get("entity"))) {
                     this.dragging.position = entity.entity.position.clone();
                     this.dragging.type = "entity";
                 } else if ((entity = this.isEntityClicked(position))) {
                     this.dragging.position = entity.position.clone();
                     this.dragging.type = "entity";
-                    window.global.set("entity", entity.model);
+                    App.global.set("entity", entity.model);
                 }
             }
         },
 
         drag : function(e, a) {
 
-            if (window.global.get("run") == "play") return ;
+            if (App.global.get("run") == "play") return ;
             if (this.dragging.type == "camera")
-                window.global.get("level").get("camera").set("position", cc.Point.add(this.dragging.position,
+                App.global.get("level").get("camera").set("position", cc.Point.add(this.dragging.position,
                     cc.ccp(a.deltaX, -a.deltaY)).floor());
             else if (this.dragging.type == "rotation")
-                window.global.get("entity").set("rotation", Math.floor(this.dragging.rotation -
+                App.global.get("entity").set("rotation", Math.floor(this.dragging.rotation -
                     cc.Point.sub(this.dragging.position, this.uiLayer.selectCircle.position)
                     .angle(cc.Point.sub(this.transformPointEvent(e), this.uiLayer.selectCircle.position))));
             else if (this.dragging.type == "entity")
-                window.global.get("entity").set("position", cc.Point.add(this.dragging.position,
+                App.global.get("entity").set("position", cc.Point.add(this.dragging.position,
                     cc.ccp(a.deltaX, -a.deltaY).rotate(this.uiLayer.rotation).scale(1 / this.uiLayer.scale).floor()));
         },
 
@@ -326,20 +306,20 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         click : function(e) {
 
-            if (window.global.get("run") == "play") return ;
+            if (App.global.get("run") == "play") return ;
             var entity = this.isEntityClicked(this.transformPointEvent(e));
-            window.global.set("entity", entity ? entity.model : null);                
+            App.global.set("entity", entity ? entity.model : null);                
         },
 
         wheel : function(e) {
 
-            if (window.global.get("run") == "play")
+            if (App.global.get("run") == "play")
                 return (false);
-            if (window.global.get("mode") == "camera")
-                window.global.get("level").get("camera").set("scale", Math.floor(Math.range(this.uiLayer.scale
+            if (App.global.get("mode") == "camera")
+                App.global.get("level").get("camera").set("scale", Math.floor(Math.range(this.uiLayer.scale
                     + e.originalEvent.wheelDeltaY * 0.0001, 0.1, 10) * 1000) / 1000);
-            else if (window.global.get("mode") == "entity" && window.global.get("entity"))
-                window.global.get("entity").set("scale", Math.floor(Math.range(window.global.get("entity").get("scale")
+            else if (App.global.get("mode") == "entity" && App.global.get("entity"))
+                App.global.get("entity").set("scale", Math.floor(Math.range(App.global.get("entity").get("scale")
                     + e.originalEvent.wheelDeltaY * 0.0001, 0.1, 10.0) * 1000) / 1000);
             return (false);
         },
@@ -428,7 +408,6 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             var entity = model.entity;
             model = model.attributes;
             entity.setUrl(model.path);
-            entity.modelLayer = model.shown;
         },
 
         verticeChanged : function(vertice, changed) {

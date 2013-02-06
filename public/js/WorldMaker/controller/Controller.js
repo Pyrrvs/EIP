@@ -5,9 +5,9 @@ define(["class"], function(Class) {
 		getWorld : function(callback) {
 
 			$.ajax(window.location.pathname + "/getWorld", { type : "GET", dataType : "json", success : function(world) {
-				window.defaultId = world.id;
+				App.defaultId = world.id;
 				for (var i in world.levels)
-					window.levels.push(world.levels[i]);
+					App.levels.push(world.levels[i]);
 				callback();
 			}.bind(this), error : function(log) { console.log(log); }});
 			return (this);
@@ -16,16 +16,15 @@ define(["class"], function(Class) {
 		postWorld : function(req) {
 
 			var d = {
-				"levels" : window.levels.toJSON(),
-				"id" : window.defaultId,
+				"levels" : App.levels.toJSON(),
+				"id" : App.defaultId,
 			};
 
 			$.ajax(window.location.pathname + "/postWorld", { type : "POST", dataType : "json",
 				data : JSON.parse(JSON.stringify(d)), success : function(res) {
-				console.log(res);
 			}, error : function(log) { console.log(log); }});
 		},
 	});
 
-	window.controller = new Controller;
+	App.controller = new Controller;
 });

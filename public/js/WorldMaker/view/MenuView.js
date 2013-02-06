@@ -20,8 +20,8 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		initialize : function() {
 
-			window.global.bind("change:entity", this.selectedEntityChanged, this);
-			window.global.bind("change:run", this.runChanged, this);
+			App.global.bind("change:entity", this.selectedEntityChanged, this);
+			App.global.bind("change:run", this.runChanged, this);
 		},
 
 		runChanged : function(global, run) {
@@ -31,7 +31,7 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		changeEntityFixture : function(e) {
 
-			var entity = window.global.get("entity"), opts = { silent : true }, $fixture = $(e.target).closest(".fixture"),
+			var entity = App.global.get("entity"), opts = { silent : true }, $fixture = $(e.target).closest(".fixture"),
 				fixture = entity.get("body").get("fixtures").at($.inArray($fixture[0], this.$(".fixture")));
 			fixture.unbind("change", this.entityFixtureChanged, this);
 			fixture.set("position", cc.ccp(parseFloat($fixture.find("#position-x").val()), parseFloat($fixture.find("#position-y").val())), opts);
@@ -50,7 +50,7 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		changeEntity : function(e) {
 
-			var entity = window.global.get("entity"), opts = { silent : true };
+			var entity = App.global.get("entity"), opts = { silent : true };
 			entity.unbind("change", this.entityChanged, this);
 			entity.set("enabled", !!this.$("#enable").attr("checked"));
 			entity.set("id", this.$("#id").val());
@@ -78,7 +78,7 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		entityShownChanged : function(body, shown) {
 
-			var entity = window.global.get("entity"), opts = { silent : true };
+			var entity = App.global.get("entity"), opts = { silent : true };
 			if (!entity) return;
 			this.$("#show-model-layer").attr("checked", entity.get("model").get("shown"));
 			this.$("#show-body-layer").attr("checked", entity.get("body").get("shown"));
@@ -154,8 +154,8 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		initialize : function() {
 
-			window.global.bind("change:level", this.selectedLevelChanged, this);
-			window.global.bind("change:run", this.runChanged, this);
+			App.global.bind("change:level", this.selectedLevelChanged, this);
+			App.global.bind("change:run", this.runChanged, this);
 		},
 
 		runChanged : function(global, run) {
@@ -165,13 +165,13 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		changeLevel : function(e) {
 
-			var level = window.global.get("level")
+			var level = App.global.get("level")
 			level.set("id", this.$("#id").val());
 		},
 
 		toggleLayers : function(e) {
 
-			var type = e.target.id, level = window.global.get("level"), shown = !level.get("entities").find(function(entity) {
+			var type = e.target.id, level = App.global.get("level"), shown = !level.get("entities").find(function(entity) {
 				return (!entity.get(type).get("shown"));
 			});
 			level.get("entities").each(function(entity) { entity.get(type).set("shown", !shown); });
@@ -179,7 +179,7 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		changeCamera : function(e) {
 
-			var level = window.global.get("level"), camera = level.get("camera"), opts = { silent : true };
+			var level = App.global.get("level"), camera = level.get("camera"), opts = { silent : true };
 			
 			camera.set("position", cc.ccp(parseFloat(this.$("#position-x").val()), parseFloat(this.$("#position-y").val())), opts);
 			camera.set("rotation", parseFloat(this.$("#rotation").val()), opts);
@@ -190,8 +190,8 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 		selectedLevelChanged : function(global, level) {
 
 			if (!level) return;
-			window.global.get("level").rebind("change", this.levelChanged, this, true);
-			window.global.get("level").get("camera").rebind("change", this.cameraChanged, this, true);
+			App.global.get("level").rebind("change", this.levelChanged, this, true);
+			App.global.get("level").get("camera").rebind("change", this.cameraChanged, this, true);
 		},
 
 		levelChanged : function(level, opts) {
@@ -215,14 +215,14 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 		initialize : function() {
 
 			$("body").attr('unselectable','on').css('UserSelect','none').css('MozUserSelect','none');
-			$("#postWorld").click(window.controller.postWorld);
+			$("#postWorld").click(App.controller.postWorld);
 			this.$('#tabs a[href="#tab-entity"]').parent().addClass("disabled");
 			this.$('#tabs a[href="#tab-level"]').parent().addClass("disabled");
 			this.$('#tabs a[href="#tab-classes"]').tab("show");
 
-			window.global.bind("change:entity", this.selectedEntityChanged, this);
-			window.global.bind("change:level", this.selectedLevelChanged, this);
-			window.global.bind("change:mode", this.modeChanged, this);
+			App.global.bind("change:entity", this.selectedEntityChanged, this);
+			App.global.bind("change:level", this.selectedLevelChanged, this);
+			App.global.bind("change:mode", this.modeChanged, this);
 		},
 
 		selectedEntityChanged : function(global, entity) {

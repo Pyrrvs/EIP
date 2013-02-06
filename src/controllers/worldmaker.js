@@ -26,7 +26,7 @@ var Controller = kNode.Controller.extend({
                 callback(err);
                 return ;
             } else if (!file) {
-                callback('No world.js file for project ' + req.params.project);
+                callback('No world.js file for project ' + project);
                 return ;
             }
             callback(err, file);

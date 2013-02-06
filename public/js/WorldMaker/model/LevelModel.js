@@ -1,6 +1,6 @@
 define(["model/EntityModel"], function() {
 
-	window.CameraModel = Backbone.Model.extend({
+	App.CameraModel = Backbone.Model.extend({
 
 		initialize : function(attr) {
 
@@ -21,10 +21,10 @@ define(["model/EntityModel"], function() {
 
 		initialize : function(attr) {
 
-			if (!(attr.camera instanceof CameraModel))
-				this.set("camera", new CameraModel(attr.camera), { silent : true });
-			if (!(attr.entities instanceof window.EntityCollection)) {
-				var entities = new window.EntityCollection;
+			if (!(attr.camera instanceof App.CameraModel))
+				this.set("camera", new App.CameraModel(attr.camera), { silent : true });
+			if (!(attr.entities instanceof App.EntityCollection)) {
+				var entities = new App.EntityCollection;
 				_.each(attr.entities, function(entity) {
 					entities.push(entity);
 				});
@@ -35,8 +35,8 @@ define(["model/EntityModel"], function() {
 		defaults : function() { return {
 
 			id : null,
-			camera : new CameraModel,
-			entities : new window.EntityCollection,
+			camera : new App.CameraModel,
+			entities : new App.EntityCollection,
 		}},
 	});
 
@@ -62,6 +62,6 @@ define(["model/EntityModel"], function() {
 		}
 	});
 
-	window.levels = new LevelCollection;
-	window.global = new GlobalModel;
+	App.levels = new LevelCollection;
+	App.global = new GlobalModel;
 })

@@ -1,3 +1,4 @@
+App = {};
 _.templateSettings.variable = "g";
 require.config({ paths : {
 
@@ -24,10 +25,9 @@ define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/Men
 		});
 	};
 
-	window.controller.getWorld(function() {
+	App.controller.getWorld(function() {
 
 //		unitest();
 		debug();
-	});
-	$("#worldmaker").css("visibility", "visible").hide().fadeIn(500);
+  	});
 });
