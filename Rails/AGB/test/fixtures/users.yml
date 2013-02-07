@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  name: Pyrrvs
+  password: toto42
+  email: pyrrvs@youporn.com
+
+two:
+  name: Kraoz
+  password: toto42
+  email: kraoz@youporn.com
