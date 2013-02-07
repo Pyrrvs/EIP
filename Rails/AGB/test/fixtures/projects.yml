@@ -1,15 +1,15 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 one:
-  name: MyString
-  description: MyString
-  privacy: MyString
-  nb_stars: 1
+  name: proj1
+  description: tropcool
+  privacy: public
+  nb_stars: 5
   user_id: 1
 
 two:
-  name: MyString
-  description: MyString
-  privacy: MyString
-  nb_stars: 1
+  name: proj2
+  description: lol
+  privacy: private
+  nb_stars: 0
   user_id: 1

@@ -1,4 +1,7 @@
 AGB::Application.routes.draw do
+  resources :project_comments
+
+
   root to: 'application#index'
 
   resources :projects
