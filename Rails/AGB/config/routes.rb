@@ -1,4 +1,12 @@
 AGB::Application.routes.draw do
+  root to: 'application#index'
+
+  resources :projects
+
+
+  resources :users
+
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
