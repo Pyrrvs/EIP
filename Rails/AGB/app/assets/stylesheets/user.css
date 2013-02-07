@@ -1,0 +1,57 @@
+@import url("/css/bootstrap.min.css");
+@import url("/css/bootstrap-responsive.css");
+
+body {
+	background-color: white;
+}
+
+#main-bloc {
+	height: 600px;
+	margin-top: 50px;
+	border-radius: 15px;
+    box-shadow: 1px 1px 5px rgba(50, 50, 50, 0.5);
+
+    overflow: scroll;
+}
+
+#avatar {
+	height: 80px;
+	margin: 10px 10px 10px 10px;
+	border-radius: 10px;
+    box-shadow: 1px 1px 5px rgba(50, 50, 50, 0.5);
+}
+
+#username {
+	margin-top: 25px;
+	margin-left: 50px;
+}
+
+#projects-bloc {
+	width: 40%;
+	margin: 0px 10px 10px 10px;
+}
+
+#file-view {
+	/*visibility: hidden;*/
+	width: 50%;
+	margin-left: 20px;
+}
+
+#edit-btn {
+	margin-bottom: 10px;
+	margin-left: 2px;
+}
+
+.privacy-label {
+	margin: -27px 11px;
+}
+
+.line-top > * {
+	vertical-align: top;
+	display: inline-block;
+}
+
+.inline-top {
+	vertical-align: top;
+	display: inline-block;
+}
