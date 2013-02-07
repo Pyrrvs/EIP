@@ -7,6 +7,7 @@ class Project < ActiveRecord::Base
 
   # checks the uniqueness by user
   validates_each :name do |record, attr, value|
+  	# shouldnt be there 
   	unless record.user.nil?
 	  	record.errors.add(attr, "Project already exists") unless record.user.projects.reject { |proj| proj.name != value }.empty?
 	end
