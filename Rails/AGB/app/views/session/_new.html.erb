@@ -1,0 +1,11 @@
+<li>
+	<%= form_tag session_path, remote: true, class: "navbar-form", id: "sign-in" do %>
+	    <%= text_field_tag :name, nil, placeholder: "Username", size: UsersController.input_size,
+	    	class: "search-query" %>
+	    <%= password_field_tag :password, nil, placeholder: "Password", size: UsersController.input_size,
+	    	class: "search-query" %>
+	<% end %>
+</li>
+<li>
+	<a href="#" onclick="$('#sign-in').submit()" >Sign in</a>
+</li>

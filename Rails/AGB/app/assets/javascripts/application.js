@@ -12,3 +12,13 @@
 //
 //= require jquery
 //= require jquery_ujs
+
+$(function() {
+	if (user) {
+		$("#authentication").hide();
+		$("#profile").show().find("span").text(user.name);
+	} else {
+		$("#profile").hide();
+		$("#authentication").show();
+	}
+});

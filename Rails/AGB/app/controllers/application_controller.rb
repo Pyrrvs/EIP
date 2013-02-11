@@ -1,7 +1,8 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
-  before_filter :load_user
+  helper_method :current_user, :set_current_user
+  before_filter :current_user
 
   def index
   	respond_to do |format|
@@ -9,19 +10,15 @@ class ApplicationController < ActionController::Base
   	end
   end
 
-  private
-
-  def load_user
-    @new_user = User.new
+private
+  def set_current_user(user)
+    @current_user = user
   end
 
-  protected
-
- #  def current_user
-	# User.find(session[:user_id])
- #  rescue
-	# user = User.create name: "Kraoz", password: "toto42", email: "toto@titit.com"
-	# session[:user_id] = user.id
- #  	user
- #  end
+  def current_user
+    @current_user ||= session[:user_id] && User.find(session[:user_id])
+  rescue
+    @current_user = nil
+    session[:user_id] = nil
+  end
 end

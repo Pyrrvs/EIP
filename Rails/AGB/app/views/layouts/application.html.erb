@@ -6,6 +6,9 @@
   <%= javascript_include_tag "application" %>
   <%= javascript_include_tag "util/bootstrap.min.js" %>
   <%= csrf_meta_tags %>
+  <script type="text/javascript">
+    var user = <%= current_user ? current_user.to_json(only: [ :name, :email ]).html_safe : "null" %>;
+  </script>
 </head>
 <body>
   <div class="navbar navbar-inverse">
@@ -16,13 +19,19 @@
           <li class="active"><a href="#">Home</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#contact">Contact</a></li>
-
+        </ul>
+        <ul class="nav pull-right" id="authentication">
+          <%= render partial: '/session/new' %>
           <li class="dropdown">
-	          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Log In<b class="caret"></b></a>
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sign Up<b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <%= render partial: '/users/new' %>
               </ul>
           </li>
+        </ul>
+        <ul class="nav pull-right" id="profile">
+          <li class="navbar-text">Welcome <span></span></li>
+          <li><%= link_to "Sign out", session_path, method: :delete, remote: true %></li>
         </ul>
 	    </div>
 	  </div>

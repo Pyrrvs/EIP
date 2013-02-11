@@ -10,9 +10,11 @@ AGB::Application.routes.draw do
     resources :project_comments
  
   end
-
+  
   resources :users
 
+  post "session" => "session#create"
+  delete "session" => "session#destroy"
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
