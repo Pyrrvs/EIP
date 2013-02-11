@@ -1,0 +1,51 @@
+<%= form_for @new_user, remote: true do |f| %>
+  <div class="field">
+    <%= f.label :name %><br />
+    <div class="field-error"></div>
+    <%= f.text_field :name, size: UsersController.input_size %>
+  </div>
+  <div class="field">
+    <%= f.label :password %><br />
+    <div class="field-error"></div>
+    <%= f.password_field :password, size: UsersController.input_size %>
+  </div>
+  <div class="field" >
+    <%= f.label :password_confirmation, "Password confirmation" %><br />
+    <div class="field-error"></div>
+    <%= f.password_field :password_confirmation, size: UsersController.input_size %>
+  </div>
+  <div class="field">
+    <%= f.label :email %><br />
+    <div class="field-error"></div>
+    <%= f.text_field :email %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+
+
+              <!-- <form style="margin: 0px" accept-charset="UTF-8" action="/sign_up" method="post">
+                  <div style="margin:0;padding:0;display:inline">
+                    <input name="utf8" type="hidden" value="&#x2713;" />
+                    <input name="authenticity_token" type="hidden" value="4L/A2ZMYkhTD3IiNDMTuB/fhPRvyCNGEsaZocUUpw40=" />
+                  </div>
+                  <fieldset class='textbox' style="padding:10px">
+                    <input style="margin-top: 8px" type="text" name="username" placeholder="username" />
+                    <input style="margin-top: 8px" type="password" name="password" placeholder="passsword" />
+                    <input style="margin-top: 8px" type="password" name="password_confirm" placeholder="retype passsword" />
+                    <input style="margin-top: 8px" type="email" name="email" placeholder="user@example.com" />
+                    <input class="btn btn-inverse" name="Log In" type="submit" value="Sign Up" />
+                  </fieldset>
+                </form>
+                <form style="margin: 0px" accept-charset="UTF-8" action="/sign_in" method="post">
+                  <div style="margin:0;padding:0;display:inline">
+                    <input name="utf8" type="hidden" value="&#x2713;" />
+                    <input name="authenticity_token" type="hidden" value="4L/A2ZMYkhTD3IiNDMTuB/fhPRvyCNGEsaZocUUpw40=" />
+                  </div>
+                  <fieldset class='textbox' style="padding:10px">
+                    <input style="margin-top: 8px" type="text" name="username" placeholder="username" />
+                    <input style="margin-top: 8px" type="password" name="password" placeholder="passsword" />
+                    <input class="btn btn-inverse" name="Log In" type="submit" value="Sign In" />
+                  </fieldset>
+                </form> -->

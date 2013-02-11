@@ -1,0 +1,4 @@
+$(".field-error").html("");
+<% @user.errors.each do |attribute, errors_array| %>
+	$('.field label[for="user_<%= attribute %>"]').parent().find(".field-error").append("<%= errors_array %><br/>");
+<% end %>
