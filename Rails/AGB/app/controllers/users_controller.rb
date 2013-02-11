@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   # GET /users
   # GET /users.json
+
   def index
     @users = User.all
 
@@ -23,14 +24,14 @@ class UsersController < ApplicationController
 
   # GET /users/new
   # GET /users/new.json
-  def new
-    @user = User.new
+  # def new
+  #   @new_user = User.new
 
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @user }
-    end
-  end
+  #   respond_to do |format|
+  #     format.html # new.html.erb
+  #     format.json { render json: @user }
+  #   end
+  # end
 
   # GET /users/1/edit
   def edit
@@ -44,10 +45,13 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
-        format.html { redirect_to @user, notice: 'User was successfully created.' }
+        #format.html { redirect_to @user, notice: 'User was successfully created.' }
+        format.js
         format.json { render json: @user, status: :created, location: @user }
       else
-        format.html { render action: "new" }
+        puts @user.errors
+        #format.html { render action: "new" }
+        format.js
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
@@ -79,5 +83,9 @@ class UsersController < ApplicationController
       format.html { redirect_to users_url }
       format.json { head :no_content }
     end
+  end
+
+  def self.input_size
+    20
   end
 end
