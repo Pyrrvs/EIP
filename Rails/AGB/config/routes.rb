@@ -1,14 +1,15 @@
 AGB::Application.routes.draw do
-  resources :resources
-
-
-  resources :project_comments
-
-
+  
   root to: 'application#index'
 
-  resources :projects
 
+  resources :projects do
+
+    resources :resources
+
+    resources :project_comments
+ 
+  end
 
   resources :users
 
