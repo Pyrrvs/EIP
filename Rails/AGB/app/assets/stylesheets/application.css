@@ -11,3 +11,28 @@
 	margin-left: 8px !important;
 	margin-top: 9px !important;
 }
+
+#sign-up .dropdown-menu {
+
+	padding: 10px;
+}
+
+#sign-up .field {
+
+	border-radius: 3px;
+	margin-bottom: 10px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgba(180, 180, 180, 1);
+}
+
+#sign-up .field-error {
+
+	font-size: 9pt;
+	color: red;
+}
+
+#sign-up input {
+
+	margin-bottom: 0px;
+}

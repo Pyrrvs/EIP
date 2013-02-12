@@ -1,4 +1,16 @@
-$(".field-error").html("");
-<% @user.errors.each do |attribute, errors_array| %>
-	$('.field label[for="user_<%= attribute %>"]').parent().find(".field-error").append("<%= errors_array %><br/>");
+var $sign_up = $("#sign-up"), $field = null;
+$sign_up.find(".field-error").html("");
+$sign_up.find("#message").css("color", "black");
+<% if (@user.errors.any?) %>
+	$sign_up.find("#message").css("color", "red").text("fix the error(s)");
+	$sign_up.find(".field").css("background-color", "rgba(0, 0, 0, 0)");
+	<% @user.errors.each do |attribute, errors_array| %>
+		<% attribute = attribute.to_s %>
+ 		<% attribute << "_confirmation" if (errors_array.index("confirmation")) %>
+		$field = $sign_up.find('.field #user_<%= j attribute %>').parent();
+		$field.find(".field-error").append("<%= j errors_array %><br/>").hide().show("slow");
+		$field.css("background-color", "rgba(220, 220, 220, 1)");
+	<% end %>
+<% else %>
+	$sign_up.find("#message").text("user <%= @user.name %> added!")
 <% end %>
