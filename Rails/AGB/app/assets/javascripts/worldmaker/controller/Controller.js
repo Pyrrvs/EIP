@@ -4,7 +4,7 @@ define(["class"], function(Class) {
 
 		getWorld : function(callback) {
 
-			$.ajax(window.location.pathname + "/getWorld", { type : "GET", dataType : "json", success : function(world) {
+			$.ajax(window.location.pathname + "/world", { type : "GET", dataType : "json", success : function(world) {
 				App.defaultId = world.id;
 				for (var i in world.levels)
 					App.levels.push(world.levels[i]);
