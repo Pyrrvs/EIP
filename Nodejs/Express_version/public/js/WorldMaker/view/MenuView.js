@@ -5,9 +5,11 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 	var EntityTabView = Backbone.View.extend({
 
 		el : $("#menuView #tab-entity"),
+		tpl_accordion : _.template(tpl_accordion),
 		tpl_vertice : _.template(tpl_vertice),
 		tpl_circle : _.template(tpl_circle),
 		tpl_polygon : _.template(tpl_polygon),
+		nbFixture : 0,
 
 		events : {
 
@@ -69,6 +71,7 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 			if (!entity) return;
 			this.$("#fixtures *").remove();
+//			this.$(".collapse").slice(1).collapse("hide");
 			entity.rebind("change", this.entityChanged, this, true);
             entity.get("body").get("fixtures").rebind("add", this.fixtureAdded, this, true);
             entity.get("body").get("fixtures").rebind("remove", this.fixtureRemoved, this);
@@ -94,6 +97,14 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 			this.$("#rotation").val(entity.get("rotation"));
 			this.$("#scale").val(entity.get("scale"));
 			this.$('#body-type input[data-type="' + entity.get("body").get("type") + '"]').attr("checked", true);
+		},
+
+		createFixture : function(tpl_fixture) {
+
+			++this.nbFixture;
+			var fixture = $(this.tpl_accordion({ id_group : "fixture", parent : "", id : nbFixture, n : nbFixture }));
+			fixture.find(".accordion_inner").remove("*").append(tpl_fixture());
+			this.$("#fixtures").append(fixture);
 		},
 
 		fixtureAdded : function(fixture, fixtures) {

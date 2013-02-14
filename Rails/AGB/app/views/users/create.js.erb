@@ -2,7 +2,7 @@ var $sign_up = $("#sign-up"), $field = null;
 $sign_up.find(".field-error").html("");
 $sign_up.find("#message").css("color", "black");
 <% if (@user.errors.any?) %>
-	$sign_up.find("#message").css("color", "red").text("fix the error(s)");
+	$sign_up.find("#message").css("color", "red").text("Fix the following error(s) !");
 	$sign_up.find(".field").css("background-color", "rgba(0, 0, 0, 0)");
 	<% @user.errors.each do |attribute, errors_array| %>
 		<% attribute = attribute.to_s %>
@@ -12,5 +12,5 @@ $sign_up.find("#message").css("color", "black");
 		$field.css("background-color", "rgba(220, 220, 220, 1)");
 	<% end %>
 <% else %>
-	$sign_up.find("#message").text("user <%= @user.name %> added!")
+	$sign_up.find("#message").text("Congratulations ! You have been added to AGB as <%= @user.name %> !")
 <% end %>

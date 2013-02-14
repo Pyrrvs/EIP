@@ -1,5 +1,5 @@
 <%= form_for User.new, remote: true do |f| %>
-  <p><center id="message">fill your informations</center></p>
+  <p><center id="message">Fill your informations.</center></p>
   <div class="field">
     <%= f.text_field :name, size: UsersController.input_size, placeholder: "name" %>
     <center class="field-error"></center>
@@ -17,6 +17,6 @@
     <center class="field-error"></center>
   </div>
   <div class="actions pull-right">
-    <%= f.submit "Sign Up", class: "btn" %>
+    <%= f.submit "Sign Up", class: "btn btn-inverse" %>
   </div>
 <% end %>
