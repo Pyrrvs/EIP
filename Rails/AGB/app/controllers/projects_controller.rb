@@ -1,4 +1,5 @@
 class ProjectsController < ApplicationController
+
   # GET /projects
   # GET /projects.json
   def index
@@ -24,6 +25,7 @@ class ProjectsController < ApplicationController
   # GET /projects/new
   # GET /projects/new.json
   def new
+    @user = User.find_by_name(params[:user_id])
     @project = Project.new
 
     respond_to do |format|
@@ -35,16 +37,34 @@ class ProjectsController < ApplicationController
   # GET /projects/1/edit
   def edit
     @project = Project.find(params[:id])
+    @user = @project.user
   end
 
   # POST /projects
   # POST /projects.json
   def create
     @project = Project.new(params[:project])
+    user = User.find_by_name(params[:user_id])
+    @project.user_id = user.id
+    @project.nb_stars = 0
+
+    res = @project.save
+    if res
+      begin
+        Dir.mkdir('./users/' + @project.user.name + '/' + @project.name, 0755)
+        Dir.mkdir('./users/' + @project.user.name + '/' + @project.name + '/Resources', 0755)
+        Dir.mkdir('./users/' + @project.user.name + '/' + @project.name + '/kFiles', 0755)
+        ResourcesController.create_world_file('./users/' + @project.user.name + '/' + @project.name + '/kFiles/world.js')
+      rescue
+        @project.destroy
+        @project.errors[:internal] = "Internal server error: Please contact an administrator."
+        puts "Cannot create the project tree for the project " + @project.name + " [owner: " + @project.user.name + "]"
+      end
+    end
 
     respond_to do |format|
-      if @project.save
-        format.html { redirect_to @project, notice: 'Project was successfully created.' }
+      if res
+        format.html { redirect_to [@project.user, @project], notice: 'Project was successfully created.' }
         format.json { render json: @project, status: :created, location: @project }
       else
         format.html { render action: "new" }
@@ -60,7 +80,7 @@ class ProjectsController < ApplicationController
 
     respond_to do |format|
       if @project.update_attributes(params[:project])
-        format.html { redirect_to @project, notice: 'Project was successfully updated.' }
+        format.html { redirect_to [@project.user, @project], notice: 'Project was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
@@ -74,9 +94,16 @@ class ProjectsController < ApplicationController
   def destroy
     @project = Project.find(params[:id])
     @project.destroy
+    
+    begin
+      FileUtils.remove_entry_secure('./users/' + @project.user.name + '/' + @project.name);
+    rescue
+      puts "Cannot remove the project directory /users/" + @project.user.name + '/' + @project.name
+      # Do something... send mail to administrator?
+    end
 
     respond_to do |format|
-      format.html { redirect_to projects_url }
+      format.html { redirect_to user_projects_url @project.user}
       format.json { head :no_content }
     end
   end
