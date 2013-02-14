@@ -21,7 +21,7 @@ define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/Men
 
 		setTimeout(function() {
 			$("#levelView .accordion-heading a").first().click();
-			setTimeout(function() {	$("#levelView .accordion-body").first().find("li a").first().click(); }, 200);
+			setTimeout(function() {	$("#levelView .accordion-body").first().find("li a").eq(1).click(); }, 200);
 		});
 	};
 

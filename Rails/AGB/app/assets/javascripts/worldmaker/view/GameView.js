@@ -10,6 +10,29 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         physicLayer : null,
         modelLayer : null,
 
+        polygonIsConvexe : function(vertices) {
+
+            // TODO CHECK MONOTONIE
+            if (vertices.length < 3)
+                return (false);
+            var v1, v2;
+            v1 = cc.Point.sub(vertices[0], vertices[vertices.length - 1]);
+            v2 = cc.Point.sub(vertices[0], vertices[1]);
+            if (v1.angle(v2) >= 180)
+                return (false);
+            for (var i = 1; i < vertices.length - 1; ++i) {
+                v1 = cc.Point.sub(vertices[i], vertices[i - 1]);
+                v2 = cc.Point.sub(vertices[i], vertices[i + 1]);
+                if (v1.angle(v2) >= 180)
+                    return (false);
+            }
+            v1 = cc.Point.sub(vertices[i], vertices[i - 1]);
+            v2 = cc.Point.sub(vertices[i], vertices[0]);
+            if (v1.angle(v2) >= 180)
+                return (false);
+            return (true);
+        },
+
         draw : function(ctx) {
 
             if (this.model.get("model").get("shown"))
@@ -22,18 +45,23 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                         ctx.lineWidth = 1.5 / this.scale / this.parent.scale;
                         ctx.arc(this.contentSize.width / 2 + shape.m_p.x * 30, this.contentSize.height / 2 + shape.m_p.y * 30,
                             shape.GetRadius() * scale, 0, 2 * Math.PI);
-                        ctx.strokeStyle = "red";
+                        ctx.strokeStyle = "green";
                     } else if (type == b2Shape.e_polygonShape) {
-                        var vertices = shape.GetVertices(), v = null, s = cc.Point.fromSize(this.contentSize).scale(0.5);
+                        var vertices = shape.GetVertices(), v = null, s = cc.Point.fromSize(this.contentSize).scale(0.5), vv = [];
                         ctx.lineWidth = 1.5 / this.scale / this.parent.scale;
-                        ctx.strokeStyle = "red";
                         v = cc.Point.fromB2(vertices[0], scale).add(s);
+                        //
+                        vv.push(v);
                         ctx.moveTo(v.x, v.y);
                         for (var i = 1; i < vertices.length; ++i) {
                             v = cc.Point.fromB2(vertices[i], scale).add(s);
+                            //
+                            vv.push(v);
                             ctx.lineTo(v.x, v.y);
                         }
+                        vv.push(v);
                         v = cc.Point.fromB2(vertices[0], scale).add(s);
+                        ctx.strokeStyle = this.polygonIsConvexe(vv) ? "green" : "red";
                         ctx.lineTo(v.x, v.y);
                     }
                     ctx.stroke();
@@ -41,12 +69,12 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         },
     });
 
-    function CircleSelect() {
+    function SelectCircle() {
 
-        CircleSelect.superclass.constructor.apply(this, arguments);
+        SelectCircle.superclass.constructor.apply(this, arguments);
     }
 
-    CircleSelect.inherit(cc.Node, {
+    SelectCircle.inherit(cc.Node, {
 
         radius : 1,
 
@@ -99,10 +127,30 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         },
     });
 
+    function VertexCircle() {
+
+        VertexCircle.superclass.constructor.apply(this, arguments);
+    }
+
+    VertexCircle.inherit(cc.Node, {
+
+        radius : 10,
+
+        draw : function(ctx) {
+
+            ctx.strokeStyle = "yellow";
+            ctx.beginPath();
+            ctx.arc(0, 0, this.radius, 0, Math.PI*2, true); 
+            ctx.stroke();
+        },
+    });
+
     function UILayer() {
 
         UILayer.superclass.constructor.apply(this, arguments)
-        this.addChild(this.selectCircle = new CircleSelect);
+        this.addChild(this.selectCircle = new SelectCircle);
+        this.addChild(this.vertexCircle = new VertexCircle);
+        this.vertexCircle.visible = false;
 
         App.global.bind("change:entity", this.entitySelectedChanged, this);
         App.global.bind("change:run", this.runChanged, this);
@@ -122,6 +170,21 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             } else if (run == "pause") {
                 this.selectCircle.update();
                 this.entityEnabledChanged();
+            }
+        },
+
+        isVertexCircleClicked : function() {
+
+            return (this.vertexCircle.visible);
+        },
+
+        updateVertexCircle : function(point, nFix, nVert) {
+
+            this.vertexCircle.visible = !!point;
+            if (point) {
+                this.vertexCircle.position = point;
+                this.vertexCircle.nFix = nFix;
+                this.vertexCircle.nVert = nVert;
             }
         },
 
@@ -145,9 +208,10 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                 this.selectCircle.visible = false;
         },
 
-        isCircleClicked : function(pos) {
+        isSelectCircleClicked : function(pos) {
 
-            return (App.global.get("entity") && Math.abs(pos.dist(this.selectCircle.position) - this.selectCircle.radius) < 5 / this.scale);
+            return (App.global.get("entity") && Math.abs(pos.dist(this.selectCircle.position)
+                - this.selectCircle.radius) < 5 / this.scale);
         },
     })
 
@@ -166,6 +230,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             "dragstart canvas" : "dragstart",
             "drag canvas" : "drag",
             "click canvas" : "click",
+            "mousemove canvas" : "mousemove",
             "mousewheel canvas" : "wheel",
             "click #play" : "clickPlay",
             "click #stop" : "clickStop",
@@ -260,6 +325,22 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             App.global.set("mode", "entity");
         },
 
+        mousemove : function(e) {
+
+            var entity = App.global.get("entity");
+            if (!entity) return;
+            entity = entity.entity;
+            var s = cc.Point.fromSize(entity.contentSize).scale(0.5), point = null, pt = null,
+                pos = entity.convertToNodeSpace(cc.Point.fromEvent(e).flipY()).sub(s), nVert = 0, nFix = 0;
+            for (var fixture = entity.body.GetFixtureList(), i = 0; fixture; fixture = fixture.GetNext(), ++i)
+                if (fixture.GetShape().GetType() == b2Shape.e_polygonShape)
+                    _.each(fixture.GetShape().GetVertices(), function(vertice, j) {
+                        if (pos.dist(cc.Point.fromB2(vertice, 30)) < 10)
+                            point = this.transformPointEvent(e), nVert = j, nFix = i;
+                    }, this);
+            this.uiLayer.updateVertexCircle(point, nFix, nVert);
+        },
+
         dragstart : function(e) {
 
             this.dragging.type = null;
@@ -269,7 +350,11 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                 this.dragging.type = "camera";
             } else if (App.global.get("mode") == "entity") {
                 var position = this.transformPointEvent(e), entity = null;
-                if (this.uiLayer.isCircleClicked(position)) {
+                if (this.uiLayer.isVertexCircleClicked()) {
+                    this.dragging.position = cc.Point.fromObject(App.global.get("entity").get("body").get("fixtures")
+                        .at(this.uiLayer.vertexCircle.nFix).get("shape").at(this.uiLayer.vertexCircle.nVert).attributes);
+                    this.dragging.type = "vertex";
+                } else if (this.uiLayer.isSelectCircleClicked(position)) {
                     this.dragging.position = position;
                     this.dragging.type = "rotation";
                     this.dragging.rotation = App.global.get("entity").entity.rotation;
@@ -287,7 +372,11 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         drag : function(e, a) {
 
             if (App.global.get("run") == "play") return ;
-            if (this.dragging.type == "camera")
+            if (this.dragging.type == "vertex")
+                App.global.get("entity").get("body").get("fixtures").at(this.uiLayer.vertexCircle.nFix).get("shape")
+                    .at(this.uiLayer.vertexCircle.nVert).set(cc.Point.add(this.dragging.position, cc.ccp(a.deltaX, -a.deltaY)
+                        .rotate(this.uiLayer.rotation).scale(1 / this.uiLayer.scale).floor()));
+            else if (this.dragging.type == "camera")
                 App.global.get("level").get("camera").set("position", cc.Point.add(this.dragging.position,
                     cc.ccp(a.deltaX, -a.deltaY)).floor());
             else if (this.dragging.type == "rotation")
@@ -421,9 +510,9 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             vertice.rebind("change", this.verticeChanged, this, !init);
         },
 
-        verticeRemoved : function(vertice) {
+        verticeRemoved : function(vertice, vertices) {
 
-            // TODO
+            this.entityFixtureShapeChanged(vertice.fixture);
         },
 
         fixtureAdded : function(fixture, fixtures) {

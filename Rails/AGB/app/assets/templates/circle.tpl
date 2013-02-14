@@ -2,7 +2,7 @@
   <div class="accordion-heading">
     <a class="accordion-toggle inline-top" data-toggle="collapse" href="#collapse-fixture-<%= g.n %>">circle</a>
     <div class="pull-right btn-accordion inline-top">
-      <button id="delete" class="btn btn-icon-tiny icon-delete label-input"></button>
+      <button class="btn btn-icon-tiny icon-delete label-input"></button>
       <span class="caret"></span>
     </div>
   </div>

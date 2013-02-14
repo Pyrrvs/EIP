@@ -9,18 +9,18 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 		events : {
 
-			"click #create" : "createLevel",
+			"click .add-icon" : "createLevel",
 			"validate #id" : "createLevel",
 			"mouseenter .accordion-heading" : "showButton",
 			"mouseleave .accordion-heading" : "hideButton",
 			"open .accordion-heading" : "selectLevel",
 			"close .accordion-heading" : "deselectLevel",
-			"click .accordion-heading #create" : "createEntity",
-			"click .accordion-heading #delete" : "deleteLevel",
+			"click .accordion-heading .icon-add" : "createEntity",
+			"click .accordion-heading .icon-delete" : "deleteLevel",
 			"click .accordion-inner li a" : "selectEntity",
 			"mouseenter .accordion-inner li" : "showButton",
 			"mouseleave .accordion-inner li" : "hideButton",
-			"click .accordion-inner #delete" : "deleteEntity",
+			"click .accordion-inner .icon-delete" : "deleteEntity",
 		},
 
 		initialize : function() {

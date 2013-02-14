@@ -1,3 +1,289 @@
 // Place all the styles related to the Worldmaker controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+#worldmaker {
+
+    width: 1262px;
+    margin: auto;
+}
+
+#levelView {
+
+    width: 200px;
+    margin-left: 2px;
+    max-height: 516px;
+}
+
+#levelView #levelList {
+
+    max-height: 455px;
+    overflow: scroll;
+}
+
+#gameView {
+
+    margin-left: 5px;
+}
+
+#menuView {
+
+    width: 340px;
+    margin-left: 5px;
+    margin-right: 2px;
+}
+
+#canvasView {
+
+    width: 640px;
+    height: 480px;
+}
+
+.btn-micro {
+
+    padding: 0px;
+    font-size: 7pt;
+    height: 15px;
+}
+
+.icon-add {
+
+    background: url("/assets/icon-add.png") no-repeat top left;    
+}
+
+.icon-delete {
+
+    background: url("/assets/icon-delete.png") no-repeat top left;
+}
+
+.accordion-group a {
+
+    text-decoration: none;
+}
+
+.btn-icon, .btn-icon-tiny {
+
+    padding: 0px;
+    width: 22px;
+    height: 22px;
+    background-size: 20px 20px;
+    background-position: 0px 0px;
+    border-radius: 10px;
+}
+
+.btn-icon:hover, .btn-icon-tiny:hover {
+
+    background-position: 0px 0px;
+    box-shadow: 0px 0px 2px gray;
+}
+
+.btn-icon-tiny {
+
+    width: 16px;
+    height: 16px;
+    background-size: 14px 14px;
+}
+
+.btn-tiny {
+
+    font-size: 8pt;
+    padding: 0px 5px !important;
+}
+
+.dropdown b {
+
+    margin-top: 0px;
+}
+
+.nav-list > li > a {
+
+    padding: 0px 15px;
+}
+
+.accordion {
+
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+.accordion-heading .accordion-toggle {
+
+    padding: 0px 8px;
+}
+
+.btn-accordion {
+
+    margin-top: -22px;
+    margin-right: 10px;
+}
+
+.btn-accordion span {
+
+    margin-top: 10px;
+}
+
+#levelView .accordion-inner .btn {
+
+    margin: -18px 2px;
+}
+
+.nav-tabs > li > a {
+
+    padding: 0px 8px;
+}
+
+#menuView #tabs {
+
+    margin-bottom: 10px;
+}
+
+.inline-top {
+
+    display: inline-block;
+    vertical-align: top;
+}
+
+.tab-content {
+
+    overflow: visible !important;
+}
+
+.line-top {
+
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.line-top.semi-top {
+
+    margin-top: 5px;
+}
+
+.line-top.semi-bot {
+
+    margin-bottom: 5px;
+}
+
+.line-top.top {
+
+    margin-top: 0px;
+}
+
+.line-top.bot {
+
+    margin-bottom: 0px;
+}
+
+.line-top > * {
+
+    display: inline-block;
+    vertical-align: top;
+}
+
+.line-top input[type="text"] {
+
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.label-input {
+
+    margin-right: 5px;
+}
+
+.label-input.pull-right {
+
+    margin-right: 8px;
+}
+
+.line-separator {
+
+    width: 100%;
+    height: 1px;
+    border-radius: 10px;
+    background-color: rgba(200, 200, 200, 1);
+}
+
+.input-thin {
+
+    padding: 0px 5px !important;
+}
+
+.sprite {
+
+    margin-left: 5px;
+}
+
+#tabsView #id {
+
+    margin-left: 20px;
+}
+
+#levelView input {
+
+    width: 81%;
+}
+
+#levelView .accordion-inner a {
+
+    border-radius: 5px;
+}
+
+.line-top input[type="checkbox"] {
+
+    margin-top: 5px;
+}
+
+.line-top input[type="number"] {
+
+    width: 25%;
+    padding: 0px 2px;
+    margin: 0px;
+}
+
+#gameView #menu .line-top {
+
+    margin: 0px;
+}
+
+.separator {
+
+    margin: 0 5px;
+    width: 1px;
+    height: 20px;
+    border-radius: 10px;
+    background-color: rgba(200, 200, 200, 1);
+}
+
+.caret-section {
+
+    margin-top: -12px;
+    margin-right: 8px;
+}
+
+input[type="radio"] {
+
+    margin-top: -1px;
+}
+
+.radio-group span {
+
+    margin-left: 5px;
+}
+
+.fixture-body {
+
+    padding-bottom: 0px;
+    margin-bottom: 5px;
+}
+
+#fixtures {
+
+    max-height: 300px;
+    overflow: scroll;
+}
+
+.vertice .icon-delete {
+
+	margin-left: 15px;
+}
