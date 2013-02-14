@@ -9,7 +9,6 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 		tpl_vertice : _.template(tpl_vertice),
 		tpl_circle : _.template(tpl_circle),
 		tpl_polygon : _.template(tpl_polygon),
-		nbFixture : 0,
 
 		events : {
 
@@ -18,10 +17,13 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 			'click #body-type input[type="radio"]' : "changeEntity",
 			'click input[type="checkbox"]' : "changeEntity",
 			"change #collapse-body .entity-member" : "changeEntityFixture",
+			"click .fixture .accordion-heading #delete" : "deleteFixture",
+			"click .polygon .accordion-heading #create" : "createPolygonVertice",
 		},
 
 		initialize : function() {
-
+	
+			this.nbFixtures = 0;
 			App.global.bind("change:entity", this.selectedEntityChanged, this);
 			App.global.bind("change:run", this.runChanged, this);
 		},
@@ -33,8 +35,8 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		changeEntityFixture : function(e) {
 
-			var entity = App.global.get("entity"), opts = { silent : true }, $fixture = $(e.target).closest(".fixture"),
-				fixture = entity.get("body").get("fixtures").at($.inArray($fixture[0], this.$(".fixture")));
+			var entity = App.global.get("entity"), opts = { silent : true }, $fixture = $(e.target).closest(".fixture-body"),
+				fixture = entity.get("body").get("fixtures").at($.inArray($fixture[0], this.$(".fixture-body")));
 			fixture.unbind("change", this.entityFixtureChanged, this);
 			fixture.set("position", cc.ccp(parseFloat($fixture.find("#position-x").val()), parseFloat($fixture.find("#position-y").val())), opts);
 			if (fixture.get("type") == b2Shape.e_circleShape) {
@@ -99,20 +101,24 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 			this.$('#body-type input[data-type="' + entity.get("body").get("type") + '"]').attr("checked", true);
 		},
 
-		createFixture : function(tpl_fixture) {
+		deleteFixture : function(e) {
 
-			++this.nbFixture;
-			var fixture = $(this.tpl_accordion({ id_group : "fixture", parent : "", id : nbFixture, n : nbFixture }));
-			fixture.find(".accordion_inner").remove("*").append(tpl_fixture());
-			this.$("#fixtures").append(fixture);
+			var fixtures = App.global.get("entity").get("body").get("fixtures");
+			console.log($(".fixture").index($(e.target).closest(".fixture")));
+			console.log(fixtures);
+		},
+
+		createPolygonVertice : function(e) {
+
 		},
 
 		fixtureAdded : function(fixture, fixtures) {
 
+			var $fixture = null;
 			if (fixture.get("type") == b2Shape.e_circleShape)
-				this.$("#fixtures").append(this.tpl_circle());
+				this.$("#fixtures").append(this.tpl_circle({ n : ++this.nbFixtures }));
 			else if (fixture.get("type") == b2Shape.e_polygonShape) {
-				this.$("#fixtures").append(this.tpl_polygon());
+				this.$("#fixtures").append(this.tpl_polygon({ n : ++this.nbFixtures }));
 				fixture.get("shape").fixtures = fixtures;
 				fixture.get("shape").rebind("add", this.verticeAdded, this, true);
 				fixture.get("shape").rebind("remove", this.verticeRemoved, this);
@@ -128,7 +134,7 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		verticeAdded : function(vertice, vertices) {
 
-			this.$(".fixture").eq(vertices.fixtures.indexOf(vertices.fixtures.where({ shape : vertices })[0]))
+			this.$(".fixture-body").eq(vertices.fixtures.indexOf(vertices.fixtures.where({ shape : vertices })[0]))
 				.append(this.tpl_vertice({ x : vertice.get("x"), y : vertice.get("y") }));
 		},
 
@@ -139,7 +145,7 @@ define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner
 
 		entityFixtureChanged : function(fixture) {
 
-			var $fixture = this.$(".fixture").eq(fixture.fixtures.indexOf(fixture));
+			var $fixture = this.$(".fixture-body").eq(fixture.fixtures.indexOf(fixture));
 			fixture = fixture.attributes;
 			$fixture.find("#position-x").eq(0).val(fixture.position.x);
 			$fixture.find("#position-y").eq(0).val(fixture.position.y);
