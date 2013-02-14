@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WorldMaker</title>
+    <script src="/js/util/jquery-1.8.2.min.js"></script>
+    <script src="/js/util/jquery.event.drag-2.2.js"></script>
+    <script src="/js/util/jquery.utils.js"></script>
+    <script src="/js/util/underscore.js"></script>
+    <script src="/js/util/backbone-min.js"></script>
+    <script src="/js/util/backbone-model++.js"></script>
+    <script src="/js/util/bootstrap.js"></script>
+    <script src="/js/worldmaker/kGE/src/cocos2d.js" defer></script>
+    <script src="/js/worldmaker/kGE/src/box2d.js" defer></script>
+    <script src="/js/util/require.js" data-main="/js/worldmaker/main.js"></script>
+    <link href="/css/worldmaker.css" type="text/css" rel="stylesheet"/>
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="#">AGB / WorldMaker</a>
+          <ul class="nav pull-right">
+            <li><a id="postWorld" class="brand" href="#">Save</a></li>
+          </u>
+        </div>
+      </div>
+    </div>
+    <div id="worldmaker">
+
+      <!-- LevelView -->
+      <div id="levelView" class="inline-top well well-small">
+        <div class="line-top top">
+          <input id="id" class="input-thin" type="text" placeholder="id"></input>
+          <button id="create" class="btn icon-add btn-icon"></button>
+        </div>
+        <div id="levelList" class="accordion"></div>
+      </div>
+      <!-- !LevelView -->      
+
+      <!-- GameView -->
+      <div id="gameView" class="inline-top well well-small">
+        <div id="menu" class="line-top top">
+          <div class="btn-group" data-toggle="buttons-radio">
+            <button id="camera" class="btn btn-small active">Camera</button>
+            <button id="entity" class="btn btn-small">Entity</button>
+          </div>
+          <div class="btn-group pull-right" data-toggle="buttons-radio">
+            <button id="play" class="btn btn-small">Play</button>
+            <button id="stop" class="btn btn-small active">Stop</button>
+            <button id="pause" class="btn btn-small">Pause</button>
+          </div>
+        </div>
+        <div id="canvasView" class="line-top bot">
+        </div>
+      </div>
+      <!-- !GameView -->
+
+      <!-- MenuView -->
+      <div id="menuView" class="inline-top well well-small">
+        <ul id="tabs" class="nav nav-tabs">
+          <li><a href="#tab-entity" data-toggle="tab">entity</a></li>
+          <li><a href="#tab-level" data-toggle="tab">level</a></li>
+          <li><a href="#tab-classes" data-toggle="tab">classes</a></li>
+          <li><a href="#tab-models" data-toggle="tab">models</a></li>
+          <li><a href="#tab-bodies" data-toggle="tab">bodies</a></li>
+        </ul>
+        <div class="tab-content">
+
+          <!-- TabEntity -->
+          <div class="tab-pane" id="tab-entity">
+
+            <!-- SectionCharac -->
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#collapse-charac">characteristics</a>
+                <span class="caret pull-right caret-section"></span>
+              </div>
+              <div class="accordion-body collapse in" id="collapse-charac">
+                <div class="accordion-inner">
+                  <div class="line-top top semi-bot">
+                    <span>enable : </span>
+                    <input id="enable" type="checkbox" class="pull-right"></input>
+                  </div>
+                  <div class="line-top">
+                    <span>id : </span>
+                    <input id="id" class="input-thin pull-right" type="text" placeholder="id"></input>
+                  </div>
+                  <div class="line-top">
+                    <span>class : </span>
+                    <div id="class" class="btn-group pull-right">
+                      <button class="btn btn-tiny">none</button>
+                      <button class="btn btn-tiny dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu"></ul>
+                    </div>
+                  </div>
+                  <div class="line-top">
+                    <span class="label-input">x : </span>
+                    <input id="position-x" class="entity-member" type="number" step="5"></input>
+                    <input id="scale" class="entity-member pull-right" type="number" step="0.1"></input>
+                    <span class="pull-right label-input">scale : </span>
+                  </div>
+                  <div class="line-top semi-bot">
+                    <span class="label-input">y : </span>
+                    <input id="position-y" class="entity-member" type="number" step="5"></input>
+                    <input id="rotation"  class="entity-member pull-right" type="number" step="5"></input>
+                    <span class="pull-right label-input">rotation : </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- !SectionCharac -->
+
+            <!-- SectionModel -->
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#collapse-model">model</a>
+                <span class="caret pull-right caret-section"></span>
+              </div>
+              <div class="accordion-body collapse in" id="collapse-model">
+                <div class="accordion-inner">
+                  <div class="line-top top semi-bot">
+                    <span>show model layer : </span>
+                    <input type="checkbox" id="show-model-layer" class="pull-right"></input>
+                  </div>
+                  <div class="line-top semi-bot">
+                    <span>models : </span>
+                    <div id="models" class="btn-group pull-right">
+                      <button class="btn btn-tiny">none</button>
+                      <button class="btn btn-tiny dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu"></ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- !SectionModel -->
+
+            <!-- SectionBody -->
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#collapse-body">body</a>
+                <span class="caret pull-right caret-section"></span>
+              </div>
+              <div class="accordion-body collapse in" id="collapse-body">
+                <div class="accordion-inner">
+                  <div class="line-top top bot">
+                    <span>show body layer : </span>
+                    <input type="checkbox" id="show-body-layer" class="pull-right"></input>
+                  </div>
+                  <div class="line-top">
+                    <span>bodies : </span>
+                    <div id="bodies" class="btn-group pull-right">
+                      <button class="btn btn-tiny">none</button>
+                      <button class="btn btn-tiny dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu"></ul>
+                    </div>
+                  </div>
+                  <div class="line-top">
+                    <span>type : </span>
+                    <div id="body-type" class="pull-right radio-group">
+                      <span class="label-input">dynamic</span><input type="radio" name="body-type" data-type="2"/>
+                      <span class="label-input">static</span><input type="radio" name="body-type" data-type="0"/>
+                      <span class="label-input">kinematic</span><input type="radio" name="body-type" data-type="1"/>
+                    </div>
+                  </div>
+                  <div class="line-top top">
+                    <span>fixtures : </span>
+                  </div>
+                  <div id="fixtures" class="line-top top bot">
+                  </div>
+                </div>
+              </div>
+            </div>  
+            <!-- !SectionBody -->
+
+          </div>
+          <!-- !TabEntity -->
+
+          <!-- TabLevel -->
+          <div class="tab-pane" id="tab-level">
+            <div class="line-top">
+              <span>id : </span>
+              <input id="id" class="input-thin pull-right" type="text" placeholder="id"></input>
+            </div>
+            <div class="line-top">
+              <span>camera : </span>
+            </div>
+            <div class="line-top">
+              <span class="label-input">x : </span>
+              <input id="position-x" class="entity-member" type="number" step="5"></input>
+              <input id="scale" class="entity-member pull-right" type="number" step="0.1"></input>
+              <span class="pull-right label-input">scale : </span>
+            </div>
+            <div class="line-top">
+              <span class="label-input">y : </span>
+              <input id="position-y" class="entity-member" type="number" step="5"></input>
+              <input id="rotation"  class="entity-member pull-right" type="number" step="5"></input>
+              <span class="pull-right label-input">rotation : </span>
+            </div>
+            <div class="line-top semi-bot">
+              <div>
+                <span class="label-input">model layers : </span>
+                <button id="model" class="toggle-layers btn btn-tiny">toggle</button>
+              </div>
+              <div class="pull-right">
+                <span class="label-input">body layers : </span>
+                <button id="body" class="toggle-layers btn btn-tiny">toggle</button>
+              </div>
+            </div>
+          </div>
+          <!-- !TabLevel -->
+
+          <!-- TabClasses -->
+          <div class="tab-pane" id="tab-classes">
+          </div>
+          <!-- !TabClasses -->
+
+          <!-- !TabModels -->
+          <div class="tab-pane" id="tab-models">
+            <ul class="media-grid"></ul>
+          </div>
+          <!-- !TabModels -->
+
+          <!-- !TabBodys -->
+          <div class="tab-pane" id="tab-bodies">
+          </div>
+          <!-- !TabBodys -->
+
+        </div>
+      </div>
+      <!-- MenuView -->
+
+    </div>
+  </body>
+</html>
