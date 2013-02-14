@@ -14,7 +14,7 @@ class UsersController < ApplicationController
   # GET /users/1
   # GET /users/1.json
   def show
-    @user = User.find(params[:id])
+    @user = User.find_by_name(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -35,7 +35,7 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
-    @user = User.find(params[:id])
+    @user = User.find_by_name(params[:id])
   end
 
   # POST /users
@@ -43,7 +43,15 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
 
-    @user.save
+    if @user.save
+      begin
+        Dir.mkdir('./users/' + @user.name, 0755)
+      rescue
+        @user.destroy
+        @user.errors[:internal] = "Internal server error: Please contact an administrator."
+        puts "Cannot create the user directory /users/" + @user.name
+      end
+    end
     respond_to do |format|
       format.js
     end
@@ -52,7 +60,7 @@ class UsersController < ApplicationController
   # PUT /users/1
   # PUT /users/1.json
   def update
-    @user = User.find(params[:id])
+    @user = User.find_by_name(params[:id])
 
     respond_to do |format|
       if @user.update_attributes(params[:user])
@@ -68,8 +76,16 @@ class UsersController < ApplicationController
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy
-    @user = User.find(params[:id])
+    @user = User.find_by_name(params[:id])
+    
     @user.destroy
+    begin
+      puts @user.name
+      FileUtils.remove_entry_secure('./users/' + @user.name);
+    rescue
+      puts "Cannot remove the user directory /users/" + @user.name
+      # Do something... send mail to administrator?
+    end
 
     respond_to do |format|
       format.html { redirect_to users_url }

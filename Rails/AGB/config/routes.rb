@@ -2,19 +2,15 @@ AGB::Application.routes.draw do
   
   root to: 'application#index'
 
-
-  resources :projects do
-
-    resources :resources
-
-    resources :project_comments
- 
-  end
-  
-  resources :users
-
   post "session" => "session#create"
   delete "session" => "session#destroy"
+
+  resources :users do
+    resources :projects do
+      resources :resources
+      resources :project_comments
+    end
+  end
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

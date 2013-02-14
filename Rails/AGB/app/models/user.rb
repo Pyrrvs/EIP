@@ -8,4 +8,8 @@ class User < ActiveRecord::Base
 
   has_many :projects
   has_many :project_comments
+
+  def to_param
+  	name
+  end
 end

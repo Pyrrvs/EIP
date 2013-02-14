@@ -2,5 +2,5 @@
 
 <%= render 'form' %>
 
-<%= link_to 'Show', @project %> |
-<%= link_to 'Back', projects_path %>
+<%= link_to 'Show', [@project.user, @project] %>
+<%= link_to 'Back', user_projects_path(@project.user) %>

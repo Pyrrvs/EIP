@@ -1,4 +1,11 @@
 class ResourcesController < ApplicationController
+  
+  def self.create_world_file(path)
+    File.open(path, "w") do |f|
+      f.puts '{ "levels" : [], "id" : 0 }'
+    end
+  end
+
   # GET /resources
   # GET /resources.json
   def index
