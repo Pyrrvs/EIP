@@ -46,12 +46,12 @@
 
 .icon-add {
 
-    background: url("/img/icon-add.png") no-repeat top left;    
+    background: url("/assets/icon-add.png") no-repeat top left;    
 }
 
 .icon-delete {
 
-    background: url("/img/icon-delete.png") no-repeat top left;
+    background: url("/assets/icon-delete.png") no-repeat top left;
 }
 
 .accordion-group a {

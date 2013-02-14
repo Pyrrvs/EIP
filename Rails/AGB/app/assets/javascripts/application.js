@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= requite bootstrap.min
 
 $(function() {
 	if (user) {

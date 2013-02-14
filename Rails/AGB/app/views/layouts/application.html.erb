@@ -4,7 +4,6 @@
   <title>AGB</title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
-  <%= javascript_include_tag "util/bootstrap.min.js" %>
   <%= csrf_meta_tags %>
   <script type="text/javascript">
     var user = <%= current_user ? current_user.to_json(only: [ :name, :email ]).html_safe : "null" %>;

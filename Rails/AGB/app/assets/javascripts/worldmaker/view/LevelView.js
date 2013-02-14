@@ -1,4 +1,4 @@
-define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner_li.tpl", "model/LevelModel"],
+define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.tpl", "model/LevelModel"],
 		function(Class, accordion, entity) {
 
 	var LevelView = Backbone.View.extend({

@@ -2,8 +2,8 @@ App = {};
 _.templateSettings.variable = "g";
 require.config({ paths : {
 
-	"text" : "/js/util/text",
-	"class" : "/js/util/class",
+	"text" : "/assets/util/text",
+	"class" : "/assets/util/class",
 } })
 
 define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/MenuView", "view/GameView"], function() {

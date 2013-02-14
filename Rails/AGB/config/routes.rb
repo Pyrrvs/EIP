@@ -7,6 +7,9 @@ AGB::Application.routes.draw do
 
   resources :users do
     resources :projects do
+      get "worldmaker" => "worldmaker#index"
+      get "worldmaker/world" => "worldmaker#world"
+      put "worldmaker/world" => "worldmaker#update"
       resources :resources
       resources :project_comments
     end

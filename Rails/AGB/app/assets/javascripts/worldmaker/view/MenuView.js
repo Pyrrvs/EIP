@@ -1,5 +1,5 @@
-define(["class", "text!/template/accordion.tpl", "text!/template/accordion_inner_li.tpl", "text!/template/vertice.tpl",
-	"text!/template/circle.tpl", "text!/template/polygon.tpl", "model/LevelModel"],
+define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.tpl", "text!/assets/vertice.tpl",
+	"text!/assets/circle.tpl", "text!/assets/polygon.tpl", "model/LevelModel"],
 	function(Class, tpl_accordion, tpl_class, tpl_vertice, tpl_circle, tpl_polygon) {
 
 	var EntityTabView = Backbone.View.extend({
