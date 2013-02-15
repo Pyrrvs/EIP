@@ -1,23 +1,37 @@
 Backbone.Model.prototype.rebind = function(a, b, c, d) {
 
+  var func = function() {
+    var args = arguments;
+    setTimeout(function() {
+      b.apply(c, args);
+    }, 0);
+  };
+
   try {
-    this.unbind(a, b, c);
+    this.unbind(a, func);
   } catch (e) {}
-  this.bind(a, b, c);
+  this.bind(a, func);
   if (d)
-    b.call(c, this, true);
+    func(this, true)
 };
 
 Backbone.Collection.prototype.rebind = function(a, b, c, d) {
 
-  this.unbind(a, b, c);
-  this.bind(a, b, c);
-  if (d && a == "add") {
-    var self = this;
+  var func = function() {
+    var args = arguments;
+    setTimeout(function() {
+      b.apply(c, args);
+    }, 0);
+  };
+
+  try {
+    this.unbind(a, func);
+  } catch (e) {}
+  this.bind(a, func);
+  if (d && a == "add")
     this.each(function(model) {
-      b.call(c, model, self, true)
-    });
-  }
+      func(model, this, true);
+    }, this);
 };
 
 Backbone.Model.prototype.deepClone = function(cloneUserMembers) {
@@ -33,3 +47,4 @@ Backbone.Model.prototype.deepClone = function(cloneUserMembers) {
       clone.attributes[i] = clone.attributes[i].deepClone(cloneUserMembers);
   return (clone);
 };
+

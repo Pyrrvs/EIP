@@ -1,5 +1,38 @@
 define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+
     function Entity() {
 
         Entity.superclass.constructor.apply(this, arguments)
@@ -10,25 +43,23 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         physicLayer : null,
         modelLayer : null,
 
-        polygonIsConvexe : function(vertices) {
+        _isAngleOk : function(p1, p2, p3) {
 
-            // TODO CHECK MONOTONIE
-            if (vertices.length < 3)
+            var angle = cc.Point.sub(p1, p2).angle(cc.Point.sub(p1, p3));
+            return (angle < 0 && angle > -180);
+        },
+
+        isPolygonConvexAndCCW : function(vertices) {
+
+            var idx = vertices.length - 1;
+            if (idx < 2)
                 return (false);
-            var v1, v2;
-            v1 = cc.Point.sub(vertices[0], vertices[vertices.length - 1]);
-            v2 = cc.Point.sub(vertices[0], vertices[1]);
-            if (v1.angle(v2) >= 180)
+            if (!this._isAngleOk(vertices[0], vertices[idx], vertices[1]))
                 return (false);
-            for (var i = 1; i < vertices.length - 1; ++i) {
-                v1 = cc.Point.sub(vertices[i], vertices[i - 1]);
-                v2 = cc.Point.sub(vertices[i], vertices[i + 1]);
-                if (v1.angle(v2) >= 180)
+            for (i = 1; i < idx; ++i)
+                if (!this._isAngleOk(vertices[i], vertices[i - 1], vertices[i + 1]))
                     return (false);
-            }
-            v1 = cc.Point.sub(vertices[i], vertices[i - 1]);
-            v2 = cc.Point.sub(vertices[i], vertices[0]);
-            if (v1.angle(v2) >= 180)
+            if (!this._isAngleOk(vertices[idx], vertices[idx - 1], vertices[0]))
                 return (false);
             return (true);
         },
@@ -47,21 +78,16 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                             shape.GetRadius() * scale, 0, 2 * Math.PI);
                         ctx.strokeStyle = "green";
                     } else if (type == b2Shape.e_polygonShape) {
-                        var vertices = shape.GetVertices(), v = null, s = cc.Point.fromSize(this.contentSize).scale(0.5), vv = [];
+                        var vertices = shape.GetVertices(), v = null, s = cc.Point.fromSize(this.contentSize).scale(0.5);
                         ctx.lineWidth = 1.5 / this.scale / this.parent.scale;
                         v = cc.Point.fromB2(vertices[0], scale).add(s);
-                        //
-                        vv.push(v);
                         ctx.moveTo(v.x, v.y);
                         for (var i = 1; i < vertices.length; ++i) {
                             v = cc.Point.fromB2(vertices[i], scale).add(s);
-                            //
-                            vv.push(v);
                             ctx.lineTo(v.x, v.y);
                         }
-                        vv.push(v);
                         v = cc.Point.fromB2(vertices[0], scale).add(s);
-                        ctx.strokeStyle = this.polygonIsConvexe(vv) ? "green" : "red";
+                        ctx.strokeStyle = this.isPolygonConvexAndCCW(vertices) ? "green" : "red";
                         ctx.lineTo(v.x, v.y);
                     }
                     ctx.stroke();
@@ -224,10 +250,12 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         scene : null,
         uiLayer : null,
         gameLayer : null,
+        mousemotion : 0,
 
         events : {
 
             "dragstart canvas" : "dragstart",
+            "dragend canvas" : "dragend",
             "drag canvas" : "drag",
             "click canvas" : "click",
             "mousemove canvas" : "mousemove",
@@ -328,14 +356,16 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         mousemove : function(e) {
 
             var entity = App.global.get("entity");
-            if (!entity) return;
+            if (!entity || ++this.mousemotion % 2) return;
             entity = entity.entity;
-            var s = cc.Point.fromSize(entity.contentSize).scale(0.5), point = null, pt = null,
-                pos = entity.convertToNodeSpace(cc.Point.fromEvent(e).flipY()).sub(s), nVert = 0, nFix = 0;
+            var s = cc.Point.fromSize(entity.contentSize).scale(0.5),
+                pos = entity.convertToNodeSpace(cc.Point.fromEvent(e).flipY()).sub(s),
+                circle = this.uiLayer.vertexCircle, point = null, nVert = -1, nFix = -1;
             for (var fixture = entity.body.GetFixtureList(), i = 0; fixture; fixture = fixture.GetNext(), ++i)
                 if (fixture.GetShape().GetType() == b2Shape.e_polygonShape)
-                    _.each(fixture.GetShape().GetVertices(), function(vertice, j) {
-                        if (pos.dist(cc.Point.fromB2(vertice, 30)) < 10)
+                    _.each(fixture.GetShape().GetVertices(), function(vertex, j) {
+                        if (pos.dist(cc.Point.fromB2(vertex, 30 / entity.scale)) < 10 / entity.scale
+                            && (this.dragging.type != "vertex" || (circle.nVert == j && circle.nFix == i)))
                             point = this.transformPointEvent(e), nVert = j, nFix = i;
                     }, this);
             this.uiLayer.updateVertexCircle(point, nFix, nVert);
@@ -372,20 +402,27 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         drag : function(e, a) {
 
             if (App.global.get("run") == "play") return ;
+            var entity = App.global.get("entity");
             if (this.dragging.type == "vertex")
-                App.global.get("entity").get("body").get("fixtures").at(this.uiLayer.vertexCircle.nFix).get("shape")
+                entity.get("body").get("fixtures").at(this.uiLayer.vertexCircle.nFix).get("shape")
                     .at(this.uiLayer.vertexCircle.nVert).set(cc.Point.add(this.dragging.position, cc.ccp(a.deltaX, -a.deltaY)
-                        .rotate(this.uiLayer.rotation).scale(1 / this.uiLayer.scale).floor()));
+                        .rotate(this.uiLayer.rotation).scale(1 / this.uiLayer.scale).rotate(entity.entity.rotation)
+                        .scale(1 / entity.entity.scale).floor()));
             else if (this.dragging.type == "camera")
                 App.global.get("level").get("camera").set("position", cc.Point.add(this.dragging.position,
                     cc.ccp(a.deltaX, -a.deltaY)).floor());
             else if (this.dragging.type == "rotation")
-                App.global.get("entity").set("rotation", Math.floor(this.dragging.rotation -
+                entity.set("rotation", Math.floor(this.dragging.rotation -
                     cc.Point.sub(this.dragging.position, this.uiLayer.selectCircle.position)
                     .angle(cc.Point.sub(this.transformPointEvent(e), this.uiLayer.selectCircle.position))));
             else if (this.dragging.type == "entity")
-                App.global.get("entity").set("position", cc.Point.add(this.dragging.position,
+                entity.set("position", cc.Point.add(this.dragging.position,
                     cc.ccp(a.deltaX, -a.deltaY).rotate(this.uiLayer.rotation).scale(1 / this.uiLayer.scale).floor()));
+        },
+
+        dragend : function() {
+
+            this.dragging.type = null;
         },
 
         transformPointEvent : function(e) {
@@ -485,11 +522,17 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         entityFixtureShapeChanged : function(fixture) {
 
-            var fix = fixture.fixture, shape = fix.GetShape(), scale = fix.GetBody().entity.scale / 30;
-            if (fixture.get("type") == b2Shape.e_circleShape)
-                shape.SetRadius(fixture.get("shape") * scale);
-            else if (fixture.get("type") == b2Shape.e_polygonShape)
-                shape.SetAsVector(b2Vec2.verticesFromCollection(fixture.get("shape"), scale, fixture.get("position")));
+            try {
+                var fix = fixture.fixture, shape = fix.GetShape(), scale = fix.GetBody().entity.scale / 30;
+                if (fixture.get("type") == b2Shape.e_circleShape)
+                    shape.SetRadius(fixture.get("shape") * scale);
+                else if (fixture.get("type") == b2Shape.e_polygonShape)
+                    shape.SetAsVector(b2Vec2.verticesFromCollection(fixture.get("shape"), scale, fixture.get("position")));
+            } catch (e) {
+                console.log(e, "when creating shape");
+            }
+            if (fixture.get("type") == b2Shape.e_polygonShape)
+                console.log(shape.GetVertexCount(), shape.GetVertices(), fixture.get("shape"));
         },
 
         entityModelChanged : function(model) {
@@ -499,20 +542,23 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             entity.setUrl(model.path);
         },
 
-        verticeChanged : function(vertice, changed) {
+        vertexChanged : function(vertex, changed) {
 
-            this.entityFixtureShapeChanged(vertice.fixture);
+            this.entityFixtureShapeChanged(vertex.fixture);
         },
 
-        verticeAdded : function(vertice, vertices, init) {
+        vertexAdded : function(vertex, vertices, init) {
 
-            vertice.fixture = vertices.fixture;
-            vertice.rebind("change", this.verticeChanged, this, !init);
+            vertex.fixture = vertices.fixture;
+            vertex.rebind("change", this.vertexChanged, this, init);
         },
 
-        verticeRemoved : function(vertice, vertices) {
+        vertexRemoved : function(vertex, vertices) {
 
-            this.entityFixtureShapeChanged(vertice.fixture);
+            console.log(vertex.fixture)
+            this.entityFixtureShapeChanged(vertex.fixture);
+            // fixes a bug from box2d (might create errors)
+            vertex.fixture.fixture.GetShape().GetVertices().pop();
         },
 
         fixtureAdded : function(fixture, fixtures) {
@@ -525,8 +571,8 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                 fixdef.shape = b2PolygonShape.AsBox(1, 1);
                 fixture.fixture = fixtures.body.CreateFixture(fixdef);
                 fixture.get("shape").fixture = fixture;
-                fixture.get("shape").rebind("add", this.verticeAdded, this, true);
-                fixture.get("shape").rebind("remove", this.verticeRemoved, this);
+                fixture.get("shape").rebind("add", this.vertexAdded, this, true);
+                fixture.get("shape").rebind("remove", this.vertexRemoved, this);
             }
             fixture.rebind("change:shape", this.entityFixtureShapeChanged, this)
             fixture.rebind("change", this.entityFixtureChanged, this, true);
