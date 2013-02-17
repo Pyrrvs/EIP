@@ -475,7 +475,6 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         entityChanged : function(model, init) {
 
             var entity = model.entity, data = model.attributes;
-            console.log(entity, data);
             entity.id = data.id;
             entity.position = data.position.clone();
             entity.scale = data.scale;
