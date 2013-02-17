@@ -9,6 +9,16 @@ Function.prototype.async = function(timeout) {
   })
 }
 
+Function.prototype.asyncCall = function() {
+
+	this.async().apply(this, arguments);
+}
+
+Function.prototype.asyncCallBind = function() {
+
+	this.async().apply(arguments[0], Array.prototype.shift(arguments));
+}
+
 $(function() {
 
 	$("body").on("keydown", 'input[type="text"]', function(e) {

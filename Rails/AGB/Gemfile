@@ -36,3 +36,8 @@ gem 'bcrypt-ruby', '~> 3.0.0'
 
 # To use debugger
 # gem 'debugger'
+
+group :development, :test do
+      gem 'rb-fsevent', require: false if RUBY_PLATFORM =~ /darwin/i
+      gem 'guard-livereload'
+end

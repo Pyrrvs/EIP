@@ -1,37 +1,29 @@
-define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
+define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
 
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
-    // FIX BUG TOGGLE LAYERS AFTER PLAYED
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
+    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
 
     function Entity() {
 
@@ -142,7 +134,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         update : function() {
 
-            var entity = App.global.get("entity");
+            var entity = App.get("entity");
             if (!entity) return ;
             entity = entity.entity;
             var box = entity.boundingBox, size = box.size, pos = box.origin;
@@ -178,8 +170,8 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         this.addChild(this.vertexCircle = new VertexCircle);
         this.vertexCircle.visible = false;
 
-        App.global.bind("change:entity", this.entitySelectedChanged, this);
-        App.global.bind("change:run", this.runChanged, this);
+        App.bind("change:entity", this.entitySelectedChanged, this);
+        App.bind("change:run", this.runChanged, this);
     }
 
     UILayer.inherit(cc.Layer, {
@@ -216,7 +208,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         entityEnabledChanged : function(entity) {
 
-            entity = entity || App.global.get("entity");
+            entity = entity || App.get("entity");
             if (entity && entity.get("enabled")) {
                 this.selectCircle.update();
                 this.selectCircle.visible = true;
@@ -236,7 +228,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         isSelectCircleClicked : function(pos) {
 
-            return (App.global.get("entity") && Math.abs(pos.dist(this.selectCircle.position)
+            return (App.get("entity") && Math.abs(pos.dist(this.selectCircle.position)
                 - this.selectCircle.radius) < 5 / this.scale);
         },
     })
@@ -269,12 +261,11 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         initialize : function() {
 
-            App.global.bind("change:entity", this.selectedEntityChanged, this);
-            App.global.bind("change:level", this.levelChanged, this);
-            App.global.bind("change:highlightedFixture", this.highlightFixture, this);
+            App.bind("change:entity", this.selectedEntityChanged, this);
+            App.bind("change:level", this.levelChanged, this);
+            App.bind("change:highlightedFixture", this.highlightFixture, this);
 
             cc.Director.sharedDirector.attachInView(document.getElementById("canvasView"));
-            cc.Director.sharedDirector.displayFPS = true
             this.scene = new kge.DynamicScene;
             this.gameLayer = new cc.Layer;
             this.scene.addChild({ child : this.gameLayer, z : 0 });
@@ -287,86 +278,89 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
             var prev = global.previous("highlightedFixture");
             if (highlightedFixture)
-                highlightedFixture.highlighted = true;
+                highlightedFixture.fixture.highlighted = true;
             if (prev)
-                prev.highlighted = false;
+                prev.fixture.highlighted = false;
         },
 
         clickPlay : function() {
 
-            if (App.global.get("run") == "play") return ;
-            if (App.global.get("run") == "stop") {
+            if (App.get("run") == "play") return ;
+            if (App.get("run") == "stop") {
                 this.save.entities.reset();
-                this.save.camera = App.global.get("level").get("camera").clone();
-                App.global.get("level").get("entities").each(function(entity) {
-                    entity.set("id", entity.get("id"));
-                    var s = entity.deepClone(true);
-                    this.save.entities.push(s);
+                this.save.camera = App.get("level").get("camera").clone();
+                App.get("level").get("entities").each(function(entity) {
+                    this.save.entities.push(entity.deepClone());
                 }.bind(this));
             }
             this.gameLayer.children.forEach(function(entity) {
                 entity.body.SetAwake(true);
-            })
+            });
+            cc.Director.sharedDirector.displayFPS = true;
             this.scene.scheduleUpdate();
-            App.global.set("run", "play");
+            App.set("run", "play");
         },
 
         clickPause : function() {
 
-            if (App.global.get("run") == "pause") return ;
-            if (App.global.get("run") == "stop")
+            if (App.get("run") == "pause") return ;
+            if (App.get("run") == "stop")
                 this.clickPlay();
-            var opts = { silent : true };
-            this.scene.unscheduleUpdate();
+            cc.Director.sharedDirector.displayFPS = false;
+            this.scene.unscheduleUpdate(); 
             this.gameLayer.children.forEach(function(entity) {
-                entity.model.set("position", cc.ccp(entity.position.x, entity.position.y), opts);
-                entity.model.set("rotation", entity.rotation, opts);
-                entity.model.change();
+                entity.model.set("position", cc.ccp(entity.position.x, entity.position.y));
+                entity.model.set("rotation", entity.rotation);
             });
-            App.global.set("run", "pause");
+            App.set("run", "pause");
         },
 
         clickStop : function() {
 
-            if (App.global.get("run") == "stop") return ;
+            if (App.get("run") == "stop") return ;
+            cc.Director.sharedDirector.displayFPS = false;
             this.scene.unscheduleUpdate();
-            if (!App.global.get("level")) return ;
-            var camera = App.global.get("level").get("camera");
+            if (!App.get("level")) return ;
+            var camera = App.get("level").get("camera");
             camera.attributes = this.save.camera.attributes;
             camera.trigger("change", camera, {});
-            App.global.get("level").get("entities").each(function(model) {
-                model.attributes = this.save.entities._byId[model.get("id")].attributes;
+            App.get("level").get("entities").each(function(model) {
+                save = this.save.entities._byId[model.get("id")];
                 var entity = model.entity, type = null;
-                if (!model.entity) return;
-                this.entityChanged(model);
-                this.entityEnabledChanged(model);
-                this.entityBodyChanged(model.get("body"));
-                model.get("body").get("fixtures").each(function(fixture, __, fixtures) {
-                    this.entityFixtureChanged(fixture, fixtures);
-                }.bind(this));
-                this.entityModelChanged(model.get("model"));
-                type = entity.body.GetType();
-                entity.body.SetType(0);
-                entity.body.SetType(type);
+                if (!entity) return;
+                this.rollback(model, save, entity.id == "ball");
+                entity.body.SetLinearVelocity(new b2Vec2(0,0));
+                entity.body.SetAngularVelocity(0);
             }.bind(this));
-            if (App.global.get("entity"))
-                App.global.get("entity").trigger("change", App.global.get("entity"), {});
-            App.global.set("run", "stop");
+            if (App.get("entity"))
+                App.get("entity").trigger("change", App.get("entity"), {});
+            App.set("run", "stop");
+        },
+        rollback : function(model, save, debug) {
+
+            _.each(save.attributes, function(value, key) {
+                if (value instanceof Backbone.Model)
+                    this.rollback(model.get(key), value, debug);
+                else if (value instanceof Backbone.Collection)
+                    model.get(key).clear().concat(value);
+                else
+                    model.set(key, value);
+            }, this);
         },
 
         clickCamera : function() {
 
-            App.global.set("mode", "camera");
+            App.set("mode", "camera");
         },
 
         clickEntity : function() {
 
-            App.global.set("mode", "entity");
+            App.set("mode", "entity");
         },
 
         mousemove : function(e) {
 
-            var entity = App.global.get("entity");
+            var entity = App.get("entity");
             if (!entity || ++this.mousemotion % 2) return;
             entity = entity.entity;
             var s = cc.Point.fromSize(entity.contentSize).scale(0.5),
@@ -385,42 +379,42 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
         dragstart : function(e) {
 
             this.dragging.type = null;
-            if (App.global.get("run") == "play") return ;
-            if (App.global.get("mode") == "camera") {
+            if (App.get("run") == "play") return ;
+            if (App.get("mode") == "camera") {
                 this.dragging.position = this.gameLayer.position.clone();
                 this.dragging.type = "camera";
-            } else if (App.global.get("mode") == "entity") {
+            } else if (App.get("mode") == "entity") {
                 var position = this.transformPointEvent(e), entity = null;
                 if (this.uiLayer.isVertexCircleClicked()) {
-                    this.dragging.position = cc.Point.fromObject(App.global.get("entity").get("body").get("fixtures")
+                    this.dragging.position = cc.Point.fromObject(App.get("entity").get("body").get("fixtures")
                         .at(this.uiLayer.vertexCircle.nFix).get("shape").at(this.uiLayer.vertexCircle.nVert).attributes);
                     this.dragging.type = "vertex";
                 } else if (this.uiLayer.isSelectCircleClicked(position)) {
                     this.dragging.position = position;
                     this.dragging.type = "rotation";
-                    this.dragging.rotation = App.global.get("entity").entity.rotation;
-                } else if ((entity = App.global.get("entity"))) {
+                    this.dragging.rotation = App.get("entity").entity.rotation;
+                } else if ((entity = App.get("entity"))) {
                     this.dragging.position = entity.entity.position.clone();
                     this.dragging.type = "entity";
                 } else if ((entity = this.isEntityClicked(position))) {
                     this.dragging.position = entity.position.clone();
                     this.dragging.type = "entity";
-                    App.global.set("entity", entity.model);
+                    App.set("entity", entity.model);
                 }
             }
         },
 
         drag : function(e, a) {
 
-            if (App.global.get("run") == "play") return ;
-            var entity = App.global.get("entity");
+            if (App.get("run") == "play") return ;
+            var entity = App.get("entity");
             if (this.dragging.type == "vertex")
                 entity.get("body").get("fixtures").at(this.uiLayer.vertexCircle.nFix).get("shape")
                     .at(this.uiLayer.vertexCircle.nVert).set(cc.Point.add(this.dragging.position, cc.ccp(a.deltaX, -a.deltaY)
                         .rotate(this.uiLayer.rotation).scale(1 / this.uiLayer.scale).rotate(entity.entity.rotation)
                         .scale(1 / entity.entity.scale).floor()));
             else if (this.dragging.type == "camera")
-                App.global.get("level").get("camera").set("position", cc.Point.add(this.dragging.position,
+                App.get("level").get("camera").set("position", cc.Point.add(this.dragging.position,
                     cc.ccp(a.deltaX, -a.deltaY)).floor());
             else if (this.dragging.type == "rotation")
                 entity.set("rotation", Math.floor(this.dragging.rotation -
@@ -443,20 +437,20 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         click : function(e) {
 
-            if (App.global.get("run") == "play") return ;
+            if (App.get("run") == "play") return ;
             var entity = this.isEntityClicked(this.transformPointEvent(e));
-            App.global.set("entity", entity ? entity.model : null);                
+            App.set("entity", entity ? entity.model : null);                
         },
 
         wheel : function(e) {
 
-            if (App.global.get("run") == "play")
+            if (App.get("run") == "play")
                 return (false);
-            if (App.global.get("mode") == "camera")
-                App.global.get("level").get("camera").set("scale", Math.floor(Math.range(this.uiLayer.scale
+            if (App.get("mode") == "camera")
+                App.get("level").get("camera").set("scale", Math.floor(Math.range(this.uiLayer.scale
                     + e.originalEvent.wheelDeltaY * 0.0001, 0.1, 10) * 1000) / 1000);
-            else if (App.global.get("mode") == "entity" && App.global.get("entity"))
-                App.global.get("entity").set("scale", Math.floor(Math.range(App.global.get("entity").get("scale")
+            else if (App.get("mode") == "entity" && App.get("entity"))
+                App.get("entity").set("scale", Math.floor(Math.range(App.get("entity").get("scale")
                     + e.originalEvent.wheelDeltaY * 0.0001, 0.1, 10.0) * 1000) / 1000);
             return (false);
         },
@@ -543,7 +537,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                 else if (fixture.get("type") == b2Shape.e_polygonShape)
                     shape.SetAsVector(b2Vec2.verticesFromCollection(fixture.get("shape"), scale, fixture.get("position")));
             } catch (e) {
-                console.log(e, "when creating shape");
+                console.debug(e, "when creating shape");
             }
         },
 

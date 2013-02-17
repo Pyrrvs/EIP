@@ -69,7 +69,7 @@ define([], function() {
 
 		defaults : function() { return {
 
-			id : "noname" + App.defaultId++,
+			id : "noname",
 			enabled : "checked",
 			position : cc.ccp(0, 0),
 			scale : 1,
@@ -79,8 +79,8 @@ define([], function() {
 		}},
 	});
 
-	App.EntityCollection = Backbone.Collection.extend({
+	return (Backbone.Collection.extend({
 
 		model : EntityModel,
-	});
+	}));
 })
