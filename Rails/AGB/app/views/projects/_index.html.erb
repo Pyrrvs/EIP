@@ -1,0 +1,30 @@
+<h3>Listing projects</h3>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Privacy</th>
+    <th>Nb stars</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @user.projects.each do |project| %>
+  <tr>
+    <td><%= project.name %></td>
+    <td><%= project.description %></td>
+    <td><%= project.privacy %></td>
+    <td><%= project.nb_stars %></td>
+    <td><%= link_to 'Show', user_project_path(@user, project) %> | </td>
+    <td><%= link_to 'World Maker', user_project_worldmaker_path(@user, project) %> | </td>
+    <td><%= link_to 'Edit', edit_user_project_path(@user, project) %> | </td>
+    <td><%= link_to 'Destroy', user_project_path(@user, project), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Project', new_user_project_path(@user) %>

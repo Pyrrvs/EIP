@@ -1,21 +1,26 @@
 class ProjectsController < ApplicationController
 
+  before_filter :load_project, except: [:new, :create ]
+
+  def load_project
+    user = User.find_by_name(params[:user_id]) || not_found
+    @project = user.projects.find_by_name(params[:id]) || not_found
+  end
+
   # GET /projects
   # GET /projects.json
-  def index
-    @projects = Project.all
+  # def index
+  #   @projects = Project.all
 
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @projects }
-    end
-  end
+  #   respond_to do |format|
+  #     format.html # index.html.erb
+  #     format.json { render json: @projects }
+  #   end
+  # end
 
   # GET /projects/1
   # GET /projects/1.json
   def show
-    @project = Project.find(params[:id])
-
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @project }
@@ -25,7 +30,7 @@ class ProjectsController < ApplicationController
   # GET /projects/new
   # GET /projects/new.json
   def new
-    @user = User.find_by_name(params[:user_id])
+    @user = User.find_by_name(params[:user_id]) || not_found
     @project = Project.new
 
     respond_to do |format|
@@ -36,7 +41,6 @@ class ProjectsController < ApplicationController
 
   # GET /projects/1/edit
   def edit
-    @project = Project.find(params[:id])
     @user = @project.user
   end
 
@@ -76,8 +80,6 @@ class ProjectsController < ApplicationController
   # PUT /projects/1
   # PUT /projects/1.json
   def update
-    @project = Project.find(params[:id])
-
     respond_to do |format|
       if @project.update_attributes(params[:project])
         format.html { redirect_to [@project.user, @project], notice: 'Project was successfully updated.' }
@@ -92,7 +94,6 @@ class ProjectsController < ApplicationController
   # DELETE /projects/1
   # DELETE /projects/1.json
   def destroy
-    @project = Project.find(params[:id])
     @project.destroy
     
     begin
@@ -103,7 +104,7 @@ class ProjectsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_to user_projects_url @project.user}
+      format.html { redirect_to user_url @project.user, notice: 'Project was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

@@ -5,13 +5,16 @@ AGB::Application.routes.draw do
   post "session" => "session#create"
   delete "session" => "session#destroy"
 
-  resources :users do
-    resources :projects do
-      get "worldmaker" => "worldmaker#index"
-      get "worldmaker/world" => "worldmaker#world"
-      put "worldmaker/world" => "worldmaker#update"
-      resources :resources
-      resources :project_comments
+  constraints id: '[a-zA-Z0-9\_\-]+' do
+    get ":id/edit" => "users#edit", as: 'edit_user'
+    resources :users, except: [ :new, :index ], constraints: {user_id: '[a-zA-Z0-9\_\-]+'}, path: '/' do
+      resources :projects, except: [ :index ], constraints: {project_id: '.[a-zA-Z0-9\_\-]+'}, path: '/' do
+        get "worldmaker" => "worldmaker#index"
+        get "worldmaker/world" => "worldmaker#world"
+        put "worldmaker/world" => "worldmaker#update"
+        resources :resources
+        resources :project_comments
+      end
     end
   end
 
