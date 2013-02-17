@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
-  helper_method :current_user, :set_current_user
+  helper_method :current_user, :set_current_user, :not_found
   before_filter :current_user
 
   def index
@@ -20,5 +20,9 @@ private
   rescue
     @current_user = nil
     session[:user_id] = nil
+  end
+
+  def not_found
+    raise ActionController::RoutingError.new('Not Found')
   end
 end

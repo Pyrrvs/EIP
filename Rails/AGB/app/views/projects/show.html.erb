@@ -25,6 +25,6 @@
   <%= @project.user.name %>
 </p>
 
-
-<%= link_to 'Edit', edit_user_project_path(@project) %> |
-<%= link_to 'Back', user_projects_path %>
+<%= link_to 'World Maker', user_project_worldmaker_path(@project.user, @project) %> | 
+<%= link_to 'Edit', edit_user_project_path(@project.user, @project) %> | 
+<%= link_to 'Back', user_path(@project.user) %>
