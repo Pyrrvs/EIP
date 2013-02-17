@@ -17,9 +17,9 @@ class WorldmakerController < ApplicationController
   end
 
   def update
-  #   ResourcesController.update_world_file @path, params[:data].to_json  
-  #   render json: { resp: 'success' }
-  # rescue
+    ResourcesController.update_world_file @path, params[:data].to_json
+    render json: { resp: 'success' }
+  rescue
     render json: { resp: 'failure' }, status: 500   
   end
 end
