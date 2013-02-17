@@ -15,10 +15,6 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			"validate #id" : "changeEntity",
 			"mouseenter .accordion-heading" : "showButton",
 			"mouseleave .accordion-heading" : "hideButton",
-			// "mouseenter .vertex" : "showButtonVertex",
-			// "mouseleave .vertex" : "hideButtonVertex",
-			// "mouseenter .vertex > *" : "showButtonVertex",
-			// "mouseleave .vertex > *": "hideButtonVertex",
 			"change #collapse-charac .entity-member" : "changeEntity",
 			'click #body-type input[type="radio"]' : "changeEntity",
 			'click input[type="checkbox"]' : "changeEntity",
@@ -34,16 +30,6 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			App.global.bind("change:entity", this.selectedEntityChanged, this);
 			App.global.bind("change:run", this.runChanged, this);
 		},
-
-		// showButtonVertex : function(e) {
-
-		// 	$(e.target).find(".btn").show();
-		// },
-
-		// hideButtonVertex : function(e) {
-
-		// 	$(e.target).find(".btn").hide();
-		// },
 
 		showButton : function(e) {
 
@@ -104,7 +90,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
             entity.get("body").get("fixtures").rebind("remove", this.fixtureRemoved, this);
 			entity.get("body").rebind("change:shown", this.entityShownChanged, this);
 			entity.get("model").rebind("change:shown", this.entityShownChanged, this, true);
-		},
+		}.async(),
 
 		entityShownChanged : function(body, shown) {
 
@@ -112,7 +98,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			if (!entity) return;
 			this.$("#show-model-layer").attr("checked", entity.get("model").get("shown"));
 			this.$("#show-body-layer").attr("checked", entity.get("body").get("shown"));
-		},
+		}.async(),
 
 		entityChanged : function(entity, opts) {
 
@@ -124,7 +110,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			this.$("#rotation").val(entity.get("rotation"));
 			this.$("#scale").val(entity.get("scale"));
 			this.$('#body-type input[data-type="' + entity.get("body").get("type") + '"]').attr("checked", true);
-		},
+		}.async(),
 
 		deleteFixture : function(e) {
 
@@ -162,41 +148,39 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 			//debug
 			this.$(".collapse").last().collapse("show");
-		},
+		}.async(),
 
 		fixtureRemoved : function(fixture, fixtures) {
 
 			this.$("#fixtures *").remove();
             fixtures.body.entity.model.get("body").get("fixtures").rebind("add", this.fixtureAdded, this, true);
-		},
+		}.async(),
 
 		vertexChanged : function(vertex, vertices) {
 
 			vertices = vertex.collection;
-			setTimeout(function() {
 			this.$(".fixture-body .vertices").eq(vertices.fixtures.indexOf(vertices.fixtures.where({ shape : vertices })[0]))
 				.find(".vertex").eq(vertices.indexOf(vertex)).find("#position-x")
 				.val(vertex.get("x")).parent().find("#position-y").val(vertex.get("y"))
-			}.bind(this), 0); 
-		},
+		}.async(),
 
 		vertexAdded : function(vertex, vertices) {
 
 			this.$(".fixture-body .vertices").eq(vertices.fixtures
 				.indexOf(vertices.fixtures.where({ shape : vertices })[0])).append(this.tpl_vertex());
 			vertex.rebind("change", this.vertexChanged, this, true);
-		},
+		}.async(),
 
 		vertexRemoved : function(vertex, vertices) {
 
 			var scroll = this.$el.scrollTop();
  			this.$(".fixture-body .vertices").eq(vertices.fixtures
 				.indexOf(vertices.fixtures.where({ shape : vertices })[0])).find("*").remove();
-//			vertex.fixture.get("shape").rebind("add", this.vertexAdded, this, true);
+			vertex.fixture.get("shape").rebind("add", this.vertexAdded, this, true);
 			setTimeout(function() {
 				this.$el.scrollTop(scroll);
 			}.bind(this));
-		},
+		}.async(),
 
 		entityFixtureChanged : function(fixture) {
 
@@ -211,7 +195,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 					$fixture.find(".vertex").eq(i).find("position-x").val(elem.get("x"))
 						.parent().find("position-y").val(elem.get("y"));
 				});
-		},
+		}.async(),
 	});
 
 	var LevelTabView = Backbone.View.extend({

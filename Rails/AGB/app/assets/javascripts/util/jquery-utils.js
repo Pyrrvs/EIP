@@ -1,3 +1,14 @@
+Function.prototype.async = function(timeout) {
+
+  var funcToAsync = this;
+  return (function() {
+    var args = arguments, self = this;
+    setTimeout(function() {
+      funcToAsync.apply(self, args);
+    }, timeout)
+  })
+}
+
 $(function() {
 
 	$("body").on("keydown", 'input[type="text"]', function(e) {
