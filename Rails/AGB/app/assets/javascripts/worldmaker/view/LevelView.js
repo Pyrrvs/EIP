@@ -21,6 +21,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			"mouseenter .accordion-inner li" : "showButton",
 			"mouseleave .accordion-inner li" : "hideButton",
 			"click .accordion-inner .icon-delete" : "deleteEntity",
+			"click #save" : "saveWorld",
 		},
 
 		initialize : function() {
@@ -146,6 +147,11 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 		entityRemoved : function(entity, level, opts) {
 
 			this.$("#levelList ul").eq(App.levels.indexOf(App.global.get("level"))).find("a").eq(opts.index).parent().remove();
+		},
+
+		saveWorld : function() {
+
+			App.controller.putWorld();
 		},
 	});
 

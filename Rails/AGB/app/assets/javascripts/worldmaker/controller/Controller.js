@@ -13,7 +13,7 @@ define(["class"], function(Class) {
 			return (this);
 		},
 
-		postWorld : function(req) {
+		putWorld : function() {
 
 			var d = {
 				"levels" : App.levels.toJSON(),
