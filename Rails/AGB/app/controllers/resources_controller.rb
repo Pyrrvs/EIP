@@ -6,6 +6,12 @@ class ResourcesController < ApplicationController
     end
   end
 
+  def self.update_world_file(path, data)
+    File.open(path, "w") do |f|
+      f.puts data
+    end
+  end
+
   # GET /resources
   # GET /resources.json
   def index
