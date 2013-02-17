@@ -21,7 +21,7 @@ define(["class"], function(Class) {
 			};
 
 			$.ajax(window.location.pathname + "/world", { type : "PUT", dataType : "json",
-				data : JSON.parse(JSON.stringify(d)), success : function(res) {
+				data : { data : JSON.parse(JSON.stringify(d)) }, success : function(res) {
 			}, error : function(log) { console.log(log); }});
 		},
 	});
