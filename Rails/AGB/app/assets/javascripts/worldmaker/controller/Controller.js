@@ -20,7 +20,7 @@ define(["class"], function(Class) {
 				"id" : App.defaultId,
 			};
 
-			$.ajax(window.location.pathname + "/postWorld", { type : "POST", dataType : "json",
+			$.ajax(window.location.pathname + "/world", { type : "PUT", dataType : "json",
 				data : JSON.parse(JSON.stringify(d)), success : function(res) {
 			}, error : function(log) { console.log(log); }});
 		},
