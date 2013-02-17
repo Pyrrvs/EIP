@@ -50,7 +50,7 @@ define([], function() {
 
 		cleanup : function() {
 
-			if (this.body)
+			if (this.body && this.parent)
 				this.parent.parent.world.DestroyBody(this.body);
 			Entity.superclass.cleanup.call(this);
 		}

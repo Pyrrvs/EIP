@@ -76,7 +76,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                         ctx.lineWidth = 1.5 / this.scale / this.parent.scale;
                         ctx.arc(this.contentSize.width / 2 + shape.m_p.x * 30, this.contentSize.height / 2 + shape.m_p.y * 30,
                             shape.GetRadius() * scale, 0, 2 * Math.PI);
-                        ctx.strokeStyle = "green";
+                        ctx.strokeStyle = fixture.highlighted ? "yellow" : "#22DD22";
                     } else if (type == b2Shape.e_polygonShape) {
                         var vertices = shape.GetVertices(), v = null, s = cc.Point.fromSize(this.contentSize).scale(0.5);
                         ctx.lineWidth = 1.5 / this.scale / this.parent.scale;
@@ -87,7 +87,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
                             ctx.lineTo(v.x, v.y);
                         }
                         v = cc.Point.fromB2(vertices[0], scale).add(s);
-                        ctx.strokeStyle = this.isPolygonConvexAndCCW(vertices) ? "green" : "red";
+                        ctx.strokeStyle = fixture.highlighted ? "yellow" : this.isPolygonConvexAndCCW(vertices) ? "#22DD22" : "red";
                         ctx.lineTo(v.x, v.y);
                     }
                     ctx.stroke();
@@ -271,6 +271,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
             App.global.bind("change:entity", this.selectedEntityChanged, this);
             App.global.bind("change:level", this.levelChanged, this);
+            App.global.bind("change:highlightedFixture", this.highlightFixture, this);
 
             cc.Director.sharedDirector.attachInView(document.getElementById("canvasView"));
             cc.Director.sharedDirector.displayFPS = true
@@ -280,6 +281,15 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             this.uiLayer = new UILayer;
             this.scene.addChild({ child : this.uiLayer, z : 1 });
         	cc.Director.sharedDirector.runWithScene(this.scene);
+        },
+
+        highlightFixture : function(global, highlightedFixture) {
+
+            var prev = global.previous("highlightedFixture");
+            if (highlightedFixture)
+                highlightedFixture.highlighted = true;
+            if (prev)
+                prev.highlighted = false;
         },
 
         clickPlay : function() {
@@ -523,22 +533,18 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
 
         entityFixtureShapeChanged : function(fixture) {
 
-            // try {
+            try {
                 var fix = fixture.fixture;
                 if (!fix) return ;
                 var shape = fix.GetShape(), scale = fix.GetBody().entity.scale / 30;
+                if (!shape) return ;
                 if (fixture.get("type") == b2Shape.e_circleShape)
                     shape.SetRadius(fixture.get("shape") * scale);
                 else if (fixture.get("type") == b2Shape.e_polygonShape)
                     shape.SetAsVector(b2Vec2.verticesFromCollection(fixture.get("shape"), scale, fixture.get("position")));
-            // }
-            //  catch (e) {
-            //     console.log(e, "when creating shape");
-            // }
-            // if (fixture.get("type") == b2Shape.e_polygonShape) {
-            //     throw 42;
-            //     console.log(shape.GetVertexCount(), shape.GetVertices(), fixture.get("shape"));
-            // }
+            } catch (e) {
+                console.log(e, "when creating shape");
+            }
         },
 
         entityModelChanged : function(model) {
@@ -616,7 +622,6 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge) {
             model.get("body").get("fixtures").rebind("add", this.fixtureAdded, this, true);
             model.get("body").get("fixtures").rebind("remove", this.fixtureRemoved, this);
             model.get("model").rebind("change", this.entityModelChanged, this, true);
-            console.log("NEW ENTITY");
             this.clickPlay();
             this.clickStop();
         },

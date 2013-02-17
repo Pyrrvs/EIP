@@ -32,14 +32,17 @@ define(["class"], function(Class) {
 
 		putWorld : function() {
 
-			var d = {
-				"levels" : App.levels.toJSON(),
-				"defaultId" : App.defaultId,
-			};
+			var d = { "levels" : App.levels.toJSON(), "defaultId" : App.defaultId };
 
+			$("#save").text("saving ...");
 			$.ajax(window.location.pathname + "/world", { type : "PUT", dataType : "json",
 				data : { data : JSON.parse(JSON.stringify(d)) }, success : function(res) {
-			}, error : function(log) { console.log(log); }});
+					$("#save").text("successfully saved !");
+					(function() { $("#save").text("save"); }.async(1111))();
+			}, error : function(log) {
+					$("#save").text("save failed !");
+					(function() { $("#save").text("save"); }.async(1111))();
+			}});
 		},
 	});
 

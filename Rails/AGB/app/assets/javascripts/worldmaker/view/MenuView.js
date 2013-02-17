@@ -22,6 +22,8 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			"click .fixture .accordion-heading .icon-delete" : "deleteFixture",
 			"click .polygon .accordion-heading .icon-add" : "addVertex",
 			"click .polygon .fixture-body .vertices .icon-delete" : "deleteVertex",
+			"mouseenter .fixture" : "highlightFixture",
+			"mouseleave .fixture" : "unhighlightFixture",
 		},
 
 		initialize : function() {
@@ -196,6 +198,20 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 						.parent().find("position-y").val(elem.get("y"));
 				});
 		}.async(),
+
+		highlightFixture : function(e) {
+
+			var entity = App.global.get("entity");
+			if (!entity) return ;
+			var idx = $(".fixture").index($(e.target).closest(".fixture")), fixture = null;
+            for (fixture = entity.entity.body.GetFixtureList(); fixture && idx--; fixture = fixture.GetNext());
+        	App.global.set("highlightedFixture", fixture);
+		},
+
+		unhighlightFixture : function() {
+
+			App.global.set("highlightedFixture", null);
+		},
 	});
 
 	var LevelTabView = Backbone.View.extend({

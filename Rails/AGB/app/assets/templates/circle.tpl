@@ -15,7 +15,7 @@
           <input id="radius" class="entity-member pull-right" type="number" step="1"></input>
           <span class="pull-right label-input">radius : </span>
         </div>
-        <div class="line-top">
+        <div class="line-top bot">
           <span class="label-input">y : </span>
           <input id="position-y" class="entity-member" type="number" step="5"></input>
         </div>

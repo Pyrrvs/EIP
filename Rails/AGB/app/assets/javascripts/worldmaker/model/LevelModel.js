@@ -44,6 +44,7 @@ define(["model/EntityModel"], function() {
 
 		defaults : function() { return {
 
+			highlightedFixture : null,
 			level : null,
 			entity : null,
 			run : "stop",
