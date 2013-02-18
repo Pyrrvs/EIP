@@ -89,24 +89,23 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			}
 			if (!entity) return;
 			this.$("#fixtures *").remove();
-//			this.$(".collapse").slice(1).collapse("hide");
 			entity.rebind("change", this.entityChanged, this, true);
 			entity.get("model").rebind("change", this.entityModelChanged, this, true);
 			entity.get("body").rebind("change", this.entityBodyChanged, this, true);
             entity.get("body").get("fixtures").rebind("add", this.fixtureAdded, this, true);
             entity.get("body").get("fixtures").rebind("remove", this.fixtureRemoved, this);
-		}.async(),
+		},
 
 		entityModelChanged : function(model) {
 
 			this.$("#show-model-layer").prop("checked", model.get("shown"));
-		}.async(),
+		},
 
 		entityBodyChanged : function(body) {
 
 			this.$('#body-type input[data-type="' + body.get("type") + '"]').prop("checked", true);
 			this.$("#show-body-layer").prop("checked", body.get("shown"));
-		}.async(),
+		},
 
 		entityChanged : function(entity) {
 
@@ -152,17 +151,15 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			fixture.fixtures = fixtures;
 			fixture.rebind("change", this.fixtureChanged, this, true);
 			this.$("#fixtures .accordion-heading").last().find(".btn").hide();
-
-			//debug
 			this.$(".collapse").last().collapse("show");
-		}.async(),
+		},
 
 		fixtureRemoved : function(fixture, fixtures) {
 
 			this.$("#fixtures *").remove();
 			this.cleanupFixture(fixture);
             fixtures.rebind("add", this.fixtureAdded, this, true);
-		}.async(),
+		},
 
 		cleanupFixture : function(fixture) {
 
@@ -188,7 +185,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			this.$(".fixture-body .vertices").eq(fixtures.indexOf(vertex.fixture)).append(this.tpl_vertex());
 			vertex.vertices = vertices;
 			vertex.rebind("change", this.vertexChanged, this, true);
-		}.async(),
+		},
 
 		vertexRemoved : function(vertex, vertices) {
 
@@ -200,7 +197,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 				this.$el.scrollTop(scroll);
 			}.bind(this));
 			this.cleanupVertex(vertex);
-		}.async(),
+		},
 
 		cleanupVertex : function(vertex) {
 

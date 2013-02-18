@@ -349,7 +349,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
                 save = this.save.entities._byId[model.get("id")];
                 var entity = model.entity;
                 if (!entity) return;
-                this.rollback(model, save, entity.id == "ball");
+                this.rollback(model, save);
                 entity.body.SetLinearVelocity(new b2Vec2(0,0));
                 entity.body.SetAngularVelocity(0);
             }.bind(this));
@@ -470,7 +470,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
                 return (false);
             if (App.get("mode") == "camera")
                 App.get("level").get("camera").set("scale", Math.floor(Math.range(this.uiLayer.scale
-                    + e.originalEvent.wheelDeltaY * 0.0001, 0.1, 10) * 1000) / 1000);
+                    + e.originalEvent.wheelDeltaY * 0.0001, 0.1, 10.0) * 1000) / 1000);
             else if (App.get("mode") == "entity" && App.get("entity"))
                 App.get("entity").set("scale", Math.floor(Math.range(App.get("entity").get("scale")
                     + e.originalEvent.wheelDeltaY * 0.0001, 0.1, 10.0) * 1000) / 1000);
@@ -638,8 +638,6 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
             model.get("body").get("fixtures").rebind("add", this.fixtureAdded, this, true);
             model.get("body").get("fixtures").rebind("remove", this.fixtureRemoved, this);
             model.get("model").rebind("change", this.entityModelChanged, this, true);
-            this.clickPlay();
-            this.clickStop();
         },
 
         entityRemoved : function(entity, entities) {
