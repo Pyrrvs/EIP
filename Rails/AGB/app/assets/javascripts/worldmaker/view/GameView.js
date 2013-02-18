@@ -271,7 +271,24 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
             this.scene.addChild({ child : this.gameLayer, z : 0 });
             this.uiLayer = new UILayer;
             this.scene.addChild({ child : this.uiLayer, z : 1 });
-        	cc.Director.sharedDirector.runWithScene(this.scene);
+            cc.Director.sharedDirector.runWithScene(this.scene);
+
+//            this.debug();
+        },
+
+        debug : function() {
+
+            var debugDraw = new b2DebugDraw(), ctx = $("#debug canvas")[0].getContext("2d");
+            $("#debug").show();
+            debugDraw.SetSprite(ctx);
+            ctx.translate(100, 0);
+            debugDraw.SetDrawScale(10.0);
+            debugDraw.SetFillAlpha(0.5);
+            debugDraw.SetLineThickness(1.0);
+            debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit
+                | b2DebugDraw.e_pairBit | b2DebugDraw.e_centerOfMassBit | b2DebugDraw.e_controllerBit);
+            this.scene.world.SetDebugDraw(debugDraw);
+            this.scene.debug = true;
         },
 
         highlightFixture : function(global, highlightedFixture) {
@@ -283,16 +300,20 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
                 prev.fixture.highlighted = false;
         },
 
+        migrate : function() {
+
+            this.save.entities.reset();
+            this.save.camera = App.get("level").get("camera").clone();
+            App.get("level").get("entities").each(function(entity) {
+                this.save.entities.push(entity.deepClone());
+            }.bind(this));            
+        },
+
         clickPlay : function() {
 
             if (App.get("run") == "play") return ;
-            if (App.get("run") == "stop") {
-                this.save.entities.reset();
-                this.save.camera = App.get("level").get("camera").clone();
-                App.get("level").get("entities").each(function(entity) {
-                    this.save.entities.push(entity.deepClone());
-                }.bind(this));
-            }
+            if (App.get("run") == "stop")
+                this.migrate();
             this.gameLayer.children.forEach(function(entity) {
                 entity.body.SetAwake(true);
             });
@@ -326,9 +347,9 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
             camera.trigger("change", camera, {});
             App.get("level").get("entities").each(function(model) {
                 save = this.save.entities._byId[model.get("id")];
-                var entity = model.entity, type = null;
+                var entity = model.entity;
                 if (!entity) return;
-                this.rollback(model, save, entity.id == "ball");
+                this.rollback(model, save);
                 entity.body.SetLinearVelocity(new b2Vec2(0,0));
                 entity.body.SetAngularVelocity(0);
             }.bind(this));
@@ -336,11 +357,12 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
                 App.get("entity").trigger("change", App.get("entity"), {});
             App.set("run", "stop");
         },
-        rollback : function(model, save, debug) {
+
+        rollback : function(model, save) {
 
             _.each(save.attributes, function(value, key) {
                 if (value instanceof Backbone.Model)
-                    this.rollback(model.get(key), value, debug);
+                    this.rollback(model.get(key), value);
                 else if (value instanceof Backbone.Collection)
                     model.get(key).clear().concat(value);
                 else
@@ -448,7 +470,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
                 return (false);
             if (App.get("mode") == "camera")
                 App.get("level").get("camera").set("scale", Math.floor(Math.range(this.uiLayer.scale
-                    + e.originalEvent.wheelDeltaY * 0.0001, 0.1, 10) * 1000) / 1000);
+                    + e.originalEvent.wheelDeltaY * 0.0001, 0.1, 10.0) * 1000) / 1000);
             else if (App.get("mode") == "entity" && App.get("entity"))
                 App.get("entity").set("scale", Math.floor(Math.range(App.get("entity").get("scale")
                     + e.originalEvent.wheelDeltaY * 0.0001, 0.1, 10.0) * 1000) / 1000);
@@ -616,8 +638,6 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
             model.get("body").get("fixtures").rebind("add", this.fixtureAdded, this, true);
             model.get("body").get("fixtures").rebind("remove", this.fixtureRemoved, this);
             model.get("model").rebind("change", this.entityModelChanged, this, true);
-            this.clickPlay();
-            this.clickStop();
         },
 
         entityRemoved : function(entity, entities) {

@@ -22,7 +22,6 @@ define(["class", "model/LevelModel"], function(Class, App) {
 
 			$.ajax(window.location.pathname + "/world", { type : "GET", dataType : "json", success : function(world) {
 				this.deserialize(world);
-				App.set("defaultId", world.defaultId);
 				for (var i in world.levels)
 					App.get("levels").push(world.levels[i]);
 				callback();

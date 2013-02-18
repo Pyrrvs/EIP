@@ -1,5 +1,23 @@
 define([], function() {
 
+	// Box2DWeb migration
+	// (function(obj, n) {
+	// 	if (n > 4) return;
+	// 	for (var i in obj)
+	// 		if (i.substring(0, 2) == "b2")
+	// 			window[i] = obj[i];
+	// 		else
+	// 			arguments.callee(obj[i], ++n);
+	// })(Box2D, 0);
+	// b2Shape.e_circleShape = 0;
+	// b2Shape.e_polygonShape = 1;
+	// b2CircleShape.prototype.GetType = function() {
+	// 	return (b2Shape.e_circleShape);
+	// }
+	// b2PolygonShape.prototype.GetType = function() {
+	// 	return (b2Shape.e_polygonShape);
+	// }
+
 	function DynamicScene() {
 
 	    DynamicScene.superclass.constructor.call(this);
@@ -23,6 +41,8 @@ define([], function() {
 			        }
 		        });
 			});
+			if (this.debug)
+				this.world.DrawDebugData();
 		}
 	});
 

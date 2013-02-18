@@ -2,6 +2,21 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+#debug {
+
+    display: none;
+    position: absolute;
+    z-index: 42;
+    top: 105px;
+    left: 240px;
+}
+
+#debug canvas {
+
+    width: 640px;
+    height: 480px;
+}
+
 #worldmaker {
 
     width: 1262px;
@@ -12,7 +27,7 @@
 
     width: 200px;
     margin-left: 2px;
-    max-height: 516px;
+    height: 516px;
 }
 
 #levelView #levelList {
@@ -29,6 +44,7 @@
 #menuView {
 
     width: 340px;
+    height: 516px;
     margin-left: 5px;
     margin-right: 2px;
 }

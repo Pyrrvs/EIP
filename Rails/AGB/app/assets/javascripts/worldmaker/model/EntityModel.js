@@ -1,4 +1,4 @@
-define([], function() {
+define(["model/LevelModel"], function() {
 
 	var FixtureModel = Backbone.Model.extend({
 
@@ -61,15 +61,28 @@ define([], function() {
 
 		initialize : function(attr) {
 
+			var App = App || require("model/LevelModel");
+			attr = attr || this.attributes;
 			this.set("body", new BodyModel(attr.body));
 			this.set("model", new ModelModel(attr.model));
 			this.set("position", cc.Point.fromObject(attr.position));
+			if (!attr.id) {
+				var n, found = false;
+				for (n = 1; !found && n < 10000; ++n) {
+					found = true;
+					App.get("levels").each(function(level) {
+						if (level.get("entities").where({ id : "noname" + n }).length)
+							found = false;
+					});
+				}
+				attr.id = "noname" + (n - 1);
+			}
 			this.set("id", attr.id);
 		},
 
 		defaults : function() { return {
 
-			id : "noname",
+			id : null,
 			enabled : "checked",
 			position : cc.ccp(0, 0),
 			scale : 1,
