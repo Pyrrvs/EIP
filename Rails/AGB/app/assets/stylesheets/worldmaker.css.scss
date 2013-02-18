@@ -2,6 +2,21 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+#debug {
+
+    display: none;
+    position: absolute;
+    z-index: 42;
+    top: 105px;
+    left: 240px;
+}
+
+#debug canvas {
+
+    width: 640px;
+    height: 480px;
+}
+
 #worldmaker {
 
     width: 1262px;

@@ -23,6 +23,8 @@ define([], function() {
 			        }
 		        });
 			});
+			if (this.debug)
+				this.world.DrawDebugData();
 		}
 	});
 
