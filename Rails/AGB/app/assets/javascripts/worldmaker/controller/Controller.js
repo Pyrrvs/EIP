@@ -1,4 +1,4 @@
-define(["class"], function(Class) {
+define(["class", "model/LevelModel"], function(Class, App) {
 
 	var Controller = Class.extend({
 
@@ -22,9 +22,9 @@ define(["class"], function(Class) {
 
 			$.ajax(window.location.pathname + "/world", { type : "GET", dataType : "json", success : function(world) {
 				this.deserialize(world);
-				App.defaultId = world.defaultId;
+				App.set("defaultId", world.defaultId);
 				for (var i in world.levels)
-					App.levels.push(world.levels[i]);
+					App.get("levels").push(world.levels[i]);
 				callback();
 			}.bind(this), error : function(log) { console.log(log); }});
 			return (this);
@@ -32,11 +32,9 @@ define(["class"], function(Class) {
 
 		putWorld : function() {
 
-			var d = { "levels" : App.levels.toJSON(), "defaultId" : App.defaultId };
-
 			$("#save").text("saving ...");
 			$.ajax(window.location.pathname + "/world", { type : "PUT", dataType : "json",
-				data : { data : JSON.parse(JSON.stringify(d)) }, success : function(res) {
+				data : { data : JSON.parse(JSON.stringify(App)) }, success : function(res) {
 					$("#save").text("successfully saved !");
 					(function() { $("#save").text("save"); }.async(1111))();
 			}, error : function(log) {

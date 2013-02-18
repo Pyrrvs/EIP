@@ -6,7 +6,7 @@ require.config({ paths : {
 	"class" : "/assets/util/class",
 } })
 
-define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/MenuView", "view/GameView"], function() {
+define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/MenuView", "view/GameView"], function(App) {
 
 	function debug() {
 
@@ -18,7 +18,7 @@ define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/Men
 
 	App.controller.getWorld(function() {
 
-		debug.async()();
+		debug.asyncCall();
   	});
 });
 

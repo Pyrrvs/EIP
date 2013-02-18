@@ -1,11 +1,11 @@
 define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.tpl", "model/LevelModel"],
-		function(Class, accordion, entity) {
+		function(Class, tpl_accordion, tpl_entity, App) {
 
 	var LevelView = Backbone.View.extend({
 
 		el : $("#levelView"),
-		tpl_accordion : _.template(accordion),
-		tpl_entity : _.template(entity),
+		tpl_accordion : _.template(tpl_accordion),
+		tpl_entity : _.template(tpl_entity),
 
 		events : {
 
@@ -26,15 +26,15 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 		initialize : function() {
 
-			App.levels.bind("add", this.levelAdded, this);
-			App.levels.bind("remove", this.levelRemoved, this);
-			App.global.bind("change:entity", this.selectedEntityChanged, this);
-			App.global.bind("change:level", this.selectedLevelChanged, this);
+			App.get("levels").bind("add", this.levelAdded, this);
+			App.get("levels").bind("remove", this.levelRemoved, this);
+			App.bind("change:entity", this.selectedEntityChanged, this);
+			App.bind("change:level", this.selectedLevelChanged, this);
 		},
 
 		levelAdded : function(level) {
 
-			var n = App.levels.size() - 1, el = null;
+			var n = App.get("levels").size() - 1, el = null;
 			this.$("#levelList").append(this.tpl_accordion({ id_group : "level", parent : "levelList", id : level.get("id"), n : n }));
 			this.$("#levelList .accordion-group").eq(n).find(".accordion-heading .btn").hide();
 			level.get("entities").rebind("add", this.entityAdded, this, true);
@@ -43,13 +43,13 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 		createLevel : function() {
 
-			App.levels.addLevel(this.$("#id").val());
+			App.get("levels").addLevel(this.$("#id").val());
 		},
 
 		showButton : function(e) {
 
-			if ($(e.target).parent().hasClass("entity") || App.global.get("level")
-				== App.levels.where({ id : $(e.target).parent().find("a").text() })[0])
+			if ($(e.target).parent().hasClass("entity") || App.get("level")
+				== App.get("levels").where({ id : $(e.target).parent().find("a").text() })[0])
 				$(e.target).parent().find(".btn").show();
 		},
 
@@ -60,25 +60,25 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 		deselectLevel : function(e, target) {
 
-			App.global.set("level", null);
+			App.set("level", null);
 			$(target).parent().find(".btn").hide();
 		},
 
 		selectLevel : function(e, target) {
 
-			App.global.set("level", App.levels.where({ id : $(target).text() })[0]);
+			App.set("level", App.get("levels").where({ id : $(target).text() })[0]);
 			if ($(target).css("color") == "#005580")
 				$(target).parent().find(".btn").show();
 		},
 
 		createEntity : function(e) {
 
-			App.levels.where({ id : $(e.target).parent().parent().find("a").text() })[0].get("entities").add();
+			App.get("levels").where({ id : $(e.target).parent().parent().find("a").text() })[0].get("entities").add();
 		},
 
 		deleteLevel : function(e) {
 
-			App.levels.remove(App.levels.where({ id : $(e.target).parent().parent().find("a").text() })[0]);
+			App.get("levels").remove(App.get("levels").where({ id : $(e.target).parent().parent().find("a").text() })[0]);
 		},
 
 		levelRemoved : function(level, levels, opts) {
@@ -89,11 +89,11 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 		entityAdded : function(entity, entities) {
 
 			setTimeout(function() {
-				var level = App.levels.where({ entities : entities })[0];
-				var a = this.$("#levelList .accordion-group").eq(App.levels.indexOf(level))
+				var level = App.get("levels").where({ entities : entities })[0];
+				var a = this.$("#levelList .accordion-group").eq(App.get("levels").indexOf(level))
 					.find("ul").append(this.tpl_entity({ id : entity.get("id") })).find("li a:last");
 				a.parent().find(".btn").hide();
-				if (level == App.global.get("level"))
+				if (level == App.get("level"))
 					a.click();
 			}.bind(this));
 		},
@@ -102,8 +102,8 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 			var i = null, j = null;
 			this.$("#levelList ul a").css("background-color", "");
-			if (entity && (i = App.levels.indexOf(App.global.get("level"))) != -1
-				&& (j = App.global.get("level").get("entities").indexOf(entity)) != -1) {
+			if (entity && (i = App.get("levels").indexOf(App.get("level"))) != -1
+				&& (j = App.get("level").get("entities").indexOf(entity)) != -1) {
 				entity.rebind("change:id", this.entityIdChanged, this);
 				this.$("#levelList ul").eq(i).find("a").eq(j).css("background-color", "rgba(150, 150, 255, 0.2)");
 			}
@@ -112,46 +112,46 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 		entityIdChanged : function(entity, id) {
 
 			var i = null, j = null;
-			if (entity && (i = App.levels.indexOf(App.global.get("level"))) != -1
-				&& (j = App.global.get("level").get("entities").indexOf(entity)) != -1)			
+			if (entity && (i = App.get("levels").indexOf(App.get("level"))) != -1
+				&& (j = App.get("level").get("entities").indexOf(entity)) != -1)			
 				this.$("#levelList ul").eq(i).find("a").eq(j).text(entity.id);
 		},
 
 		selectedLevelChanged : function(global, level) {
 
-			App.global.set("entity", null);
+			App.set("entity", null);
 			if (!level) return;
 			level.rebind("change:id", this.levelChanged, this);
 		},
 
 		levelChanged : function(level, id) {
 
-			this.$("#levelList").eq(App.levels.indexOf(level)).find(".accordion-heading a").text(id);
+			this.$("#levelList").eq(App.get("levels").indexOf(level)).find(".accordion-heading a").text(id);
 		},
 
 		selectEntity : function(e) {
 
-			if (!App.global.get("level")) return;
-			App.global.set("entity", App.global.get("level").get("entities").where({ id : $(e.target).text() })[0]);
+			if (!App.get("level")) return;
+			App.set("entity", App.get("level").get("entities").where({ id : $(e.target).text() })[0]);
 		},
 
 		deleteEntity : function(e) {
 
-			var entities = App.global.get("level").get("entities"),
+			var entities = App.get("level").get("entities"),
 				entity = entities.where({ id : $(e.target).parent().find("a").text() })[0];
-			if (App.global.get("entity") === entity)
-				App.global.set("entity", null);
+			if (App.get("entity") === entity)
+				App.set("entity", null);
 			entities.remove(entity);
 		},
 
 		entityRemoved : function(entity, level, opts) {
 
-			this.$("#levelList ul").eq(App.levels.indexOf(App.global.get("level"))).find("a").eq(opts.index).parent().remove();
+			this.$("#levelList ul").eq(App.get("levels").indexOf(App.get("level"))).find("a").eq(opts.index).parent().remove();
 		},
 
 		saveWorld : function() {
 
-			App.controller.putWorld();
+			App.controller.putWorld(App);
 		},
 	});
 

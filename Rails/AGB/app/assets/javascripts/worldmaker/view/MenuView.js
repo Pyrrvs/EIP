@@ -1,6 +1,6 @@
 define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.tpl", "text!/assets/vertex.tpl",
 	"text!/assets/circle.tpl", "text!/assets/polygon.tpl", "model/LevelModel"],
-	function(Class, tpl_accordion, tpl_class, tpl_vertex, tpl_circle, tpl_polygon) {
+	function(Class, tpl_accordion, tpl_class, tpl_vertex, tpl_circle, tpl_polygon, App) {
 
 	var EntityTabView = Backbone.View.extend({
 
@@ -29,8 +29,8 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 		initialize : function() {
 	
 			this.nbFixtures = 0;
-			App.global.bind("change:entity", this.selectedEntityChanged, this);
-			App.global.bind("change:run", this.runChanged, this);
+			App.bind("change:entity", this.selectedEntityChanged, this);
+			App.bind("change:run", this.runChanged, this);
 		},
 
 		showButton : function(e) {
@@ -50,86 +50,91 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 		changeEntityFixture : function(e) {
 
-			var entity = App.global.get("entity"), opts = { silent : true }, $fixture = $(e.target).closest(".fixture-body"),
+			var entity = App.get("entity"), $fixture = $(e.target).closest(".fixture-body"),
 				fixture = entity.get("body").get("fixtures").at($.inArray($fixture[0], this.$(".fixture-body"))), $vertex = null;
-			fixture.unbind("change", this.entityFixtureChanged, this);
 			fixture.set("position", cc.ccp(parseFloat($fixture.find("#position-x").val()),
-				parseFloat($fixture.find("#position-y").val())), opts);
+				parseFloat($fixture.find("#position-y").val())));
 			if (fixture.get("type") == b2Shape.e_circleShape) {
 				$fixture.find("#radius").val(Math.minimize($fixture.find("#radius").val(), 0.1));
-				fixture.set("shape", $fixture.find("#radius").val(), opts);
+				fixture.set("shape", $fixture.find("#radius").val());
 			} else if (fixture.get("type") == b2Shape.e_polygonShape && ($vertex = $(e.target).closest(".vertex")).length)
 				fixture.get("shape").at($fixture.find(".vertex").index($vertex))
 					.set({ x : parseFloat($vertex.find("#position-x").val()), y : parseFloat($vertex.find("#position-y").val()) });
-			fixture.change();
-			fixture.bind("change", this.entityFixtureChanged, this);
 		},
 
 		changeEntity : function(e) {
 
-			var entity = App.global.get("entity"), opts = { silent : true };
-			entity.unbind("change", this.entityChanged, this);
-			entity.set("enabled", !!this.$("#enable").attr("checked"));
+			var entity = App.get("entity");
+			entity.set("enabled", !!this.$("#enable").prop("checked"));
 			entity.set("id", this.$("#id").val());
-			entity.set("class", this.$("#class button").first().text(), opts);
-			entity.set("position", cc.ccp(parseFloat(this.$("#position-x").val()), parseFloat(this.$("#position-y").val())), opts);
-			entity.set("rotation", parseFloat(this.$("#rotation").val()), opts);
-			entity.set("scale", parseFloat(this.$("#scale").val()), opts);
+			entity.set("class", this.$("#class button").first().text());
+			entity.set("position", cc.ccp(parseFloat(this.$("#position-x").val()), parseFloat(this.$("#position-y").val())));
+			entity.set("rotation", parseFloat(this.$("#rotation").val()));
+			entity.set("scale", parseFloat(this.$("#scale").val()));
 			entity.get("body").set("type", parseInt(this.$('#body-type input:checked').attr("data-type")));
-			entity.get("body").set("shown", !!this.$("#show-body-layer").attr("checked"));
-			entity.get("model").set("shown", !!this.$("#show-model-layer").attr("checked"));
-            entity.change();
-			entity.bind("change", this.entityChanged, this);
+			entity.get("body").set("shown", !!this.$("#show-body-layer").prop("checked"));
+			entity.get("model").set("shown", !!this.$("#show-model-layer").prop("checked"));
 		},
 
 		selectedEntityChanged : function(global, entity) {
 
+			var prev = global.previous("entity");
+			if (prev) {
+				prev.unbind("change", this.entityChanged, this);
+				prev.get("model").unbind("change", this.entityModelChanged, this);
+				prev.get("body").unbind("change", this.entityBodyChanged, this);
+	            prev.get("body").get("fixtures").unbind("add", this.fixtureAdded, this, this);
+	            prev.get("body").get("fixtures").unbind("remove", this.fixtureRemoved, this);
+	            prev.get("body").get("fixtures").cleanup(this.cleanupFixture, this);
+			}
 			if (!entity) return;
 			this.$("#fixtures *").remove();
 //			this.$(".collapse").slice(1).collapse("hide");
 			entity.rebind("change", this.entityChanged, this, true);
+			entity.get("model").rebind("change", this.entityModelChanged, this, true);
+			entity.get("body").rebind("change", this.entityBodyChanged, this, true);
             entity.get("body").get("fixtures").rebind("add", this.fixtureAdded, this, true);
             entity.get("body").get("fixtures").rebind("remove", this.fixtureRemoved, this);
-			entity.get("body").rebind("change:shown", this.entityShownChanged, this);
-			entity.get("model").rebind("change:shown", this.entityShownChanged, this, true);
 		}.async(),
 
-		entityShownChanged : function(body, shown) {
+		entityModelChanged : function(model) {
 
-			var entity = App.global.get("entity"), opts = { silent : true };
-			if (!entity) return;
-			this.$("#show-model-layer").attr("checked", entity.get("model").get("shown"));
-			this.$("#show-body-layer").attr("checked", entity.get("body").get("shown"));
+			this.$("#show-model-layer").prop("checked", model.get("shown"));
 		}.async(),
 
-		entityChanged : function(entity, opts) {
+		entityBodyChanged : function(body) {
 
-			this.$("#enable").attr("checked", entity.get("enabled"));
+			this.$('#body-type input[data-type="' + body.get("type") + '"]').prop("checked", true);
+			this.$("#show-body-layer").prop("checked", body.get("shown"));
+		}.async(),
+
+		entityChanged : function(entity) {
+
+			this.$("#enable").prop("checked", entity.get("enabled"));
 			this.$("#id").val(entity.get("id"));
 			this.$("#class button").first().text(entity.get("class"));
 			this.$("#position-x").val(entity.get("position").x);
 			this.$("#position-y").val(entity.get("position").y);
 			this.$("#rotation").val(entity.get("rotation"));
 			this.$("#scale").val(entity.get("scale"));
-			this.$('#body-type input[data-type="' + entity.get("body").get("type") + '"]').attr("checked", true);
 		}.async(),
 
 		deleteFixture : function(e) {
 
-			var fixtures = App.global.get("entity").get("body").get("fixtures");
+			var fixtures = App.get("entity").get("body").get("fixtures");
 			fixtures.remove(fixtures.at(this.$(".fixture").index($(e.target).closest(".fixture"))));
 		},
 
 		addVertex : function(e) {
 
-			App.global.get("entity").get("body").get("fixtures").at(this.$(".fixture").
+			App.get("entity").get("body").get("fixtures").at(this.$(".fixture").
 				index($(e.target).closest(".fixture"))).get("shape").add({ x : 0, y : 0 });
 		},
 
 		deleteVertex : function(e) {
 
 			var idx = this.$(".fixture").index($(e.target).closest(".fixture")),
-				vertices = App.global.get("entity").get("body").get("fixtures").at(idx).get("shape");
+				vertices = App.get("entity").get("body").get("fixtures").at(idx).get("shape");
 			vertices.remove(vertices.at(this.$(".fixture").eq(idx).find(".vertex").index($(e.target).closest(".vertex"))));
 		},
 
@@ -145,7 +150,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 				fixture.get("shape").rebind("remove", this.vertexRemoved, this);
 			}
 			fixture.fixtures = fixtures;
-			fixture.rebind("change", this.entityFixtureChanged, this, true);
+			fixture.rebind("change", this.fixtureChanged, this, true);
 			this.$("#fixtures .accordion-heading").last().find(".btn").hide();
 
 			//debug
@@ -155,21 +160,33 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 		fixtureRemoved : function(fixture, fixtures) {
 
 			this.$("#fixtures *").remove();
-            fixtures.body.entity.model.get("body").get("fixtures").rebind("add", this.fixtureAdded, this, true);
+			this.cleanupFixture(fixture);
+            fixtures.rebind("add", this.fixtureAdded, this, true);
 		}.async(),
 
-		vertexChanged : function(vertex, vertices) {
+		cleanupFixture : function(fixture) {
 
-			vertices = vertex.collection;
-			this.$(".fixture-body .vertices").eq(vertices.fixtures.indexOf(vertices.fixtures.where({ shape : vertices })[0]))
-				.find(".vertex").eq(vertices.indexOf(vertex)).find("#position-x")
+			if (fixture.get("shape") instanceof Backbone.Collection) {
+				fixture.get("shape").unbind("add", this.vertexAdded, this);
+				fixture.get("shape").unbind("remove", this.vertexRemoved, this);
+				fixture.get("shape").cleanup(this.cleanupVertex, this);
+			}
+			fixture.unbind("change", this.entityFixtureChanged, this);
+		},
+
+		vertexChanged : function(vertex) {
+
+			var fixtures = vertex.fixture.fixtures;
+			this.$(".fixture-body .vertices").eq(fixtures.indexOf(vertex.fixture))
+				.find(".vertex").eq(vertex.vertices.indexOf(vertex)).find("#position-x")
 				.val(vertex.get("x")).parent().find("#position-y").val(vertex.get("y"))
 		}.async(),
 
 		vertexAdded : function(vertex, vertices) {
 
-			this.$(".fixture-body .vertices").eq(vertices.fixtures
-				.indexOf(vertices.fixtures.where({ shape : vertices })[0])).append(this.tpl_vertex());
+			var fixtures = vertex.fixture.fixtures;
+			this.$(".fixture-body .vertices").eq(fixtures.indexOf(vertex.fixture)).append(this.tpl_vertex());
+			vertex.vertices = vertices;
 			vertex.rebind("change", this.vertexChanged, this, true);
 		}.async(),
 
@@ -182,9 +199,15 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			setTimeout(function() {
 				this.$el.scrollTop(scroll);
 			}.bind(this));
+			this.cleanupVertex(vertex);
 		}.async(),
 
-		entityFixtureChanged : function(fixture) {
+		cleanupVertex : function(vertex) {
+
+			vertex.unbind("change", this.vertexChanged, this);
+		},
+
+		fixtureChanged : function(fixture) {
 
 			var $fixture = this.$(".fixture-body").eq(fixture.fixtures.indexOf(fixture));
 			fixture = fixture.attributes;
@@ -201,16 +224,15 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 		highlightFixture : function(e) {
 
-			var entity = App.global.get("entity");
+			var entity = App.get("entity");
 			if (!entity) return ;
-			var idx = $(".fixture").index($(e.target).closest(".fixture")), fixture = null;
-            for (fixture = entity.entity.body.GetFixtureList(); fixture && idx--; fixture = fixture.GetNext());
-        	App.global.set("highlightedFixture", fixture);
+        	App.set("highlightedFixture", entity.get("body").get("fixtures")
+        		.at($(".fixture").index($(e.target).closest(".fixture"))));
 		},
 
 		unhighlightFixture : function() {
 
-			App.global.set("highlightedFixture", null);
+			App.set("highlightedFixture", null);
 		},
 	});
 
@@ -227,8 +249,8 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 		initialize : function() {
 
-			App.global.bind("change:level", this.selectedLevelChanged, this);
-			App.global.bind("change:run", this.runChanged, this);
+			App.bind("change:level", this.selectedLevelChanged, this);
+			App.bind("change:run", this.runChanged, this);
 		},
 
 		runChanged : function(global, run) {
@@ -238,13 +260,13 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 		changeLevel : function(e) {
 
-			var level = App.global.get("level")
+			var level = App.get("level")
 			level.set("id", this.$("#id").val());
 		},
 
 		toggleLayers : function(e) {
 
-			var type = e.target.id, level = App.global.get("level"), shown = !level.get("entities").find(function(entity) {
+			var type = e.target.id, level = App.get("level"), shown = !level.get("entities").find(function(entity) {
 				return (!entity.get(type).get("shown"));
 			});
 			level.get("entities").each(function(entity) { entity.get(type).set("shown", !shown); });
@@ -252,19 +274,18 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 		changeCamera : function(e) {
 
-			var level = App.global.get("level"), camera = level.get("camera"), opts = { silent : true };
+			var level = App.get("level"), camera = level.get("camera");
 			
-			camera.set("position", cc.ccp(parseFloat(this.$("#position-x").val()), parseFloat(this.$("#position-y").val())), opts);
-			camera.set("rotation", parseFloat(this.$("#rotation").val()), opts);
-			camera.set("scale", parseFloat(this.$("#scale").val()), opts);
-            camera.change();
+			camera.set("position", cc.ccp(parseFloat(this.$("#position-x").val()), parseFloat(this.$("#position-y").val())));
+			camera.set("rotation", parseFloat(this.$("#rotation").val()));
+			camera.set("scale", parseFloat(this.$("#scale").val()));
 		},
 
 		selectedLevelChanged : function(global, level) {
 
 			if (!level) return;
-			App.global.get("level").rebind("change", this.levelChanged, this, true);
-			App.global.get("level").get("camera").rebind("change", this.cameraChanged, this, true);
+			App.get("level").rebind("change", this.levelChanged, this, true);
+			App.get("level").get("camera").rebind("change", this.cameraChanged, this, true);
 		},
 
 		levelChanged : function(level, opts) {
@@ -288,14 +309,13 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 		initialize : function() {
 
 			$("body").attr('unselectable','on').css('UserSelect','none').css('MozUserSelect','none');
-			$("#postWorld").click(App.controller.postWorld);
 			this.$('#tabs a[href="#tab-entity"]').parent().addClass("disabled");
 			this.$('#tabs a[href="#tab-level"]').parent().addClass("disabled");
 			this.$('#tabs a[href="#tab-classes"]').tab("show");
 
-			App.global.bind("change:entity", this.selectedEntityChanged, this);
-			App.global.bind("change:level", this.selectedLevelChanged, this);
-			App.global.bind("change:mode", this.modeChanged, this);
+			App.bind("change:entity", this.selectedEntityChanged, this);
+			App.bind("change:level", this.selectedLevelChanged, this);
+			App.bind("change:mode", this.modeChanged, this);
 		},
 
 		selectedEntityChanged : function(global, entity) {
