@@ -3,7 +3,7 @@ class Resource < ActiveRecord::Base
   validates :name, presence: true, length: { in:1..20 }
   validates :file_type, presence: true, inclusion: ["image", "script", "animation", "world"]
 
-  # checks the uniqueness by user
+  # checks the uniqueness by user 
   validates_each :name do |record, attr, value|
   	# shouldnt be there 
   	unless record.project.nil?
@@ -13,3 +13,4 @@ class Resource < ActiveRecord::Base
 
   belongs_to :project
 end
+

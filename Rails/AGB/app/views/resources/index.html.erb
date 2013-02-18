@@ -3,8 +3,8 @@
 <table>
   <tr>
     <th>Name</th>
-    <th>File type</th>
     <th>Project</th>
+    <th>File</th>
     <th></th>
     <th></th>
     <th></th>
@@ -13,8 +13,8 @@
 <% @resources.each do |resource| %>
   <tr>
     <td><%= resource.name %></td>
-    <td><%= resource.file_type %></td>
     <td><%= resource.project_id %></td>
+    <td><%= resource.file %></td>
     <td><%= link_to 'Show', resource %></td>
     <td><%= link_to 'Edit', edit_resource_path(resource) %></td>
     <td><%= link_to 'Destroy', resource, method: :delete, data: { confirm: 'Are you sure?' } %></td>

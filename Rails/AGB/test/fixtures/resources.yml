@@ -1,11 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 one:
-  name: toto.jpg
-  file_type: image
+  name: MyString
   project_id: 1
+  file: MyString
 
 two:
-  name: world.kwm
-  file_type: world
+  name: MyString
   project_id: 1
+  file: MyString

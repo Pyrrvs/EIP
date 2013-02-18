@@ -2,6 +2,7 @@ class UsersController < ApplicationController
  
   before_filter :load_user, except: [ :create ]
 
+
   def load_user
     @user = User.find_by_name(params[:id]) || not_found
   end
