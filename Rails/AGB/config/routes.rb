@@ -1,6 +1,6 @@
 AGB::Application.routes.draw do
   
-  root to: 'application#index'
+  root to: 'application#index', via: :get
 
   post "session" => "session#create"
   delete "session" => "session#destroy"

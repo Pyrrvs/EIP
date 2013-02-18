@@ -1,0 +1,8 @@
+development:
+  users_dir: users/development/
+
+test:
+  users_dir: users/test/
+
+production:
+  users_dir: users/production/	

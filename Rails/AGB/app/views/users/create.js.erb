@@ -2,7 +2,7 @@ var $sign_up = $("#sign-up"), $field = null;
 $sign_up.find(".field-error").html("");
 $sign_up.find("#message").css("color", "black");
 <% if (@user.errors.any?) %>
-	<% if (@user.errors[:internal]) %>
+	<% if (!@user.errors[:internal].empty?) %>
 		$sign_up.find("#message").css("color", "red").html("<%= h @user.errors[:internal] %>");
 	<% else %>
 		$sign_up.find("#message").css("color", "red").text("Fix the following error(s) !");
