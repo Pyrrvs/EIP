@@ -17,7 +17,7 @@ define(["model/LevelModel"], function() {
 		defaults : function() { return {
 
             density : 1.0,
-            friction : 1,
+            friction : 0.5,
             restitution : 0.5,
             type : null,
             shape : null,
@@ -62,7 +62,7 @@ define(["model/LevelModel"], function() {
 		initialize : function(attr) {
 
 			var App = App || require("model/LevelModel");
-			attr = attr || this.attributes;
+			attr = this.attributes;
 			this.set("body", new BodyModel(attr.body));
 			this.set("model", new ModelModel(attr.model));
 			this.set("position", cc.Point.fromObject(attr.position));
@@ -83,12 +83,12 @@ define(["model/LevelModel"], function() {
 		defaults : function() { return {
 
 			id : null,
-			enabled : "checked",
+			enabled : true,
 			position : cc.ccp(0, 0),
 			scale : 1,
 			rotation : 0,
-			model : new ModelModel,
-			body : new BodyModel,
+			model : null,
+			body : null,
 		}},
 	});
 

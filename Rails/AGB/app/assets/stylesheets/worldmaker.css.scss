@@ -7,14 +7,14 @@
     display: none;
     position: absolute;
     z-index: 42;
-    top: 105px;
-    left: 240px;
+    top: 0;
+    left: 0;
 }
 
 #debug canvas {
 
     width: 640px;
-    height: 480px;
+    height: 640px;
 }
 
 #worldmaker {
@@ -308,3 +308,9 @@ input[type="radio"] {
 
 	width: 100%;
 }
+
+.accordion-group * {
+
+    overflow: visible !important;
+}
+

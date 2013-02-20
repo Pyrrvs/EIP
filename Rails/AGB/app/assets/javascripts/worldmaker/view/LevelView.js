@@ -9,7 +9,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 		events : {
 
-			"click .add-icon" : "createLevel",
+			"click .icon-add" : "createLevel",
 			"validate #id" : "createLevel",
 			"mouseenter .accordion-heading" : "showButton",
 			"mouseleave .accordion-heading" : "hideButton",
