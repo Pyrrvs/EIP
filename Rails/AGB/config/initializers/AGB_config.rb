@@ -1,0 +1,1 @@
+AGB_CONFIG = YAML.load_file("#{Rails.root}/config/AGB_config.yml")[Rails.env]

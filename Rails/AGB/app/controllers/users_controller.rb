@@ -49,11 +49,11 @@ class UsersController < ApplicationController
 
     if @user.save
       begin
-        Dir.mkdir('./users/' + @user.name, 0755)
+        Dir.mkdir("#{Rails.root}/#{AGB_CONFIG['users_dir']}/#{@user.name}", 0755)
       rescue
         @user.destroy
         @user.errors[:internal] = "Internal server error: Please contact an administrator."
-        puts "Cannot create the user directory /users/" + @user.name
+        puts "Cannot create the user directory #{Rails.root}/#{AGB_CONFIG['users_dir']}/#{@user.name}"
       end
     end
     respond_to do |format|
@@ -81,9 +81,9 @@ class UsersController < ApplicationController
     @user.destroy
     begin
       puts @user.name
-      FileUtils.remove_entry_secure('./users/' + @user.name);
+      FileUtils.remove_entry_secure("#{AGB_CONFIG['users_dir']}/#{@user.name}");
     rescue
-      puts "Cannot remove the user directory /users/" + @user.name
+      puts "Cannot remove the user directory #{AGB_CONFIG['users_dir']}/#{@user.name}"
       # Do something... send mail to administrator?
     end
 

@@ -48,27 +48,28 @@ class ProjectsController < ApplicationController
   # POST /projects.json
   def create
     @project = Project.new(params[:project])
-    user = User.find_by_name(params[:user_id])
-    @project.user_id = user.id
+    @user = User.find_by_name(params[:user_id])
+    @project.user_id = @user.id
     @project.nb_stars = 0
 
     res = @project.save
     if res
       begin
-        Dir.mkdir('./users/' + @project.user.name + '/' + @project.name, 0755)
-        Dir.mkdir('./users/' + @project.user.name + '/' + @project.name + '/Resources', 0755)
-        Dir.mkdir('./users/' + @project.user.name + '/' + @project.name + '/kFiles', 0755)
-        ResourcesController.create_world_file('./users/' + @project.user.name + '/' + @project.name + '/kFiles/world.js')
+        project_path = "#{Rails.root}/#{AGB_CONFIG['users_dir']}/#{@project.user.name}/#{@project.name}"
+        Dir.mkdir(project_path, 0755)
+        Dir.mkdir("#{project_path}/Resources", 0755)
+        Dir.mkdir("#{project_path}/kFiles", 0755)
+        ResourcesController.create_world_file("#{project_path}/kFiles/world.js")
       rescue
         @project.destroy
-        @project.errors[:internal] = "Internal server error: Please contact an administrator."
+        @project.errors[:internal] = "- Internal server error: Please contact an administrator."
         puts "Cannot create the project tree for the project " + @project.name + " [owner: " + @project.user.name + "]"
       end
     end
 
     respond_to do |format|
-      if res
-        format.html { redirect_to [@project.user, @project], notice: 'Project was successfully created.' }
+      if res && !@project.errors.any?
+        format.html { redirect_to [@project.user, @project] }
         format.json { render json: @project, status: :created, location: @project }
       else
         format.html { render action: "new" }
@@ -95,11 +96,13 @@ class ProjectsController < ApplicationController
   # DELETE /projects/1.json
   def destroy
     @project.destroy
+
+    project_path = "#{Rails.root}/#{AGB_CONFIG['users_dir']}/#{@project.user.name}/#{@project.name}"
     
     begin
-      FileUtils.remove_entry_secure('./users/' + @project.user.name + '/' + @project.name);
+      FileUtils.remove_entry_secure(project_path);
     rescue
-      puts "Cannot remove the project directory /users/" + @project.user.name + '/' + @project.name
+      puts "Cannot remove the project directory #{project_path}"
       # Do something... send mail to administrator?
     end
 
