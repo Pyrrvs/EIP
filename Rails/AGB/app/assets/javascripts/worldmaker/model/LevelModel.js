@@ -61,7 +61,7 @@ define(["model/EntityModel"], function(EntityCollection) {
 			entity : null,
 			run : "stop",
 			mode : "camera",
-			scaling : 100,
+			scaling : 50,
 		}},
 	});
 

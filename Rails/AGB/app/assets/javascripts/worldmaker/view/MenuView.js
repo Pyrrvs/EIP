@@ -56,8 +56,8 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			fixture.set("position", cc.ccp(parseFloat($fixture.find("#position-x").val()),
 				parseFloat($fixture.find("#position-y").val())));
 			if (fixture.get("type") == b2Shape.e_circleShape) {
-				$fixture.find("#radius").val(Math.minimize($fixture.find("#radius").val(), 0.1));
-				fixture.set("shape", $fixture.find("#radius").val());
+				$fixture.find("#radius").val(Math.minimize(parseFloat($fixture.find("#radius").val()), 0.1));
+				fixture.set("shape", parseFloat($fixture.find("#radius").val()));
 			} else if (fixture.get("type") == b2Shape.e_polygonShape && ($vertex = $(e.target).closest(".vertex")).length)
 				fixture.get("shape").at($fixture.find(".vertex").index($vertex))
 					.set({ x : parseFloat($vertex.find("#position-x").val()), y : parseFloat($vertex.find("#position-y").val()) });

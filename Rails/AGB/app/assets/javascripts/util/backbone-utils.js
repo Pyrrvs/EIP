@@ -5,7 +5,7 @@ Backbone.Model.prototype.rebind = function(a, b, c, d) {
   } catch (e) {}
   this.bind(a, b, c);
   if (d)
-    b.call(c, this, true)
+    b.call(c, this, {}, true);
   return (this);
 };
 

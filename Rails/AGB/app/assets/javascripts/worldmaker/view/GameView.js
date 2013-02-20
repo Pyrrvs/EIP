@@ -302,7 +302,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
             cc.Director.sharedDirector.runWithScene(this.scene);
 
             // this.debug();
-            this.logDebug = true;
+            // this.logDebug = true;
         },
 
         debug : function() {
@@ -386,6 +386,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
                 var entity = model.entity;
                 if (!entity) return;
                 this.rollback(model, save);
+                entity.body.ResetMassData();
                 entity.body.SetLinearVelocity(new b2Vec2(0,0));
                 entity.body.SetAngularVelocity(0);
             }.bind(this));
@@ -546,7 +547,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
             entity.rotation = data.rotation;
             if (model.hasChanged("scale"))
                 data.body.get("fixtures").each(function(fixture) {
-                    this.entityFixtureShapeChanged(fixture);
+                    this.entityFixtureChanged(fixture);
                 }.bind(this));
             this.updateBody(entity);
         },
@@ -577,35 +578,22 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
             entity.body.SetType(body.type);
         },
 
-        entityFixtureChanged : function(fixture) {
+        entityFixtureChanged : function(fixture, changes, init) {
 
             if (this.logDebug)
                 log("entityFixtureChanged");
             var fix = fixture.fixture;
             if (fixture.get("type") == b2Shape.e_circleShape)
                 fix.GetShape().m_p = fixture.get("position").toB2(App.get("scaling"));
-            else if (fixture.get("type") == b2Shape.e_polygonShape)
-                this.entityFixtureShapeChanged(fixture);
             fix.SetDensity(fixture.get("density"));
             fix.SetFriction(fixture.get("friction"));
             fix.SetRestitution(fixture.get("restitution"));
-            if (fix.GetBody().entity.id == "noname2")
-                log(JSON.stringify(fixture.attributes));
-        },
-
-        entityFixtureShapeChanged : function(fixture) {
-
-            if (this.logDebug)
-                log("entityFixtureShapeChanged");
             try {
-                var fix = fixture.fixture;
-                if (!fix) return ;
                 var aabb = fix.GetAABB(), shape = fix.GetShape(), scale = fix.GetBody().entity.scale / App.get("scaling");
-                if (!shape) return ;
-                shape.ComputeAABB(aabb, fix.GetBody().GetTransform());
-                if (!Math.inRange(Math.abs(aabb.lowerBound.x - aabb.upperBound.x), 0.1, 100)
-                    || !Math.inRange(Math.abs(aabb.upperBound.y - aabb.lowerBound.y), 0.1, 100))
-                    console.debug("NOT IN RANGE", fix.GetBody().entity.id);
+                // shape.ComputeAABB(aabb, fix.GetBody().GetTransform());
+                // if (!Math.inRange(Math.abs(aabb.lowerBound.x - aabb.upperBound.x), 0.1, 100)
+                //     || !Math.inRange(Math.abs(aabb.upperBound.y - aabb.lowerBound.y), 0.1, 100))
+                //     console.debug("NOT IN RANGE", fix.GetBody().entity.id);
                 if (fixture.get("type") == b2Shape.e_circleShape)
                     shape.SetRadius(fixture.get("shape") * scale);
                 else if (fixture.get("type") == b2Shape.e_polygonShape)
@@ -613,6 +601,33 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
             } catch (e) {
                 console.debug(e, "when creating shape");
             }
+            this.updateBody(fix.GetBody().entity);
+        },
+
+        fixtureAdded : function(fixture, fixtures) {
+
+            if (this.logDebug)
+                log("fixtureAdded");
+            var fixdef = new b2FixtureDef;
+            if (fixture.get("type") == b2Shape.e_circleShape) {
+                fixdef.shape = new b2CircleShape(0.1);
+                fixture.fixture = fixtures.body.CreateFixture(fixdef);
+                fixture.rebind("change", this.entityFixtureChanged, this, true);
+            } else if (fixture.get("type") == b2Shape.e_polygonShape) {
+                fixdef.shape = b2PolygonShape.AsBox(0.1, 0.1);
+                fixture.fixture = fixtures.body.CreateFixture(fixdef);
+                fixture.get("shape").fixture = fixture;
+                fixture.rebind("change", this.entityFixtureChanged, this);
+                fixture.get("shape").rebind("add", this.vertexAdded, this, true);
+                fixture.get("shape").rebind("remove", this.vertexRemoved, this);
+            }
+        },
+
+        fixtureRemoved : function(fixture) {
+
+            if (this.logDebug)
+                log("fixtureRemoved");
+            fixture.fixture.GetBody().DestroyFixture(fixture.fixture);
         },
 
         entityModelChanged : function(model) {
@@ -624,7 +639,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
 
         vertexChanged : function(vertex, changed) {
 
-            this.entityFixtureShapeChanged(vertex.fixture);
+            this.entityFixtureChanged(vertex.fixture);
         },
 
         vertexAdded : function(vertex, vertices, init) {
@@ -640,34 +655,6 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
             this.entityFixtureShapeChanged(vertex.fixture);
             // fixes a bug from box2d (might create errors)
             vertex.fixture.fixture.GetShape().GetVertices().pop();
-        },
-
-        fixtureAdded : function(fixture, fixtures) {
-
-            if (this.logDebug)
-                log("fixtureAdded");
-            var fixdef = new b2FixtureDef;
-            if (fixture.get("type") == b2Shape.e_circleShape) {
-                fixdef.shape = new b2CircleShape(1);
-                fixture.fixture = fixtures.body.CreateFixture(fixdef);
-                fixture.rebind("change", this.entityFixtureChanged, this, true);
-                fixture.rebind("change:shape", this.entityFixtureShapeChanged, this, true);
-            } else if (fixture.get("type") == b2Shape.e_polygonShape) {
-                fixdef.shape = b2PolygonShape.AsBox(1, 1);
-                fixture.fixture = fixtures.body.CreateFixture(fixdef);
-                fixture.get("shape").fixture = fixture;
-                fixture.rebind("change", this.entityFixtureChanged, this);
-                fixture.rebind("change:shape", this.entityFixtureShapeChanged, this);
-                fixture.get("shape").rebind("add", this.vertexAdded, this, true);
-                fixture.get("shape").rebind("remove", this.vertexRemoved, this);
-            }
-        },
-
-        fixtureRemoved : function(fixture) {
-
-            if (this.logDebug)
-                log("fixtureRemoved");
-            fixture.fixture.GetBody().DestroyFixture(fixture.fixture);
         },
 
         cameraChanged : function(camera) {
