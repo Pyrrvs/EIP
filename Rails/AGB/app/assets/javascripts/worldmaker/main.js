@@ -31,24 +31,24 @@ define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/Men
 		});
 	};
 
-	var createLevel = '$("#id").val(arguments[0]).trigger("validate");'.t(100);
-	var selectLevel = '$("#levelView .accordion-heading a").eq(arguments[0]).click();'.t(50);
-	var createEntity = '$("#levelView .accordion-heading").eq(arguments[0]).find(".icon-add").click();'.t(100);
-	var selectEntity = '$("#levelView .accordion-body").first().find("li a").eq(arguments[0]).click();'.t(80);
-	var selectCreateFixture = '$("#add-fixture").trigger("select", arguments[0]).change();'.t(50);
-	var clickCreateFixture = '$("#add-fixture button:first").click();'.t(100);
-	var moveEntity = '$("#position-x:first").val(arguments[0]).change(); $("#position-y:first").val(arguments[1]).change();'.t(80);
-	var save = '$("#save").click();'.t(200);
-	var	load = 'App.controller.getWorld(function() { });'.t(200);
-	var radius = '$("#radius").val(arguments[0]).change()'.t(80);
-	var selectType = '$("#body-type").trigger("select", arguments[0]).change();'.t(80);
-	var moveVertex = '$(".fixture").eq(arguments[0]).find(".vertex").eq(arguments[1]).find("#position-x").val(arguments[2]).change().parent().find("#position-y").val(arguments[3]).change()'.t(100);
-	var play = '$("#play").click()'.t(3000);
-	var quickPlay = '$("#play").click()'.t(1000);
-	var stop = '$("#stop").click()'.t(80);
-	var pause = '$("#pause").click()'.t(1000);
-	var display = 'log.apply(null, arguments)'.t(50);
-	var newTest = 'testTimer = 0;'.t(0);
+	var createLevel = '$("#id").val(arguments[0]).trigger("validate");'.t(100),
+		selectLevel = '$("#levelView .accordion-heading a").eq(arguments[0]).click();'.t(50),
+		createEntity = '$("#levelView .accordion-heading").eq(arguments[0]).find(".icon-add").click();'.t(100),
+		selectEntity = '$("#levelView .accordion-body").first().find("li a").eq(arguments[0]).click();'.t(80),
+		selectCreateFixture = '$("#add-fixture").trigger("select", arguments[0]).change();'.t(50),
+		clickCreateFixture = '$("#add-fixture button:first").click();'.t(100),
+		moveEntity = '$("#position-x:first").val(arguments[0]).change(); $("#position-y:first").val(arguments[1]).change();'.t(80),
+		save = '$("#save").click();'.t(200),
+		load = 'App.controller.getWorld(function() { });'.t(200),
+		radius = '$("#radius").val(arguments[0]).change()'.t(80),
+		selectType = '$("#body-type").trigger("select", arguments[0]).change();'.t(80),
+		moveVertex = '$(".fixture").eq(arguments[0]).find(".vertex").eq(arguments[1]).find("#position-x").val(arguments[2]).change().parent().find("#position-y").val(arguments[3]).change()'.t(100),
+		play = '$("#play").click()'.t(3000),
+		quickPlay = '$("#play").click()'.t(1000),
+		stop = '$("#stop").click()'.t(80),
+		pause = '$("#pause").click()'.t(1000),
+		display = 'log.apply(null, arguments)'.t(50),
+		newTest = 'testTimer = 0;'.t(0);
 
 	function createFixture(type) {
 
@@ -58,8 +58,7 @@ define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/Men
 
 	function testCreate6Circles() {
 
-		createLevel("1");
-		selectLevel(0);
+		testBaseEmpty();
 
 		createEntity(0);
 		createFixture(0);
