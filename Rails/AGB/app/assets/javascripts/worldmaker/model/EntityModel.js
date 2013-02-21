@@ -85,7 +85,7 @@ define(["model/LevelModel"], function() {
 			id : null,
 			enabled : true,
 			position : cc.ccp(0, 0),
-			scale : 1,
+			scale : cc.ccp(1, 1),
 			rotation : 0,
 			model : null,
 			body : null,

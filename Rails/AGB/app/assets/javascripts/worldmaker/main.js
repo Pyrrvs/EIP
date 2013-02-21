@@ -31,24 +31,28 @@ define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/Men
 		});
 	};
 
-	var createLevel = '$("#id").val(arguments[0]).trigger("validate");'.t(100),
-		selectLevel = '$("#levelView .accordion-heading a").eq(arguments[0]).click();'.t(50),
-		createEntity = '$("#levelView .accordion-heading").eq(arguments[0]).find(".icon-add").click();'.t(100),
-		selectEntity = '$("#levelView .accordion-body").first().find("li a").eq(arguments[0]).click();'.t(80),
+	var createLevel = '$("#id").val(arguments[0]).trigger("validate");'.t(200),
+		selectLevel = '$("#levelView .accordion-heading a").eq(arguments[0]).click();'.t(150),
+		createEntity = '$("#levelView .accordion-heading").eq(arguments[0]).find(".icon-add").click();'.t(250),
+		selectEntity = '$("#levelView .accordion-body").first().find("li a").eq(arguments[0]).click();'.t(150),
 		selectCreateFixture = '$("#add-fixture").trigger("select", arguments[0]).change();'.t(50),
-		clickCreateFixture = '$("#add-fixture button:first").click();'.t(100),
-		moveEntity = '$("#position-x:first").val(arguments[0]).change(); $("#position-y:first").val(arguments[1]).change();'.t(80),
-		save = '$("#save").click();'.t(200),
-		load = 'App.controller.getWorld(function() { });'.t(200),
-		radius = '$("#radius").val(arguments[0]).change()'.t(80),
-		selectType = '$("#body-type").trigger("select", arguments[0]).change();'.t(80),
-		moveVertex = '$(".fixture").eq(arguments[0]).find(".vertex").eq(arguments[1]).find("#position-x").val(arguments[2]).change().parent().find("#position-y").val(arguments[3]).change()'.t(100),
+		clickCreateFixture = '$("#add-fixture button:first").click();'.t(150),
+		moveEntity = '$("#section-charac #position-x").val(arguments[0]).parent().parent().find("#position-y").val(arguments[1]).change();'.t(50),
+		save = '$("#save").click();'.t(220),
+		load = 'App.controller.getWorld(function() { });'.t(220),
+		radius = '$("#radius").val(arguments[0]).change()'.t(50),
+		scale = '$("#section-charac #scale-x").val(arguments[0]).parent().parent().find("#scale-y").val(arguments[0]).change();'.t(50),
+		selectType = '$("#body-type").trigger("select", arguments[0]).change();'.t(50),
+		moveVertex = '$(".fixture").eq(arguments[0]).find(".vertex").eq(arguments[1]).find("#position-x").val(arguments[2]).parent().find("#position-y").val(arguments[3]).change()'.t(50),
+		moveFixture = '$(".fixture").eq(arguments[0]).find("#position-x:first").val(arguments[1]).parent().find("#position-y:first").val(arguments[2]).change();'.t(50),
 		play = '$("#play").click()'.t(3000),
 		quickPlay = '$("#play").click()'.t(1000),
-		stop = '$("#stop").click()'.t(80),
+		stop = '$("#stop").click()'.t(150),
 		pause = '$("#pause").click()'.t(1000),
 		display = 'log.apply(null, arguments)'.t(50),
 		newTest = 'testTimer = 0;'.t(0);
+
+	''.t(200)();
 
 	function createFixture(type) {
 
@@ -178,8 +182,6 @@ define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/Men
 
 		createLevel("1");
 		selectLevel(0);
-		// createEntity(0);
-		// selectEntity(0);
 	}
 
 	function testResetServer() {
@@ -189,28 +191,55 @@ define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/Men
 		load();
 	}
 
-	testFull();
+	function testInfinite() {
+
+		testBaseEmpty();
+		createEntity(0);
+		moveEntity(20, 20);
+		createFixture(1);
+		moveVertex(0, 1, 600, 0);
+		createFixture(1);
+		moveVertex(1, 2, 0, 400);
+		createFixture(1);
+		moveFixture(2, 600, 0);
+		moveVertex(2, 2, 0, 400);
+		for (var i = 0; i < 42; ++i) {
+			createEntity(0);
+			selectType(2);
+			createFixture(i % 2);
+			scale(kge.Random(0.5, 2));
+			moveEntity(kge.Random.int(50, 590), kge.Random.int(100, 450))
+		}
+		// play();
+		// play();
+		// play();
+		// stop();
+	}
+
+	// testInfinite();
+	// testFull();
 	// testCreate6Circles();
 	// test1Polygon();
-	// testBase();
+	testBase();
 	// testBaseEmpty();
+	// createEntity(0);
+	// createFixture(0);
+
 	// load();
 
-	selectEntity(0);
-
+	// createEntity(0);
+	// createFixture(0);
+	// selectType(2);
+	// scale(2);
+	// moveEntity(300, 200);
+	// ''.t(500)();	
 	// quickPlay();
-	play();
-	pause();
-	play();
-	stop();
-	quickPlay();
-	pause();
-	quickPlay();
-	quickPlay();
-	pause();
-	quickPlay();
-	quickPlay();
-	pause();
-	stop();
+	// quickPlay();
+	// stop();
+	// play();
+	// stop();
+
+	// stop();
+	selectEntity(0);
 	// 'log(App.get("entity"))'.t(50)();
 });

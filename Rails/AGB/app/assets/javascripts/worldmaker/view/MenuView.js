@@ -71,7 +71,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			entity.set("class", this.$("#class button").first().text());
 			entity.set("position", cc.ccp(parseFloat(this.$("#position-x").val()), parseFloat(this.$("#position-y").val())));
 			entity.set("rotation", parseFloat(this.$("#rotation").val()));
-			entity.set("scale", parseFloat(this.$("#scale").val()));
+			entity.set("scale", cc.ccp(parseFloat(this.$("#scale-x").val()), parseFloat(this.$("#scale-y").val())));
 			entity.get("body").set("type", parseInt(this.$('#body-type').val()));
 			entity.get("body").set("shown", !!this.$("#show-body-layer").prop("checked"));
 			entity.get("model").set("shown", !!this.$("#show-model-layer").prop("checked"));
@@ -116,7 +116,8 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			this.$("#position-x").val(entity.get("position").x);
 			this.$("#position-y").val(entity.get("position").y);
 			this.$("#rotation").val(entity.get("rotation"));
-			this.$("#scale").val(entity.get("scale"));
+			this.$("#scale-x").val(entity.get("scale").x);
+			this.$("#scale-y").val(entity.get("scale").y);
 		}.async(),
 
 		deleteFixture : function(e) {
@@ -212,17 +213,15 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			this.$(".fixture").eq(vertices.fixtures.indexOf(vertex.fixture)).find(".vertices").append(this.tpl_vertex());
 			vertex.vertices = vertices;
 			vertex.rebind("change", this.vertexChanged, this, true);
+			this.$el.scrollTop(this.$el.height());
 		},
 
 		vertexRemoved : function(vertex, vertices) {
 
-			var scroll = this.$el.scrollTop();
  			this.$(".fixture-body .vertices").eq(vertices.fixtures
 				.indexOf(vertices.fixtures.where({ shape : vertices })[0])).find("*").remove();
 			vertex.fixture.get("shape").rebind("add", this.vertexAdded, this, true);
-			setTimeout(function() {
-				this.$el.scrollTop(scroll);
-			}.bind(this));
+			this.$el.scrollTop(this.$el.height());
 			this.cleanupVertex(vertex);
 		},
 

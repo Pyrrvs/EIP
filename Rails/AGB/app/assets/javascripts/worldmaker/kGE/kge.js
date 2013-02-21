@@ -18,6 +18,16 @@ define([], function() {
 	// 	return (b2Shape.e_polygonShape);
 	// }
 
+	CanvasRenderingContext2D.prototype.lineTov = function(v) {
+
+		this.lineTo(v.x, v.y);
+	}
+
+	CanvasRenderingContext2D.prototype.moveTov = function(v) {
+
+		this.moveTo(v.x, v.y);
+	}
+
 	function DynamicScene(worldScaling) {
 
 	    DynamicScene.superclass.constructor.call(this);
@@ -103,8 +113,13 @@ define([], function() {
 
 		scale : function(value) {
 
-			this.x *= value;
-			this.y *= value;
+			if (value instanceof cc.Point) {
+				this.x *= value.x;
+				this.y *= value.y;
+			} else {
+				this.x *= value;
+				this.y *= value;
+			}
 			return (this);
 		},
 
@@ -235,6 +250,18 @@ define([], function() {
 			this.y = Math.ceil(this.y);
 			return (this);
 		},
+
+		div : function(value) {
+
+			if (value instanceof cc.Point) {
+				this.x /= value.x;
+				this.y /= value.y;
+			} else {
+				this.x /= value;
+				this.y /= value;
+			}
+			return (this);
+		},
     };
 
     for (var i in Point)
@@ -252,13 +279,13 @@ define([], function() {
 
 	cc.Point.scale = function(v, value) {
 
-		return (cc.ccp(v.x * value, v.y * value));
+		return (cc.ccp(v.x, v.y).scale(value));
 	};
 
 	cc.Point.fromB2 = function(v1, v) {
 
 		v = v || 1;
-		return (cc.ccp(v1.x * v, v1.y * v));
+		return (cc.ccp(v1.x, v1.y).scale(v));
 	};
 
 	cc.Point.fromEvent = function(e) {
@@ -276,6 +303,11 @@ define([], function() {
 		return (cc.ccp(obj.x, obj.y));
 	};
 
+	cc.Point.fromScale = function(entity) {
+
+		return (cc.ccp(entity.scaleX, entity.scaleY));
+	};
+
 	b2Vec2.verticesFromArray = function(array, scale) {
 
         var vertices = [];
@@ -289,10 +321,9 @@ define([], function() {
 	b2Vec2.verticesFromCollection = function(array, scale, pos) {
 
         var vertices = [];
-        scale = scale || 1;
         pos = pos || cc.ccp(0, 0);
         array.each(function(elem) {
-            vertices.push(new b2Vec2((elem.get("x") + pos.x) * scale, (elem.get("y") + pos.y) * scale));
+            vertices.push(new b2Vec2((elem.get("x") + pos.x) * scale.x, (elem.get("y") + pos.y) * scale.x));
         });
         return (vertices);
 	};
@@ -309,7 +340,6 @@ define([], function() {
 
 		return (Math.inRange(Math.abs(v.x), 0.1, 10) && Math.inRange(Math.abs(v.y), 0.1, 10));
 	},
-
 
 	Math.inRange = function(v, min, max) {
 
@@ -337,9 +367,29 @@ define([], function() {
 		return (Math.round(v * pow) / pow);
 	};
 
+
+    var Random = function(min, max) {
+
+	    min = _.isUndefined(min) ? 0 : min;
+	    max = _.isUndefined(max) ? min : max;
+	    return (min + Math.random() * (max - min));
+    };
+
+    Random.int = function(min, max) {
+
+	   return (Math.floor(Random(min, max)));
+	};
+
+	Random.prob = function(prob) {
+
+ 	    prob = _.isUndefined(prob) ? 0.5 : prob;
+  	    return (Math.random() >= prob);
+    };
+
 	return ({
 
 		DynamicScene : DynamicScene,
 		Entity : Entity,
+		Random : Random,
 	});
 })

@@ -88,15 +88,14 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 		entityAdded : function(entity, entities) {
 
-			setTimeout(function() {
 				var level = App.get("levels").where({ entities : entities })[0];
 				var a = this.$("#levelList .accordion-group").eq(App.get("levels").indexOf(level))
 					.find("ul").append(this.tpl_entity({ id : entity.get("id") })).find("li a:last");
 				a.parent().find(".btn").hide();
+				this.$("#levelList").scrollTop(this.$("#levelList").height());
 				if (level == App.get("level"))
 					a.click();
-			}.bind(this));
-		},
+		}.async(),
 
 		selectedEntityChanged : function(global, entity) {
 

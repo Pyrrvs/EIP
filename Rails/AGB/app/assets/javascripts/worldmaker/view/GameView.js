@@ -1,51 +1,6 @@
 define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
 
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC    // FIX BUG PHYSIC
-
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
-    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES    // FIX DEEPJSON CONTROLLER FOR VERTICES
+    window.kge = kge;
 
     function Entity() {
 
@@ -80,33 +35,31 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
 
         draw : function(ctx) {
 
+            var scaling = App.get("scaling");
             if (this.model.get("model").get("shown"))
                 Entity.superclass.draw.apply(this, arguments);
             if (this.model.get("body").get("shown"))
                 for (var fixture = this.body.GetFixtureList(); fixture; fixture = fixture.GetNext()) {
-                    var shape = fixture.GetShape(), type = shape.GetType(),
-                        scale = App.get("scaling") / this.scale;
+                    var shape = fixture.GetShape(), type = shape.GetType(), size = cc.Point.fromSize(this.contentSize).scale(0.5),
+                        scale = cc.Point.fromScale(this);
                     ctx.beginPath();
+                    ctx.scale(1 / scale.x, 1 / scale.y);
                     if (type == b2Shape.e_circleShape) {
-                        ctx.lineWidth = 1.5 / this.scale / this.parent.scale;
-                        ctx.arc(this.contentSize.width / 2 + shape.m_p.x * App.get("scaling"),
-                            this.contentSize.height / 2 + shape.m_p.y * App.get("scaling"),
-                            shape.GetRadius() * scale, 0, 2 * Math.PI);
-                        ctx.moveTo(0, 0);
-                        ctx.lineTo(10, 0);
+                        size.add(shape.m_p).scale(scaling);
+                        ctx.lineWidth = 1 / this.parent.scale;
+                        ctx.arc(size.x, size.y, shape.GetRadius() * scaling, 0, 2 * Math.PI);
                         ctx.strokeStyle = fixture.highlighted ? "yellow" : "#66FF66";
+                        ctx.moveTov(fixture.GetMassData().center);
+                        ctx.lineTo(shape.GetRadius() * scaling, 0);
                     } else if (type == b2Shape.e_polygonShape) {
-                        var vertices = shape.GetVertices(), v = null, s = cc.Point.fromSize(this.contentSize).scale(0.5);
-                        ctx.lineWidth = 1.5 / this.scale / this.parent.scale;
-                        v = cc.Point.fromB2(vertices[0], scale).add(s);
-                        ctx.moveTo(v.x, v.y);
-                        for (var i = 1; i < vertices.length; ++i) {
-                            v = cc.Point.fromB2(vertices[i], scale).add(s);
-                            ctx.lineTo(v.x, v.y);
-                        }
-                        v = cc.Point.fromB2(vertices[0], scale).add(s);
-                        ctx.strokeStyle = fixture.highlighted ? "yellow" : this.isPolygonConvexAndCCW(vertices) ? "#66FF66" : "red";
-                        ctx.lineTo(v.x, v.y);
+                        var vertices = shape.GetVertices(), v = null;
+                        ctx.strokeStyle = fixture.highlighted ? "yellow" :
+                            this.isPolygonConvexAndCCW(vertices) ? "#66FF66" : "red";
+                        ctx.lineWidth = 1 / this.parent.scale;
+                        ctx.moveTov(v = cc.Point.scale(vertices[0], scaling).add(size));
+                        for (var i = 1; i < vertices.length; ++i)
+                            ctx.lineTov(cc.Point.scale(vertices[i], scaling).add(size));
+                        ctx.lineTov(v);
                     }
                     ctx.stroke();
                 }
@@ -382,9 +335,8 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
             this.updateEntities();
             App.get("level").get("camera").set(this.save.camera.attributes);
             App.get("level").get("entities").each(function(model) {
-                save = this.save.entities._byId[model.get("id")];
-                var entity = model.entity;
-                if (!entity) return;
+                var save = this.save.entities._byId[model.get("id")], entity = model.entity;
+                if (!entity || !save) return;
                 this.rollback(model, save);
                 entity.body.ResetMassData();
                 entity.body.SetLinearVelocity(new b2Vec2(0,0));
@@ -427,7 +379,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
                 if (fixture.get("type") == b2Shape.e_polygonShape)
                     fixture.get("shape").each(function(vertex, i) {
                         vertex = fixture.fixture.GetShape().GetVertices()[i];
-                        if (pos.dist(cc.Point.fromB2(vertex, App.get("scaling") / entity.scale)) < 10 / entity.scale
+                        if (pos.dist(cc.Point.fromB2(vertex, App.get("scaling")).div(entity.scale)) < 10
                             && (this.dragging.type != "vertex" || (circle.nVertex == i && circle.fixture == fixture)))
                             point = this.transformPointEvent(e), nFix = fixture, nVert = i;
                     }, this);
@@ -508,8 +460,9 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
                 App.get("level").get("camera").set("scale", Math.precise(Math.range(this.uiLayer.scale
                     + e.originalEvent.wheelDeltaY * 0.0001, 0.1, 10.0), 3));
             else if (App.get("mode") == "entity" && App.get("entity"))
-                App.get("entity").set("scale", Math.precise(Math.range(App.get("entity").get("scale")
-                    + e.originalEvent.wheelDeltaY * 0.0001, 0.1, 10.0), 3));
+                App.get("entity").set("scale", cc.ccp(Math.precise(Math.range(App.get("entity").get("scale").x
+                    + e.originalEvent.wheelDeltaY * 0.0001, 0.1, 10.0), 3), Math.precise(Math.range(App
+                    .get("entity").get("scale").y + e.originalEvent.wheelDeltaY * 0.0001, 0.1, 10.0), 3)));
             return (false);
         },
 
@@ -528,14 +481,6 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
             this.$(entity ? "#entity" : "#camera").click();
         },
 
-        updateBody : function(entity) {
-
-            if (this.logDebug)
-                log("updateBody");
-            entity.body.SetPosition(entity.position.toB2(App.get("scaling")));
-            entity.body.SetAngle(cc.degreesToRadians(-entity.rotation));
-        },
-
         entityChanged : function(model, init) {
 
             if (this.logDebug)
@@ -543,13 +488,14 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
             var entity = model.entity, data = model.attributes;
             entity.id = data.id;
             entity.position = data.position.clone();
-            entity.scale = data.scale;
+            entity.scaleX = data.scale.x;
+            entity.scaleY = data.scale.y;
             entity.rotation = data.rotation;
             if (model.hasChanged("scale"))
                 data.body.get("fixtures").each(function(fixture) {
                     this.entityFixtureChanged(fixture);
                 }.bind(this));
-            this.updateBody(entity);
+            entity.body.SetPositionAndAngle(entity.position.toB2(App.get("scaling")), cc.degreesToRadians(-entity.rotation));
         },
 
         entityEnabledChanged : function(entity) {
@@ -582,26 +528,23 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
 
             if (this.logDebug)
                 log("entityFixtureChanged");
-            var fix = fixture.fixture;
+            var fix = fixture.fixture, entity = fix.GetBody().entity;
             if (fixture.get("type") == b2Shape.e_circleShape)
                 fix.GetShape().m_p = fixture.get("position").toB2(App.get("scaling"));
             fix.SetDensity(fixture.get("density"));
             fix.SetFriction(fixture.get("friction"));
             fix.SetRestitution(fixture.get("restitution"));
-            try {
-                var aabb = fix.GetAABB(), shape = fix.GetShape(), scale = fix.GetBody().entity.scale / App.get("scaling");
-                // shape.ComputeAABB(aabb, fix.GetBody().GetTransform());
-                // if (!Math.inRange(Math.abs(aabb.lowerBound.x - aabb.upperBound.x), 0.1, 100)
-                //     || !Math.inRange(Math.abs(aabb.upperBound.y - aabb.lowerBound.y), 0.1, 100))
-                //     console.debug("NOT IN RANGE", fix.GetBody().entity.id);
-                if (fixture.get("type") == b2Shape.e_circleShape)
-                    shape.SetRadius(fixture.get("shape") * scale);
-                else if (fixture.get("type") == b2Shape.e_polygonShape)
-                    shape.SetAsVector(b2Vec2.verticesFromCollection(fixture.get("shape"), scale, fixture.get("position")));
-            } catch (e) {
-                console.debug(e, "when creating shape");
-            }
-            this.updateBody(fix.GetBody().entity);
+            var aabb = fix.GetAABB(), shape = fix.GetShape(),
+                scale = cc.Point.fromScale(fix.GetBody().entity).scale(1 / App.get("scaling"));
+            // shape.ComputeAABB(aabb, fix.GetBody().GetTransform());
+            // if (!Math.inRange(Math.abs(aabb.lowerBound.x - aabb.upperBound.x), 0.1, 100)
+            //     || !Math.inRange(Math.abs(aabb.upperBound.y - aabb.lowerBound.y), 0.1, 100))
+            //     console.debug("NOT IN RANGE", fix.GetBody().entity.id);
+            if (fixture.get("type") == b2Shape.e_circleShape)
+                shape.SetRadius(fixture.get("shape") * scale.x);
+            else if (fixture.get("type") == b2Shape.e_polygonShape)
+                shape.SetAsVector(b2Vec2.verticesFromCollection(fixture.get("shape"), scale, fixture.get("position")));
+            entity.body.SetPositionAndAngle(entity.position.toB2(App.get("scaling")), cc.degreesToRadians(-entity.rotation));
         },
 
         fixtureAdded : function(fixture, fixtures) {
@@ -609,6 +552,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
             if (this.logDebug)
                 log("fixtureAdded");
             var fixdef = new b2FixtureDef;
+            fixdef.density = 1;
             if (fixture.get("type") == b2Shape.e_circleShape) {
                 fixdef.shape = new b2CircleShape(0.1);
                 fixture.fixture = fixtures.body.CreateFixture(fixdef);
@@ -627,7 +571,8 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
 
             if (this.logDebug)
                 log("fixtureRemoved");
-            fixture.fixture.GetBody().DestroyFixture(fixture.fixture);
+            if (fixture.fixture.GetBody())
+                fixture.fixture.GetBody().DestroyFixture(fixture.fixture);
         },
 
         entityModelChanged : function(model) {
