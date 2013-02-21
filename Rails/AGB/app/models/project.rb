@@ -16,6 +16,35 @@ class Project < ActiveRecord::Base
   belongs_to :user
   has_many :project_comments
 
+  after_create :create_project_tree
+
+  def create_project_tree
+    begin
+      project_path = "#{Rails.root}/#{AGB_CONFIG['users_dir']}/#{self.user.name}/#{self.name}"
+      Dir.mkdir(project_path, 0755)
+      Dir.mkdir("#{project_path}/Resources", 0755)
+      Dir.mkdir("#{project_path}/kFiles", 0755)
+      ResourcesController.create_world_file("#{project_path}/kFiles/world.js")
+    rescue
+      self.destroy
+      self.errors[:internal] = "- Internal server error: Please contact an administrator."
+      puts "Cannot create the project tree for the project #{self.name} [owner: #{self.user.name}]"
+    end
+  end
+
+  after_destroy :destroy_project_tree
+
+  def destroy_project_tree
+    project_path = "#{Rails.root}/#{AGB_CONFIG['users_dir']}/#{self.user.name}/#{self.name}"
+    
+    begin
+      FileUtils.remove_entry_secure(project_path);
+    rescue
+      puts "Cannot remove the project directory #{project_path}"
+      # Do something... send mail to administrator?
+    end
+  end
+
   def to_param
     name
   end

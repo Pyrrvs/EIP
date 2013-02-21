@@ -14,4 +14,24 @@ describe "Users" do
 		end
 		page.should have_content("Congratulations ! You have been added to AGB as #{user[:name]} !")
 	end
+
+	it 'should delete the user when clicking on destroy user' do
+		user = FactoryGirl.create(:user)
+		visit user_path(user)
+		within "#user-profile" do
+			click_link "Destroy User"
+		end
+		current_path.should == root_path
+		page.should have_content('User was successfully deleted')
+	end
+
+	it 'should show the user information when visiting the user page' do
+		user = FactoryGirl.create(:user)
+		visit user_path(user)
+		within("#user-profile") do
+			page.should have_content('User profile')
+			page.should have_content(user.name)
+			page.should have_content(user.email)
+		end
+	end
 end

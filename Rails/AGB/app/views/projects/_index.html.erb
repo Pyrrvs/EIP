@@ -1,5 +1,4 @@
 <h3>Listing projects</h3>
-
 <table>
   <tr>
     <th>Name</th>
@@ -12,7 +11,7 @@
   </tr>
 
 <% @user.projects.each do |project| %>
-  <tr>
+  <tr id="<%= project.name %>">
     <td><%= project.name %></td>
     <td><%= project.description %></td>
     <td><%= project.privacy %></td>
@@ -20,7 +19,11 @@
     <td><%= link_to 'Show', user_project_path(@user, project) %> | </td>
     <td><%= link_to 'World Maker', user_project_worldmaker_path(@user, project) %> | </td>
     <td><%= link_to 'Edit', edit_user_project_path(@user, project) %> | </td>
-    <td><%= link_to 'Destroy', user_project_path(@user, project), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    <% if (Rails.env != 'test') %>
+      <td><%= link_to 'Destroy', user_project_path(@user, project), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    <% else %>
+      <td><%= link_to 'Destroy', user_project_path(@user, project), method: :delete %></td>
+    <% end %>
   </tr>
 <% end %>
 </table>
