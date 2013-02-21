@@ -18,9 +18,10 @@ define([], function() {
 	// 	return (b2Shape.e_polygonShape);
 	// }
 
-	function DynamicScene() {
+	function DynamicScene(worldScaling) {
 
 	    DynamicScene.superclass.constructor.call(this);
+	    this.worldScaling = worldScaling;
 		this.world = new b2World(new b2Vec2(0, -10), true);
 	}
 
@@ -28,6 +29,7 @@ define([], function() {
 
 		world : null,
 		layer : null,
+		worldScaling : null,
 
 		update : function(dt) {
 
@@ -36,11 +38,11 @@ define([], function() {
 	        this.children.forEach(function(layer) {
 				layer.children.forEach(function(entity) {
 		            if (entity.body) {
-		                entity.position = cc.Point.scale(entity.body.GetPosition(), 30);
+		                entity.position = cc.Point.scale(entity.body.GetPosition(), this.worldScaling);
 			            entity.rotation = cc.radiansToDegrees(-entity.body.GetAngle());
 			        }
-		        });
-			});
+		        }.bind(this));
+			}.bind(this));
 			if (this.debug)
 				this.world.DrawDebugData();
 		}
@@ -211,6 +213,28 @@ define([], function() {
 			this.y = Math.floor(this.y);
 			return (this);
 		},
+
+		precise : function(n) {
+
+			var pow = Math.pow(10, n);
+			this.x = Math.floor(this.x * pow) / pow;
+			this.y = Math.floor(this.y * pow) / pow;
+			return (this);
+		},
+
+		round : function() {
+
+			this.x = Math.round(this.x);
+			this.y = Math.round(this.y);
+			return (this);
+		},
+
+		ceil : function() {
+
+			this.x = Math.ceil(this.x);
+			this.y = Math.ceil(this.y);
+			return (this);
+		},
     };
 
     for (var i in Point)
@@ -281,6 +305,17 @@ define([], function() {
 		}));
 	};
 
+	b2Vec2.isb2Ranged = function(v) {
+
+		return (Math.inRange(Math.abs(v.x), 0.1, 10) && Math.inRange(Math.abs(v.y), 0.1, 10));
+	},
+
+
+	Math.inRange = function(v, min, max) {
+
+		return (v >= min && v <= max);
+	};
+
 	Math.range = function(v, min, max) {
 
 		return (v < min ? min : v > max ? max : v);
@@ -294,6 +329,12 @@ define([], function() {
 	Math.maximize = function(v, max) {
 
 		return (v > max ? max : v);
+	};
+
+	Math.precise = function(v, n) {
+
+		var pow = Math.pow(10, n);
+		return (Math.round(v * pow) / pow);
 	};
 
 	return ({

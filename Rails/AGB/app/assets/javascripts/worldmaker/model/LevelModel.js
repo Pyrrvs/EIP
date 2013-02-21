@@ -40,20 +40,6 @@ define(["model/EntityModel"], function(EntityCollection) {
 		}},
 	});
 
-	var GlobalModel = Backbone.Model.extend({
-
-		defaults : function() { return {
-
-			levels : new LevelCollection,
-			highlightedFixture : null,
-			level : null,
-			entity : null,
-			run : "stop",
-			mode : "camera",
-			defaultId : "0",
-		}},
-	});
-
 	var LevelCollection = Backbone.Collection.extend({
 
 		model : LevelModel,
@@ -65,7 +51,21 @@ define(["model/EntityModel"], function(EntityCollection) {
 		}
 	});
 
-	var App = new GlobalModel;
+	var AppModel = Backbone.Model.extend({
+
+		defaults : function() { return {
+
+			levels : new LevelCollection,
+			highlightedFixture : null,
+			level : null,
+			entity : null,
+			run : "stop",
+			mode : "camera",
+			scaling : 50,
+		}},
+	});
+
+	var App = new AppModel;
 
 	App.EntityCollection = EntityCollection;
 	App.LevelCollection = LevelCollection;

@@ -16,7 +16,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			"mouseenter .accordion-heading" : "showButton",
 			"mouseleave .accordion-heading" : "hideButton",
 			"change #collapse-charac .entity-member" : "changeEntity",
-			'click #body-type input[type="radio"]' : "changeEntity",
+			'change #body-type' : "changeEntity",
 			'click input[type="checkbox"]' : "changeEntity",
 			"change #collapse-body .entity-member" : "changeEntityFixture",
 			"click .fixture .accordion-heading .icon-delete" : "deleteFixture",
@@ -24,6 +24,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			"click .polygon .fixture-body .vertices .icon-delete" : "deleteVertex",
 			"mouseenter .fixture" : "highlightFixture",
 			"mouseleave .fixture" : "unhighlightFixture",
+			"click #add-fixture button:first" : "createFixture",
 		},
 
 		initialize : function() {
@@ -55,8 +56,8 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			fixture.set("position", cc.ccp(parseFloat($fixture.find("#position-x").val()),
 				parseFloat($fixture.find("#position-y").val())));
 			if (fixture.get("type") == b2Shape.e_circleShape) {
-				$fixture.find("#radius").val(Math.minimize($fixture.find("#radius").val(), 0.1));
-				fixture.set("shape", $fixture.find("#radius").val());
+				$fixture.find("#radius").val(Math.minimize(parseFloat($fixture.find("#radius").val()), 0.1));
+				fixture.set("shape", parseFloat($fixture.find("#radius").val()));
 			} else if (fixture.get("type") == b2Shape.e_polygonShape && ($vertex = $(e.target).closest(".vertex")).length)
 				fixture.get("shape").at($fixture.find(".vertex").index($vertex))
 					.set({ x : parseFloat($vertex.find("#position-x").val()), y : parseFloat($vertex.find("#position-y").val()) });
@@ -71,7 +72,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			entity.set("position", cc.ccp(parseFloat(this.$("#position-x").val()), parseFloat(this.$("#position-y").val())));
 			entity.set("rotation", parseFloat(this.$("#rotation").val()));
 			entity.set("scale", parseFloat(this.$("#scale").val()));
-			entity.get("body").set("type", parseInt(this.$('#body-type input:checked').attr("data-type")));
+			entity.get("body").set("type", parseInt(this.$('#body-type').val()));
 			entity.get("body").set("shown", !!this.$("#show-body-layer").prop("checked"));
 			entity.get("model").set("shown", !!this.$("#show-model-layer").prop("checked"));
 		},
@@ -103,7 +104,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 		entityBodyChanged : function(body) {
 
-			this.$('#body-type input[data-type="' + body.get("type") + '"]').prop("checked", true);
+			this.$('#body-type').trigger("select", body.get("type"));
 			this.$("#show-body-layer").prop("checked", body.get("shown"));
 		},
 
@@ -137,21 +138,48 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			vertices.remove(vertices.at(this.$(".fixture").eq(idx).find(".vertex").index($(e.target).closest(".vertex"))));
 		},
 
+		createFixture : function() {
+
+			var type = parseInt(this.$("#add-fixture").val()), entity = App.get("entity"), shape;
+			type = _.isNaN(type) ? 0 : type;
+			if (type == b2Shape.e_circleShape)
+				shape = 10;
+			else if (type == b2Shape.e_polygonShape)
+				shape = { 0 : { x : -10, y : -10 }, 1 : { x : 10, y : -10 }, 2 : { x : 0, y : 10 } };
+			entity.get("body").get("fixtures").add({ type : type, shape : shape });
+		},
+
 		fixtureAdded : function(fixture, fixtures) {
 
 			var $fixture = null;
-			if (fixture.get("type") == b2Shape.e_circleShape)
+			fixture.fixtures = fixtures;
+			if (fixture.get("type") == b2Shape.e_circleShape) {
 				this.$("#fixtures").append(this.tpl_circle({ n : ++this.nbFixtures }));
-			else if (fixture.get("type") == b2Shape.e_polygonShape) {
+				fixture.rebind("change", this.fixtureChanged, this, true);
+			} else if (fixture.get("type") == b2Shape.e_polygonShape) {
 				this.$("#fixtures").append(this.tpl_polygon({ n : ++this.nbFixtures }));
 				fixture.get("shape").fixtures = fixtures;
+				fixture.rebind("change", this.fixtureChanged, this, true);
 				fixture.get("shape").rebind("add", this.vertexAdded, this, true);
 				fixture.get("shape").rebind("remove", this.vertexRemoved, this);
 			}
-			fixture.fixtures = fixtures;
-			fixture.rebind("change", this.fixtureChanged, this, true);
 			this.$("#fixtures .accordion-heading").last().find(".btn").hide();
 			this.$(".collapse").last().collapse("show");
+		},
+
+		fixtureChanged : function(fixture) {
+
+			var $fixture = this.$(".fixture-body").eq(fixture.fixtures.indexOf(fixture));
+			fixture = fixture.attributes;
+			$fixture.find("#position-x").eq(0).val(fixture.position.x);
+			$fixture.find("#position-y").eq(0).val(fixture.position.y);
+			if (fixture.type == b2Shape.e_circleShape)
+				$fixture.find("#radius").val(fixture.shape);
+			else if (fixture.type == b2Shape.e_polygonShape)
+				fixture.shape.each(function(elem, i) {
+					$fixture.find(".vertex").eq(i).find("position-x").val(elem.get("x"))
+						.parent().find("position-y").val(elem.get("y"));
+				});
 		},
 
 		fixtureRemoved : function(fixture, fixtures) {
@@ -174,15 +202,14 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 		vertexChanged : function(vertex) {
 
 			var fixtures = vertex.fixture.fixtures;
-			this.$(".fixture-body .vertices").eq(fixtures.indexOf(vertex.fixture))
+			this.$(".fixture").eq(fixtures.indexOf(vertex.fixture))
 				.find(".vertex").eq(vertex.vertices.indexOf(vertex)).find("#position-x")
 				.val(vertex.get("x")).parent().find("#position-y").val(vertex.get("y"))
 		}.async(),
 
 		vertexAdded : function(vertex, vertices) {
 
-			var fixtures = vertex.fixture.fixtures;
-			this.$(".fixture-body .vertices").eq(fixtures.indexOf(vertex.fixture)).append(this.tpl_vertex());
+			this.$(".fixture").eq(vertices.fixtures.indexOf(vertex.fixture)).find(".vertices").append(this.tpl_vertex());
 			vertex.vertices = vertices;
 			vertex.rebind("change", this.vertexChanged, this, true);
 		},
@@ -203,21 +230,6 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 			vertex.unbind("change", this.vertexChanged, this);
 		},
-
-		fixtureChanged : function(fixture) {
-
-			var $fixture = this.$(".fixture-body").eq(fixture.fixtures.indexOf(fixture));
-			fixture = fixture.attributes;
-			$fixture.find("#position-x").eq(0).val(fixture.position.x);
-			$fixture.find("#position-y").eq(0).val(fixture.position.y);
-			if (fixture.type == b2Shape.e_circleShape)
-				$fixture.find("#radius").val(fixture.shape);
-			else if (fixture.type == b2Shape.e_polygonShape)
-				fixture.shape.each(function(elem, i) {
-					$fixture.find(".vertex").eq(i).find("position-x").val(elem.get("x"))
-						.parent().find("position-y").val(elem.get("y"));
-				});
-		}.async(),
 
 		highlightFixture : function(e) {
 

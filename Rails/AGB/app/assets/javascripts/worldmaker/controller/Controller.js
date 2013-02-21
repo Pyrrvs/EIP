@@ -21,11 +21,16 @@ define(["class", "model/LevelModel"], function(Class, App) {
 		getWorld : function(callback) {
 
 			$.ajax(window.location.pathname + "/world", { type : "GET", dataType : "json", success : function(world) {
-				this.deserialize(world);
-				for (var i in world.levels)
-					App.get("levels").push(world.levels[i]);
+				if (world) {
+					this.deserialize(world);
+					for (var i in world.levels)
+						App.get("levels").push(world.levels[i]);
+				}
 				callback();
-			}.bind(this), error : function(log) { console.log(log); }});
+			}.bind(this), error : function(log) {
+				console.log(log);
+				callback();
+			}});
 			return (this);
 		},
 
@@ -33,7 +38,7 @@ define(["class", "model/LevelModel"], function(Class, App) {
 
 			$("#save").text("saving ...");
 			$.ajax(window.location.pathname + "/world", { type : "PUT", dataType : "json",
-				data : { data : JSON.parse(JSON.stringify(App)) }, success : function(res) {
+				data : { data : JSON.parse(JSON.stringify({ levels : App.get("levels").toJSON() } )) }, success : function(res) {
 					$("#save").text("successfully saved !");
 					(function() { $("#save").text("save"); }.async(1111))();
 			}, error : function(log) {

@@ -5,7 +5,7 @@ Backbone.Model.prototype.rebind = function(a, b, c, d) {
   } catch (e) {}
   this.bind(a, b, c);
   if (d)
-    b.call(c, this, true)
+    b.call(c, this, {}, true);
   return (this);
 };
 
@@ -61,4 +61,29 @@ Backbone.Collection.prototype.deepClone = function() {
   for (var i in clone.models)
     clone.models[i] = clone.models[i].deepClone();
   return (clone);
+};
+
+Backbone.Model.prototype.toJSON = function() {
+
+  var json = {}, value = null;
+
+  for (var i in this.attributes) {
+    value = this.attributes[i];
+    if (value instanceof Backbone.Model || value instanceof Backbone.Collection)
+      json[i] = value.toJSON();
+    else
+      json[i] = value;
+  }
+  return (json);
+}
+
+Backbone.Collection.prototype.toJSON = function() {
+
+  var json = [], value = null;
+
+  for (var i in this.models) {
+    value = this.models[i];
+    json.push(value.toJSON());
+  }
+  return (json);
 };
