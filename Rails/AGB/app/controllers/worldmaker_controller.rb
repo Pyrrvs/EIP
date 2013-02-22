@@ -1,5 +1,26 @@
 class WorldmakerController < ApplicationController
-  before_filter :load_project, only: [ :world, :update ]
+  
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+# ADD UNIT TESTING
+
+  before_filter :load_project
 
   def load_project
     user = User.find_by_name(params[:user_id]) || not_found

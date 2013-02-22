@@ -34,7 +34,4 @@ describe "Sessions" do
 			click_link "Sign out"
 		end
 	end
-
-	it 'should not destroy a session when the user does not have any session' do
-	end
 end
