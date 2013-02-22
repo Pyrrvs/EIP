@@ -33,18 +33,18 @@ define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/Men
 
 	var createLevel = '$("#id").val(arguments[0]).trigger("validate");'.t(200),
 		selectLevel = '$("#levelView .accordion-heading a").eq(arguments[0]).click();'.t(150),
-		createEntity = '$("#levelView .accordion-heading").eq(arguments[0]).find(".icon-add").click();'.t(250),
-		selectEntity = '$("#levelView .accordion-body").first().find("li a").eq(arguments[0]).click();'.t(150),
+		createEntity = '$("#levelView .accordion-heading").eq(arguments[0]).find(".icon-add").click();'.t(300),
+		selectEntity = '$("#levelView .accordion-body").first().find("li a").eq(arguments[0]).click();'.t(300),
 		selectCreateFixture = '$("#add-fixture").trigger("select", arguments[0]).change();'.t(50),
-		clickCreateFixture = '$("#add-fixture button:first").click();'.t(150),
+		clickCreateFixture = '$("#add-fixture button:first").click();'.t(120),
 		moveEntity = '$("#section-charac #position-x").val(arguments[0]).parent().parent().find("#position-y").val(arguments[1]).change();'.t(50),
 		save = '$("#save").click();'.t(220),
 		load = 'App.controller.getWorld(function() { });'.t(220),
 		radius = '$("#radius").val(arguments[0]).change()'.t(50),
 		scale = '$("#section-charac #scale-x").val(arguments[0]).parent().parent().find("#scale-y").val(arguments[0]).change();'.t(50),
 		selectType = '$("#body-type").trigger("select", arguments[0]).change();'.t(50),
-		moveVertex = '$(".fixture").eq(arguments[0]).find(".vertex").eq(arguments[1]).find("#position-x").val(arguments[2]).parent().find("#position-y").val(arguments[3]).change()'.t(50),
-		moveFixture = '$(".fixture").eq(arguments[0]).find("#position-x:first").val(arguments[1]).parent().find("#position-y:first").val(arguments[2]).change();'.t(50),
+		moveVertex = '$(".fixture").eq(arguments[0]).find(".vertex").eq(arguments[1]).find("#position-x").val(arguments[2]).parent().find("#position-y").val(arguments[3]).change()'.t(30),
+		moveFixture = '$(".fixture").eq(arguments[0]).find("#position-x:first").val(arguments[1]).parent().find("#position-y:first").val(arguments[2]).change();'.t(20),
 		play = '$("#play").click()'.t(3000),
 		quickPlay = '$("#play").click()'.t(1000),
 		stop = '$("#stop").click()'.t(150),
@@ -205,10 +205,10 @@ define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/Men
 		moveVertex(2, 2, 0, 400);
 		for (var i = 0; i < 42; ++i) {
 			createEntity(0);
+			moveEntity(kge.Random.int(50, 590), kge.Random.int(100, 450))
 			selectType(2);
 			createFixture(i % 2);
 			scale(kge.Random(0.5, 2));
-			moveEntity(kge.Random.int(50, 590), kge.Random.int(100, 450))
 		}
 		// play();
 		// play();

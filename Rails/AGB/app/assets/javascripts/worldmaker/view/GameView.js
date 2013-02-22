@@ -571,8 +571,8 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
 
             if (this.logDebug)
                 log("fixtureRemoved");
-            if (fixture.fixture.GetBody())
-                fixture.fixture.GetBody().DestroyFixture(fixture.fixture);
+            var body = fixture.fixtures ? fixture.fixtures.body : fixture.fixture.GetBody();
+            body.DestroyFixture(fixture.fixture);
         },
 
         entityModelChanged : function(model) {

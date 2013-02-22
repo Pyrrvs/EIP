@@ -148,6 +148,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			else if (type == b2Shape.e_polygonShape)
 				shape = { 0 : { x : -10, y : -10 }, 1 : { x : 10, y : -10 }, 2 : { x : 0, y : 10 } };
 			entity.get("body").get("fixtures").add({ type : type, shape : shape });
+			this.$el.scrollTop(this.$el.height());
 		},
 
 		fixtureAdded : function(fixture, fixtures) {
