@@ -13,8 +13,8 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			"validate #id" : "createLevel",
 			"mouseenter .accordion-heading" : "showButton",
 			"mouseleave .accordion-heading" : "hideButton",
-			"open .accordion-heading" : "selectLevel",
-			"close .accordion-heading" : "deselectLevel",
+			"kopen .accordion-heading" : "selectLevel",
+			"kclose .accordion-heading" : "deselectLevel",
 			"click .accordion-heading .icon-add" : "createEntity",
 			"click .accordion-heading .icon-delete" : "deleteLevel",
 			"click .accordion-inner li a" : "selectEntity",
@@ -58,17 +58,18 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			$(e.target).parent().find(".btn").hide();
 		},
 
-		deselectLevel : function(e, target) {
+		deselectLevel : function(e) {
 
 			App.set("level", null);
-			$(target).parent().find(".btn").hide();
+			$(e.target).find(".btn").hide();
 		},
 
-		selectLevel : function(e, target) {
+		selectLevel : function(e) {
 
-			App.set("level", App.get("levels").where({ id : $(target).text() })[0]);
-			if ($(target).css("color") == "#005580")
-				$(target).parent().find(".btn").show();
+			var $target = $(e.target).find("a");
+			App.set("level", App.get("levels").where({ id : $target.text() })[0]);
+			if ($target.css("color") == "#005580")
+				$target.parent().find(".btn").show();
 		},
 
 		createEntity : function(e) {
@@ -95,7 +96,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 				this.$("#levelList").scrollTop(this.$("#levelList").height());
 				if (level == App.get("level"))
 					a.click();
-		}.async(),
+		},
 
 		selectedEntityChanged : function(global, entity) {
 

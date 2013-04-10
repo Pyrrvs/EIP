@@ -35,22 +35,20 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
 
         draw : function(ctx) {
 
-            var scaling = App.get("scaling");
             if (this.model.get("model").get("shown"))
                 Entity.superclass.draw.apply(this, arguments);
-            if (this.model.get("body").get("shown"))
+            if (this.model.get("body").get("shown")) {
+                var scaling = App.get("scaling"), scale = cc.Point.fromScale(this),
+                    size = cc.Point.fromSize(this.contentSize).scale(scale).scale(0.5);
                 for (var fixture = this.body.GetFixtureList(); fixture; fixture = fixture.GetNext()) {
-                    var shape = fixture.GetShape(), type = shape.GetType(), size = cc.Point.fromSize(this.contentSize).scale(0.5),
-                        scale = cc.Point.fromScale(this);
+                    var shape = fixture.GetShape(), type = shape.GetType();
                     ctx.beginPath();
                     ctx.scale(1 / scale.x, 1 / scale.y);
                     if (type == b2Shape.e_circleShape) {
-                        size.add(shape.m_p).scale(scaling);
+                        size.add(cc.Point.fromB2(shape.m_p, scaling).scale(scale));
                         ctx.lineWidth = 1 / this.parent.scale;
                         ctx.arc(size.x, size.y, shape.GetRadius() * scaling, 0, 2 * Math.PI);
                         ctx.strokeStyle = fixture.highlighted ? "yellow" : "#66FF66";
-                        ctx.moveTov(fixture.GetMassData().center);
-                        ctx.lineTo(shape.GetRadius() * scaling, 0);
                     } else if (type == b2Shape.e_polygonShape) {
                         var vertices = shape.GetVertices(), v = null;
                         ctx.strokeStyle = fixture.highlighted ? "yellow" :
@@ -63,6 +61,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
                     }
                     ctx.stroke();
                 }
+            }
         },
     });
 
@@ -114,8 +113,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
         update : function() {
 
             var entity = App.get("entity");
-            if (!entity) return ;
-            entity = entity.entity;
+            if (!entity || !(entity = entity.entity)) return ;
             var box = entity.boundingBox, size = box.size, pos = box.origin;
             this.radius = Math.sqrt(Math.pow(size.width, 2) + Math.pow(size.height, 2)) / 2;
             this.rotation = entity.rotation;
@@ -253,6 +251,9 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
             this.uiLayer = new UILayer;
             this.scene.addChild({ child : this.uiLayer, z : 1 });
             cc.Director.sharedDirector.runWithScene(this.scene);
+
+            this.$("*").attr("disabled", true);
+            this.$("#canvasView canvas").hide();
 
             // this.debug();
             // this.logDebug = true;
@@ -577,8 +578,9 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
 
         entityModelChanged : function(model) {
 
+            this.countLOL = this.countLOL || 0;
             var entity = model.entity;
-            model = model.attributes;
+            model = model.attributes;            
             entity.setUrl(model.path);
         },
 
@@ -598,7 +600,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
         vertexRemoved : function(vertex, vertices) {
 
             this.entityFixtureShapeChanged(vertex.fixture);
-            // fixes a bug from box2d (might create errors)
+            // fixes a bug from box2d (may create errors or other bugs in the future)
             vertex.fixture.fixture.GetShape().GetVertices().pop();
         },
 
@@ -629,7 +631,7 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
             model.get("body").rebind("change", this.entityBodyChanged, this, true);
             model.get("body").get("fixtures").rebind("add", this.fixtureAdded, this, true);
             model.get("body").get("fixtures").rebind("remove", this.fixtureRemoved, this);
-            model.get("model").rebind("change", this.entityModelChanged, this, true);
+            model.get("model").rebind("change:path", this.entityModelChanged, this, true);
             if (this.logDebug)
                 log("}");
         },
@@ -660,15 +662,15 @@ define(["class", "kGE/kge", "model/LevelModel"], function(Class, kge, App) {
                 idx = entity ? level.get("entities").indexOf(entity) : level.get("entities").size(); 
                 App.set("entity", level.get("entities").at(--idx < 0 ? level.get("entities").size() - 1 : idx));
             } else if (play && key == 69 && shift && level) {
-                idx = entity ? App.get("level").get("entities").indexOf(App.get("entity")) : -1;
+                idx = entity ? App.get("level").get("entities").indexOf(entity) : -1;
                 App.set("entity", level.get("entities").at(++idx >= level.get("entities").size() ? 0 : idx));
-            } else if (play && key == 37 && shift && App.get("entity")) {
+            } else if (play && key == 37 && shift && entity) {
                 entity.set("position", cc.ccp(entity.get("position").x - 1, entity.get("position").y));
-            } else if (play && key == 38 && shift && App.get("entity")) {
+            } else if (play && key == 38 && shift && entity) {
                 entity.set("position", cc.ccp(entity.get("position").x, entity.get("position").y + 1));
-            } else if (play && key == 39 && shift && App.get("entity")) {
+            } else if (play && key == 39 && shift && entity) {
                 entity.set("position", cc.ccp(entity.get("position").x + 1, entity.get("position").y));
-            } else if (play && key == 40 && shift && App.get("entity")) {
+            } else if (play && key == 40 && shift && entity) {
                 entity.set("position", cc.ccp(entity.get("position").x, entity.get("position").y - 1));
             } else if (key == 83 && shift) {
                 $("#save").click();

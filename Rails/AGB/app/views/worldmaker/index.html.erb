@@ -1,7 +1,8 @@
 <% content_for :head do %>
+  <%= javascript_include_tag "util/underscore" %>
   <%= javascript_include_tag "util/jquery.event.drag-2.2" %>
   <%= javascript_include_tag "util/jquery-utils" %>
-  <%= javascript_include_tag "util/underscore" %>
+  <%= javascript_include_tag "util/ktest" %>
   <%= javascript_include_tag "util/backbone" %>
   <%= javascript_include_tag "util/backbone-utils" %>
   <%= javascript_include_tag "worldmaker/kGE/src/cocos2d.js" %>
@@ -60,7 +61,7 @@
         <!-- SectionCharac -->
         <div id="section-charac" class="accordion-group">
           <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" href="#collapse-charac">characteristics</a>
+            <a class="accordion-toggle" href="#collapse-charac">characteristics</a>
             <span class="caret pull-right caret-section"></span>
           </div>
           <div class="accordion-body collapse in" id="collapse-charac">
@@ -107,7 +108,7 @@
         <!-- SectionModel -->
         <div class="accordion-group">
           <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" href="#collapse-model">model</a>
+            <a class="accordion-toggle" href="#collapse-model">model</a>
             <span class="caret pull-right caret-section"></span>
           </div>
           <div class="accordion-body collapse in" id="collapse-model">
@@ -116,17 +117,14 @@
                 <span>show model layer : </span>
                 <input type="checkbox" id="show-model-layer" class="pull-right"></input>
               </div>
-<!--               <div class="line-top bot">
+               <div class="line-top bot">
                 <span>models : </span>
-                <div id="models" class="btn-group pull-right">
-                  <button class="btn btn-inverse btn-tiny">none</button>
-                  <button class="btn btn-inverse btn-tiny dropdown-toggle" data-toggle="dropdown">
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu"></ul>
-                </div>
+                <select id="models" class="dropdown pull-right" placeholder="none" value="none">
+                  <option value="/assets/ball.png">ball</option>
+                  <option value="/assets/crate.jpg">crate</option>
+                </select>
               </div>
- -->            </div>
+            </div>
           </div>
         </div>
         <!-- !SectionModel -->
@@ -134,7 +132,7 @@
         <!-- SectionBody -->
         <div class="accordion-group">
           <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" href="#collapse-body">body</a>
+            <a class="accordion-toggle" href="#collapse-body">body</a>
             <span class="caret pull-right caret-section"></span>
           </div>
           <div class="accordion-body collapse in" id="collapse-body">

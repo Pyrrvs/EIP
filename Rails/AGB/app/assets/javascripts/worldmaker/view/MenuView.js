@@ -16,8 +16,10 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			"mouseenter .accordion-heading" : "showButton",
 			"mouseleave .accordion-heading" : "hideButton",
 			"change #collapse-charac .entity-member" : "changeEntity",
-			'change #body-type' : "changeEntity",
-			'click input[type="checkbox"]' : "changeEntity",
+			'change #models' : "changeEntityModelPath",
+			'change #body-type' : "changeEntityBodyType",
+			'click #show-model-layer' : "changeEntityModelShown",
+			'click #show-body-layer' : "changeEntityBodyShown",
 			"change #collapse-body .entity-member" : "changeEntityFixture",
 			"click .fixture .accordion-heading .icon-delete" : "deleteFixture",
 			"click .polygon .accordion-heading .icon-add" : "addVertex",
@@ -66,16 +68,43 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 		changeEntity : function(e) {
 
 			var entity = App.get("entity");
+			if (!entity) return;
 			entity.set("enabled", !!this.$("#enable").prop("checked"));
 			entity.set("id", this.$("#id").val());
-			entity.set("class", this.$("#class button").first().text());
+			// entity.set("class", this.$("#class button").first().text());
 			entity.set("position", cc.ccp(parseFloat(this.$("#position-x").val()), parseFloat(this.$("#position-y").val())));
 			entity.set("rotation", parseFloat(this.$("#rotation").val()));
 			entity.set("scale", cc.ccp(parseFloat(this.$("#scale-x").val()), parseFloat(this.$("#scale-y").val())));
-			entity.get("body").set("type", parseInt(this.$('#body-type').val()));
-			entity.get("body").set("shown", !!this.$("#show-body-layer").prop("checked"));
+		},
+
+		changeEntityModelShown : function(e) {
+
+			console.log(42);
+			var entity = App.get("entity");
+			if (!entity) return;
 			entity.get("model").set("shown", !!this.$("#show-model-layer").prop("checked"));
 		},
+
+		changeEntityModelPath : function(e) {
+
+			var entity = App.get("entity");
+			if (!entity) return;
+			entity.get("model").set("path", this.$("#models").val());
+		},
+
+		changeEntityBodyShown : function(e) {
+
+			var entity = App.get("entity");
+			if (!entity) return;
+			entity.get("body").set("shown", !!this.$("#show-body-layer").prop("checked"));
+		},	
+
+		changeEntityBodyType : function(e) {
+
+			var entity = App.get("entity");
+			if (!entity) return;
+			entity.get("body").set("type", parseInt(this.$('#body-type').val()));
+		}	,	
 
 		selectedEntityChanged : function(global, entity) {
 
@@ -84,21 +113,22 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 				prev.unbind("change", this.entityChanged, this);
 				prev.get("model").unbind("change", this.entityModelChanged, this);
 				prev.get("body").unbind("change", this.entityBodyChanged, this);
-	            prev.get("body").get("fixtures").unbind("add", this.fixtureAdded, this, this);
-	            prev.get("body").get("fixtures").unbind("remove", this.fixtureRemoved, this);
-	            prev.get("body").get("fixtures").cleanup(this.cleanupFixture, this);
+        prev.get("body").get("fixtures").unbind("add", this.fixtureAdded, this, this);
+        prev.get("body").get("fixtures").unbind("remove", this.fixtureRemoved, this);
+        prev.get("body").get("fixtures").cleanup(this.cleanupFixture, this);
 			}
 			if (!entity) return;
 			this.$("#fixtures *").remove();
 			entity.rebind("change", this.entityChanged, this, true);
 			entity.get("model").rebind("change", this.entityModelChanged, this, true);
 			entity.get("body").rebind("change", this.entityBodyChanged, this, true);
-            entity.get("body").get("fixtures").rebind("add", this.fixtureAdded, this, true);
-            entity.get("body").get("fixtures").rebind("remove", this.fixtureRemoved, this);
+      entity.get("body").get("fixtures").rebind("add", this.fixtureAdded, this, true);
+      entity.get("body").get("fixtures").rebind("remove", this.fixtureRemoved, this);
 		},
 
 		entityModelChanged : function(model) {
 
+			this.$('#models').trigger("select", model.get("path"));
 			this.$("#show-model-layer").prop("checked", model.get("shown"));
 		},
 
@@ -118,7 +148,7 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 			this.$("#rotation").val(entity.get("rotation"));
 			this.$("#scale-x").val(entity.get("scale").x);
 			this.$("#scale-y").val(entity.get("scale").y);
-		}.async(),
+		},
 
 		deleteFixture : function(e) {
 
@@ -203,11 +233,12 @@ define(["class", "text!/assets/accordion.tpl", "text!/assets/accordion_inner_li.
 
 		vertexChanged : function(vertex) {
 
+			if (!vertex.fixture) return;
 			var fixtures = vertex.fixture.fixtures;
 			this.$(".fixture").eq(fixtures.indexOf(vertex.fixture))
 				.find(".vertex").eq(vertex.vertices.indexOf(vertex)).find("#position-x")
 				.val(vertex.get("x")).parent().find("#position-y").val(vertex.get("y"))
-		}.async(),
+		},
 
 		vertexAdded : function(vertex, vertices) {
 

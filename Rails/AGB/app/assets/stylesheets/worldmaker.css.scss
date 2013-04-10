@@ -32,7 +32,7 @@
 
 #levelView #levelList {
 
-    max-height: 455px;
+    height: 455px;
     overflow: scroll;
 }
 
@@ -295,7 +295,7 @@ input[type="radio"] {
 
 .tab-pane {
 
-    max-height: 484px;
+    height: 484px;
     overflow: scroll;
 }
 
@@ -309,7 +309,7 @@ input[type="radio"] {
 	width: 100%;
 }
 
-.accordion-group * {
+.accordion-group .accordion-body.in {
 
     overflow: visible !important;
 }

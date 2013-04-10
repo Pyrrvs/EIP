@@ -69,15 +69,15 @@ define([], function() {
 
 		setUrl : function(url) {
 
-			if (!url) {
+			if (!url || url == "") {
 				this.textureAtlas = null;
-	            this.rect = new cc.Rect(0, 0, 0, 0);
-	        } else {
-		        this.textureAtlas = new cc.TextureAtlas({ url : url });
-	            cc.addListener(this.textureAtlas, 'load', function () {
-	                this.rect = new cc.Rect(0, 0, this.textureAtlas.texture.size.width, this.textureAtlas.texture.size.height)
-	            }.bind(this));
-	        }
+        this.rect = new cc.Rect(0, 0, 0, 0);
+	    } else {
+	      this.textureAtlas = new cc.TextureAtlas({ url : url });
+        cc.addListener(this.textureAtlas, 'load', function () {
+          this.rect = new cc.Rect(0, 0, this.textureAtlas.texture.size.width, this.textureAtlas.texture.size.height)
+        }.bind(this));
+	    }
 		},
 
 		cleanup : function() {
@@ -290,7 +290,7 @@ define([], function() {
 
 	cc.Point.fromEvent = function(e) {
 
-		return (cc.ccp(e.offsetX, e.offsetY))
+		return (cc.ccp(e.offsetX || e.originalEvent.layerX, e.offsetY || e.originalEvent.layerY))
 	};
 
 	cc.Point.fromSize = function(s) {

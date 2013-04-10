@@ -8,51 +8,33 @@ require.config({ paths : {
 
 define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/MenuView", "view/GameView"], function(App) {
 
-	var testTimer = 0;
+	window.App = App;
 
-	Function.prototype.test = function() {
+	new_test({
 
-		var time = arguments[0];
-		Array.prototype.shift.call(arguments);
-		if (time < 0) {
-			time *= -1;
-			this.apply(this, arguments);
-		} else
-			this.async(testTimer).apply(this, arguments);
-		testTimer += time;
-	};
-
-	String.prototype.t = function(timeout) {
-
-		var time = timeout, toEval = this, func = function() { log("%ctesting", 'color: green', toEval + ""); eval(toEval + ""); };
-		return (function() {
-			Array.prototype.unshift.call(arguments, time);
-			func.test.apply(func, arguments);
-		});
-	};
-
-	var createLevel = '$("#id").val(arguments[0]).trigger("validate");'.t(200),
-		selectLevel = '$("#levelView .accordion-heading a").eq(arguments[0]).click();'.t(150),
-		createEntity = '$("#levelView .accordion-heading").eq(arguments[0]).find(".icon-add").click();'.t(300),
-		selectEntity = '$("#levelView .accordion-body").first().find("li a").eq(arguments[0]).click();'.t(300),
-		selectCreateFixture = '$("#add-fixture").trigger("select", arguments[0]).change();'.t(50),
-		clickCreateFixture = '$("#add-fixture button:first").click();'.t(120),
-		moveEntity = '$("#section-charac #position-x").val(arguments[0]).parent().parent().find("#position-y").val(arguments[1]).change();'.t(50),
-		save = '$("#save").click();'.t(220),
-		load = 'App.controller.getWorld(function() { });'.t(220),
-		radius = '$("#radius").val(arguments[0]).change()'.t(50),
-		scale = '$("#section-charac #scale-x").val(arguments[0]).parent().parent().find("#scale-y").val(arguments[0]).change();'.t(50),
-		selectType = '$("#body-type").trigger("select", arguments[0]).change();'.t(50),
-		moveVertex = '$(".fixture").eq(arguments[0]).find(".vertex").eq(arguments[1]).find("#position-x").val(arguments[2]).parent().find("#position-y").val(arguments[3]).change()'.t(30),
-		moveFixture = '$(".fixture").eq(arguments[0]).find("#position-x:first").val(arguments[1]).parent().find("#position-y:first").val(arguments[2]).change();'.t(20),
-		play = '$("#play").click()'.t(3000),
-		quickPlay = '$("#play").click()'.t(1000),
-		stop = '$("#stop").click()'.t(150),
-		pause = '$("#pause").click()'.t(1000),
-		display = 'log.apply(null, arguments)'.t(50),
-		newTest = 'testTimer = 0;'.t(0);
-
-	''.t(200)();
+		createLevel : '$("#levelView #id").val(arguments[0]).trigger("validate");',
+		selectLevel : '$("#levelView .accordion-heading a").eq(arguments[0]).click();',
+		createEntity : '$("#levelView .accordion-heading").eq(arguments[0]).find(".icon-add").click();',
+		selectEntity : '$("#levelView .accordion-body").first().find("li a").eq(arguments[0]).click();',
+		selectCreateFixture : '$("#add-fixture").trigger("select", arguments[0]).change();',
+		clickCreateFixture : '$("#add-fixture button:first").click();',
+		moveEntity : '$("#section-charac #position-x").val(arguments[0]).parent().parent().find("#position-y").val(arguments[1]).change();',
+		createVertex : '$(".fixture").eq(arguments[0]).find(".icon-add").click();',
+		model : '$("#models li a").eq(arguments[0]).click();',
+		save : '$("#save").click();',
+		load : 'App.controller.getWorld($.noop);',
+		radius : '$("#radius").val(arguments[0]).change()',
+		scale : '$("#section-charac #scale-x").val(arguments[0]).parent().parent().find("#scale-y").val(arguments[0]).change();',
+		rotation : '$("#section-charac #rotation").val(arguments[0]).change();',
+		type : '$("#body-type").trigger("select", arguments[0]).change();',
+		moveVertex : '$(".fixture").eq(arguments[0]).find(".vertex").eq(arguments[1]).find("#position-x").val(arguments[2]).parent().find("#position-y").val(arguments[3]).change()',
+		moveFixture : '$(".fixture").eq(arguments[0]).find("#position-x:first").val(arguments[1]).parent().find("#position-y:first").val(arguments[2]).change();',
+		play : 'console.log("play"); $("#play").click(); $.noop.async(1000)();',
+		quickPlay : '$("#play").click(); $.noop.async(1000)();',
+		stop : 'console.log("stop"); $("#stop").click(); $.noop.async(1000)();',
+		pause : '$("#pause").click()',
+		display : 'log.apply(null, arguments)',
+	});
 
 	function createFixture(type) {
 
@@ -60,140 +42,70 @@ define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/Men
 		clickCreateFixture();
 	}
 
-	function testCreate6Circles() {
-
-		testBaseEmpty();
-
-		createEntity(0);
-		createFixture(0);
-		moveEntity(200, 400);
-		selectType(2);
-
-		createEntity(0);
-		createFixture(0);
-		moveEntity(320, 400);
-		selectType(2);
-
-		createEntity(0);
-		createFixture(0);
-		moveEntity(400, 400);
-		selectType(2);
-
-		createEntity(0);
-		createFixture(0);
-		moveEntity(190, 100);
-		radius(60);
-
-		createEntity(0);
-		createFixture(0);
-		moveEntity(300, 100);
-		radius(60);
-
-		createEntity(0);
-		createFixture(0);
-		moveEntity(420, 100);
-		radius(60);
-	}
-
-	function test3Circles() {
-
-		testBaseEmpty();
-
-		createEntity(0);
-		createFixture(0);
-		selectType(2);
-		moveEntity(200, 400);
-
-		createEntity(0);
-		createFixture(0);
-		moveEntity(205, 300);
-
-		createEntity(0);
-		createFixture(0);
-		moveEntity(100, 150);
-	}
-
-	function test1Polygon() {
-
-		createEntity(0);
-		createFixture(1);
-		moveEntity(420, 300);
-		moveVertex(0, 0, -200, -50);
-	}
-
-	function testBase() {
+	function setup_base() {
 
 		load();
 		selectLevel(0);
-		selectEntity(0);
+		selectEntity(0);			
 	}
 
-	function testFull() {
+	function test_base() {
 
-		testBaseEmpty();
-
-		createEntity(0);
-		createFixture(0);
-		moveEntity(450, 450);
-		selectType(2);
-		radius(20);
-
-		createEntity(0);
-		createFixture(0);
-		moveEntity(400, 350);
-		selectType(2);
-		radius(10);
-
-		createEntity(0);
-		createFixture(0);
-		moveEntity(500, 400);
-		selectType(2);
-		radius(20);
-
-		createEntity(0);
-		createFixture(0);
-		moveEntity(400, 450);
-		selectType(2);
-		radius(10);
-
-		createEntity(0);
-		createFixture(0);
-		moveEntity(500, 350);
-		selectType(2);
-		radius(20);
-
-		createEntity(0);
-		createFixture(1);
-		moveEntity(600, 300);
-		moveVertex(0, 0, -300, -50);
-
-		createEntity(0);
-		createFixture(1);
-		moveEntity(100, 250);
-		moveVertex(0, 1, 200, -150);
-
-		createEntity(0);
-		createFixture(1);
-		moveEntity(20, 20);
-		moveVertex(0, 1, 600, 0);
+		it("should select first level and first entity");
+			setup_base();
 	}
 
-	function testBaseEmpty() {
-
-		createLevel("1");
-		selectLevel(0);
-	}
-
-	function testResetServer() {
+	function reset_server() {
 
 		App.set("levels", null);
 		save();
 		load();
 	}
 
-	function testInfinite() {
+	function setup_empty() {
 
-		testBaseEmpty();
+		createLevel("1");
+		selectLevel(0);
+	}
+
+	function create_ball(x, y, s, r) {
+
+		x = _.undef(x, kge.Random.int(100, 550));
+		y = _.undef(y, kge.Random.int(100, 450));
+		s = _.undef(s, kge.Random(0.5, 1.5));
+		r = _.undef(r, kge.Random.int(0, 360));
+		createEntity(0);
+		moveEntity(x, y);
+		type(2);
+		createFixture(0);
+		radius(32);
+		scale(s);
+		rotation(r);
+		model(0);
+	}
+
+	function create_crate(x, y, s, r) {
+
+		x = _.undef(x, kge.Random.int(100, 550));
+		y = _.undef(y, kge.Random.int(100, 450));
+		s = _.undef(s, kge.Random(0.3, 0.6));
+		r = _.undef(r, kge.Random.int(0, 360));
+		createEntity(0);
+		moveEntity(x, y);
+		type(2);
+		createFixture(1);
+		createVertex(0);
+		moveVertex(0, 0, -64, -64);
+		moveVertex(0, 1, 64, -64);
+		moveVertex(0, 2, 64, 64);
+		moveVertex(0, 3, -64, 64);
+		scale(s);
+		rotation(r);
+		model(1);
+	}
+
+	function create_ground() {
+
 		createEntity(0);
 		moveEntity(20, 20);
 		createFixture(1);
@@ -203,43 +115,40 @@ define(["model/LevelModel", "controller/Controller", "view/LevelView", "view/Men
 		createFixture(1);
 		moveFixture(2, 600, 0);
 		moveVertex(2, 2, 0, 400);
-		for (var i = 0; i < 42; ++i) {
-			createEntity(0);
-			moveEntity(kge.Random.int(50, 590), kge.Random.int(100, 450))
-			selectType(2);
-			createFixture(i % 2);
-			scale(kge.Random(0.5, 2));
-		}
-		// play();
-		// play();
-		// play();
-		// stop();
 	}
 
-	// testInfinite();
-	// testFull();
-	// testCreate6Circles();
-	// test1Polygon();
-	testBase();
-	// testBaseEmpty();
-	// createEntity(0);
-	// createFixture(0);
+	function test_single_ball() {
 
-	// load();
+		it("should create a level and a single ball");
+			setup_empty();
+			create_ground();
+			create_ball(void 0, void 0, 1);
+			selectEntity(1);
+	}
 
-	// createEntity(0);
-	// createFixture(0);
-	// selectType(2);
-	// scale(2);
-	// moveEntity(300, 200);
-	// ''.t(500)();	
-	// quickPlay();
-	// quickPlay();
-	// stop();
-	// play();
-	// stop();
+	function test_single_crate() {
 
-	// stop();
-	selectEntity(0);
-	// 'log(App.get("entity"))'.t(50)();
+		it("should create a level and a single crate");
+			setup_empty();
+			create_ground();
+			create_crate(void 0, void 0, 1);
+			selectEntity(1);
+	}
+
+	function test_full() {
+
+		it("should create a level, 3 platforms and x circle/triangles");
+			setup_empty();
+			create_ground();
+			for (var i = 0; i < 20; ++i)
+				eval("create_" + (i % 2 ? "ball" : "crate") + "()");
+			selectEntity(0);
+	}
+
+	begin_test();
+		// test_single_crate();
+		// test_single_ball();
+		// test_full();
+		test_base();
+	end_test();
 });
