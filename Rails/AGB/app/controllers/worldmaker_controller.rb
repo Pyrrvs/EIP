@@ -25,22 +25,20 @@ class WorldmakerController < ApplicationController
   def load_project
     user = User.find_by_name(params[:user_id]) || not_found
     @project = user.projects.find_by_name(params[:project_id]) || not_found
-    @project_path = "#{Rails.root}/#{AGB_CONFIG['users_dir']}/#{@project.user.name}/#{@project.name}/kFiles/world.js"
+    @project_path = "#{Rails.root}/#{AGB_CONFIG['users_dir']}/#{@project.user.name}/#{@project.name}/kFiles/world.json"
   end
 
   def index
   end
 
   def world
-  	respond_to do |format|
-  		format.json { send_file @project_path }
-  	end
+    render json: File.read(@project_path)
   end
 
   def update
-    ResourcesController.update_world_file @project_path, params[:data].to_json
-    render json: { resp: 'success' }
+    ResourcesController.update_world_file @project_path, params[:world].to_json
+    render json: { error: nil }
   rescue
-    render json: { resp: 'failure' }, status: 500   
+    render json: { error: 'fail' }
   end
 end

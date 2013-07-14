@@ -39,8 +39,9 @@ gem 'bcrypt-ruby', '~> 3.0.0'
 
 
 group :development, :test do
+  gem 'better_errors'
 	gem 'rb-fsevent', require: false if RUBY_PLATFORM =~ /darwin/i
-    gem 'guard-livereload'
+  gem 'guard-livereload'
 end
 
 gem "rspec-rails", :group => [:test, :development]
