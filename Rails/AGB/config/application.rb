@@ -61,5 +61,10 @@ module AGB
     config.assets.version = '1.0'
 
     config.assets.paths << "#{Rails.root}/app/assets/templates"
+    config.assets.paths << Rails.root.join("app", "assets", "fonts")
+    config.assets.paths << Rails.root.join("app", "assets", "images")
+    config.assets.paths << Rails.root.join("app", "assets", "javascripts")
+    config.assets.paths << Rails.root.join("app", "assets", "stylesheets")
+
   end
 end
