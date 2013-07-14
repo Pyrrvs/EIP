@@ -1,4 +1,3 @@
-App = {};
 _.templateSettings.variable = "g";
 require.config({ paths : {
 

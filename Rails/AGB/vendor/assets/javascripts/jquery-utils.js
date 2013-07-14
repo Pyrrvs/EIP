@@ -1,31 +1,3 @@
-log = console.log.bind(console);
-
-_.undef = function(v, value) {
-
-    return (_.isUndefined(v) ? value : v);
-}
-
-Function.prototype.async = function(timeout) {
-
-    var funcToAsync = this;
-    return (function() {
-        var args = arguments, self = this;
-        setTimeout(function() {
-            funcToAsync.apply(self, args);
-        }, timeout)
-    })
-}
-
-Function.prototype.asyncCall = function() {
-
-	this.async().apply(this, arguments);
-}
-
-Function.prototype.asyncCallBind = function() {
-
-	this.async().apply(arguments[0], Array.prototype.shift(arguments));
-}
-
 $(function() {
 
 	$("body").on("keydown", 'input[type="text"]', function(e) {
