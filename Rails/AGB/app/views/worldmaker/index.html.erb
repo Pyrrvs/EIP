@@ -1,4 +1,8 @@
-<% content_for:head do %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag "worldmaker" %>
+<% end %>
+
+<% content_for :javascript do %>
   <%= javascript_include_tag "underscore.min" %>
   <%= javascript_include_tag "kjs" %>
   <%= javascript_include_tag "jquery.event.drag-2.2" %>
@@ -8,7 +12,6 @@
   <%= javascript_include_tag "kge/js/box2d" %>
   <%= javascript_include_tag "kge/js/kge" %>
   <%= javascript_include_tag "worldmaker" %>
-  <%= stylesheet_link_tag "worldmaker" %>
 <% end %>
 
 <div ng-app="app" ng-controller="AppController" ngx-keydown="key_actions($event)">

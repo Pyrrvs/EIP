@@ -42,6 +42,7 @@
     <link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png">
     <link rel="shortcut icon" href="ico/favicon.png">
     <!-- end: Favicon and Touch Icons --> 
+    <%= yield :head %>
       
   </head>
 
@@ -275,6 +276,8 @@
     <%= javascript_include_tag "charts.min.js"%>  
     <%= javascript_include_tag "custom.min.js"%>
     <!-- end: JavaScript-->
+
+    <%= yield :javascript %>
     
   </body>
   </html> 
