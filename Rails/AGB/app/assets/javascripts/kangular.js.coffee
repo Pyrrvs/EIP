@@ -5,6 +5,11 @@ $ ->
 
 	app = angular.module name, []
 
+	# watch mutiple
+	app.$watch = (scope, listener, to_watch) ->
+		scope[listener] = 0
+		_(to_watch).each (e) -> scope.$watch e, -> ++scope[listener]
+
 	app.service 'array', ['$parse', ($parse) ->
 		$watch: (scope, array, added_listener, removed_listener) ->
 			oldValue = []
@@ -108,6 +113,108 @@ $ ->
 		start: (element, done) ->
 			element.stop().height(0).animate({ height: height }) if height = element.height()
 
+	app.directive 'ngxValidate', ->
+		require: 'ngModel'
+		link: (scope, element, attrs, ctrl) ->
+			validator =  ->
+				validations = scope.$eval attrs.ngxValidate
+				ctrl.$setValidity validation, value for validation, value of validations
+			scope.$watch attrs.ngxValidateDependency, validator if attrs.ngxValidateDependency
+			ctrl.$viewChangeListeners.push validator
+
+	app.directive 'ngxOffset', ->
+		(scope, element, attrs) ->
+			scope.$watch attrs.ngxOffset, (pos) ->
+				element.offset pos
+
+	app.directive 'ngxTypeahead', ["$compile", ($compile) ->
+		require: 'ngModel'
+		link: (scope, element, attrs, ctrl) ->
+			matcher = if attrs.ngxTypeaheadMatcher then scope.$eval attrs.ngxTypeaheadMatcher else (query, groups) ->
+				_(groups).fold [], (mem_groups, group) -> 
+					mem_groups.push _({}).extend(group, items: items) if (items = _(group.items).fold [], (mem_items, item) ->
+						mem_items.push item if ~item.label.toLowerCase().indexOf(query?.toLowerCase()); mem_items).length
+					mem_groups
+			updater = if attrs.ngxTypeaheadUpdater then scope.$eval attrs.ngxTypeaheadUpdater else (query, group, item) -> item.label
+			scope.$watch attrs.ngxTypeahead, (v) -> scope.source = v || []
+			scope.pick = ->
+				return unless scope.menu_shown
+				scope.menu_shown = false
+				ctrl.$setViewValue updater(ctrl.$modelValue || "", scope.group, scope.item)
+				ctrl.$render()
+			scope.select = (group, item) ->
+				scope.group = group
+				scope.item = item
+			scope.lookup = ->
+				scope.groups = matcher ctrl.$modelValue || "", scope.source, element
+				return unless scope.groups and scope.groups.length
+				scope.menu_shown = true
+				scope.offset = element.offset()
+				scope.offset.top += element.height() + element.get(0).offsetHeight - 15
+				scope.item = _(scope.group.items).first() if scope.group = _(scope.groups).first()
+			ctrl.$viewChangeListeners.push -> _(-> scope.$apply scope.lookup).defer()
+			menu = $("<ul class='typeahead' style='position: absolute' ng-show='menu_shown'
+				ngx-click-out='menu_shown = false' ngx-offset='offset'>
+				<li ng-show='groups' ng-repeat='group in groups' ng-show='group.items.length'>
+					<ul>
+						<li class='group-name' ng-show='group.label'><a>{{group.label}}</a></li>
+						<li ngx-active='item == it' ng-repeat='it in group.items' ng-click='pick()' ng-mouseenter='select(group, it)'>
+							<a href>{{it.label}}</a>
+						</li>
+					</ul>
+				</li>
+			</ul>").insertAfter(element)
+			$compile(menu)(scope)
+			element.on('keydown', (e) -> scope.$apply ->
+				return unless scope.menu_shown
+				switch e.keyCode
+					when 9, 13, 27 then e.preventDefault()
+					when 38 # arrowup
+						return unless scope.groups and scope.group and scope.item
+						if _(scope.group.items).is_first(scope.item)
+							scope.group = _(scope.groups).prev(scope.group)
+							scope.item = _(scope.group.items).last()
+						else
+							scope.item = _(scope.group.items).prev(scope.item)
+						e.preventDefault()
+					when 40 # arrowdown
+						return unless scope.groups and scope.group and scope.item
+						if _(scope.group.items).is_last(scope.item)
+							scope.group = _(scope.groups).next(scope.group)
+							scope.item = _(scope.group.items).first()
+						else
+							scope.item = _(scope.group.items).next(scope.item)
+						e.preventDefault()
+				e.stopPropagation()
+			).on('keyup', (e) -> scope.$apply ->
+				switch e.keyCode
+					when 40, 38, 16, 17, 18 then null
+					when 9, 13 # tab, enter
+						scope.pick()
+						e.stopPropagation()
+					when 27 # escape
+						if scope.menu_shown
+							scope.menu_shown = false
+							e.stopPropagation()
+				scope.lookup() unless scope.menu_shown
+				e.preventDefault()
+			).focus -> app.$$apply scope, scope.lookup
+	]
+
+	app.directive 'ngxEditableContent', ->
+		require: 'ngModel'
+		link: (scope, element, attrs, ctrl) ->
+			ctrl.$render = -> element.html ctrl.$viewValue || ''
+			element.bind 'blur keyup change', -> scope.$apply -> ctrl.$setViewValue element.html(); ctrl.$render()
+
+	app.directive 'ngxSubmit', ->
+		require: 'form'
+		link: (scope, element, attrs, ctrl) ->
+			element.find('input[type="submit"], button').first().click ->
+				return unless ctrl.$valid
+				scope.$apply attrs.ngxSubmit
+				element.submit()
+
 	app.directive 'ngxFirst', ->
 		(scope, element, attrs) ->
 			scope.$watch '$first', -> element.toggleClass attrs.ngxFirst || 'first', scope.$first
@@ -124,6 +231,11 @@ $ ->
 		(scope, element, attrs) ->
 			scope.$watch '$index', ->
 				element.toggleClass("first", scope.$first).toggleClass("middle", scope.$middle).toggleClass("last", scope.$last)
+
+	app.directive 'ngxActive', ->
+		(scope, element, attrs) ->
+			scope.$watch attrs.ngxActive, (v) ->
+				element.toggleClass 'active', !!v
 
 	app.directive 'ngxKeydown', ->
 		(scope, element, attrs) ->
@@ -348,7 +460,7 @@ $ ->
 			scope.view = _(scope.view).let {}
 			element.find("button").attr 'ng-click', "view.editing_#{id} = true; view.input_#{id} = user.#{id}"
 			element.wrapInner "<div ng-show='!view.editing_#{id}'></div>"
-			element.append "<form ng-show='view.editing_#{id}' ng-submit='#{attrs.ngxEditable}; view.editing_#{id} = false' class='edit-form'>
+			element.append "<form ng-show='view.editing_#{id}' ngx-submit='#{attrs.ngxEditable}; view.editing_#{id} = false' class='edit-form'>
 			<input type='text' ngx-focus='view.editing_#{id}' ng-model='view.input_#{id}'/><button ng-click='view.editing_#{id} = false'
 			type='button' class='close' aria-hidden='true'>&times;</button></form>"
 			$("body").keydown (e) -> scope.$apply "view.editing_#{id} = false" if e.keyCode == 27
@@ -374,7 +486,7 @@ $ ->
 					when 'right' then top: p.top + eh / 2 - th / 2 + t, left: p.left + ew + 12 + l
 				app.$tooltip.offset(pos).addClass(placement).hide().fadeIn(100)), ->
 					hover = false; app.$tooltip.stop().show().fadeOut(100)
-			element.on 'remove', -> app.$tooltip.stop().show().fadeOut(100) if hover
+			element.on 'remove, $destroy', -> app.$tooltip.stop().show().fadeOut(100) if hover
 
 	app.directive 'ngxPopover', ->
 		(scope, element, attrs) ->

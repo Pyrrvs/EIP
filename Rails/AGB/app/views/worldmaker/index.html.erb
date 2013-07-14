@@ -1,9 +1,8 @@
-<% content_for :head do %>
+<% content_for:head do %>
   <%= javascript_include_tag "underscore.min" %>
   <%= javascript_include_tag "kjs" %>
   <%= javascript_include_tag "jquery.event.drag-2.2" %>
   <%= javascript_include_tag "angular" %>
-  <%= javascript_include_tag "angular-bootstrap" %>
   <%= javascript_include_tag "kangular" %>
   <%= javascript_include_tag "kge/js/cocos2d" %>
   <%= javascript_include_tag "kge/js/box2d" %>
@@ -107,36 +106,36 @@
           <div class="accordion-body collapse in" id="collapse-charac">
             <div class="accordion-inner">
               <div class="line-top top semi-bot">
-                <span>enabled : </span>
+                <span>enabled: </span>
                 <input ng-model="entity.enabled" type="checkbox" class="pull-right"/>
               </div>
               <div class="line-top">
-                <span>name : </span>
+                <span>name: </span>
                 <input ng-model="entity.name" class="input-thin pull-right" type="text" placeholder="name"/>
               </div>
               <div class="line-top">
-                <span>classes : </span>
+                <span>classes: </span>
                 <select ng-select="class in classes" class="btn-inverse pull-right" placeholder="none"></select>
               </div>
               <div class="line-top">
-                <span class="label-input">x : </span>
+                <span class="label-input">x: </span>
                 <input ng-model="entity.position.x" type="number" step="5"/>
                 <div class="line-right">
-                  <span class="label-input">scale x : </span>
+                  <span class="label-input">scale x: </span>
                   <input ng-model="entity.scale.x" type="number" step="0.1"/>
                 </div>
               </div>
               <div class="line-top bot">
-                <span class="label-input">y : </span>
+                <span class="label-input">y: </span>
                 <input ng-model="entity.position.y" type="number" step="5"/>
                 <div class="line-right">
-                  <span class="label-input">scale y : </span>
+                  <span class="label-input">scale y: </span>
                   <input ng-model="entity.scale.y" type="number" step="0.1"/>
                 </div>
               </div>
               <div class="line-top bot clearfix">
                 <input ng-model="entity.rotation" class="pull-right " type="number" step="5"/>
-                <span class="pull-right label-input">rotation : </span>
+                <span class="pull-right label-input">rotation: </span>
               </div>
             </div>
           </div>
@@ -152,15 +151,15 @@
           <div class="accordion-body collapse in" id="collapse-model">
             <div class="accordion-inner">
               <div class="line-top top semi-bot">
-                <span>enabled : </span>
+                <span>enabled: </span>
                 <input ng-model="entity.model.enabled" type="checkbox" class="pull-right"/>
               </div>
               <div class="line-top top semi-bot">
-                <span>visible : </span>
+                <span>visible: </span>
                 <input ng-model="entity.model.visible" type="checkbox" class="pull-right"/>
               </div>
               <div class="line-top bot">
-                <span>models : </span>
+                <span>models: </span>
                 <select ng-select="model in models" class="btn-inverse pull-right" placeholder="none"></select>
               </div>
             </div>
@@ -177,24 +176,24 @@
           <div class="accordion-body collapse in" id="collapse-body">
             <div class="accordion-inner">
               <div class="line-top top semi-bot">
-                <span>enabled : </span>
+                <span>enabled: </span>
                 <input ng-model="entity.body.enabled" type="checkbox" class="pull-right"/>
               </div>
               <div class="line-top top bot">
-                <span>visible : </span>
+                <span>visible: </span>
                 <input ng-model="entity.body.visible" type="checkbox" class="pull-right"/>
               </div>
               <div class="line-top bot">
-                <span>bodies : </span>
+                <span>bodies: </span>
                 <select ng-select="body in bodies" class="btn-inverse" placeholder="none"></select>
               </div>
               <div class="line-top top bot">
-                <span>type : </span>
+                <span>type: </span>
                 <select ng-options="body_type as body_type_name for (body_type, body_type_name) in body_types" ng-model="entity.body.type"
                 class="btn-inverse" placeholder="none"></select>
               </div>
               <div class="line-top top bot">
-                <span>fixtures : </span>
+                <span>fixtures: </span>
                 <select ng-options="type_name for (type, type_name) in fixture_types"
                   ng-model="input_fixture_type" class="btn-inverse"></select>
                 <button ng-click="create_fixture()" class="btn btn-mini btn-inverse">create</button>
@@ -232,31 +231,31 @@
       <div class="tab-pane" id="tab-level" ngx-all-disabled="!level">
         <div class="well well-small">
           <div class="line-top top">
-            <span>name : </span>
+            <span>name: </span>
             <input ng-model="level.name" class="input-thin pull-right" type="text" placeholder="name"/>
           </div>
           <div class="line-top">
-            <span>camera : </span>
+            <span>camera: </span>
           </div>
           <div class="line-top">
-            <span class="label-input">x : </span>
+            <span class="label-input">x: </span>
             <input ng-model="level.camera.position.x" type="number" step="5"/>
             <input ng-model="level.camera.scale" class="pull-right" type="number" step="0.1"/>
-            <span class="pull-right label-input">scale : </span>
+            <span class="pull-right label-input">scale: </span>
           </div>
           <div class="line-top">
-            <span class="label-input">y : </span>
+            <span class="label-input">y: </span>
             <input ng-model="level.camera.position.y" type="number" step="5"/>
             <input ng-model="level.camera.rotation" class="pull-right" type="number" step="5"/>
-            <span class="pull-right label-input">rotation : </span>
+            <span class="pull-right label-input">rotation: </span>
           </div>
           <div class="line-top bot">
             <div>
-              <span class="label-input">model layers : </span>
+              <span class="label-input">model layers: </span>
               <button ng-click="toggle_layers('model')" class="btn btn-inverse btn-tiny">toggle</button>
             </div>
             <div class="pull-right">
-              <span class="label-input">body layers : </span>
+              <span class="label-input">body layers: </span>
               <button ng-click="toggle_layers('body')" class="btn btn-inverse btn-tiny">toggle</button>
             </div>
           </div>
@@ -299,14 +298,22 @@
 <!-- circle-shape -->
 <script type="text/ng-template" id="circle-shape">
   <div class="line-top top">
-    <span class="label-input">x : </span>
+    <span class="label-input">x: </span>
     <input ng-model="fixture.position.x" type="number" step="5"></input>
-    <input ng-model="fixture.shape.radius" class="pull-right" type="number" step="1"></input>
-    <span class="pull-right label-input">radius : </span>
+    <input class="pull-right" ng-model="fixture.position.y" type="number" step="5"></input>
+    <span class="pull-right label-input">y: </span>
+  </div>
+  <div class="line-top">
+    <span class="label-input">friction: </span>
+    <input ng-model="fixture.friction" type="number" step="0.1"></input>
+    <input ng-model="fixture.density" class="pull-right" type="number" step="0.1"></input>
+    <span class="pull-right label-input">density: </span>
   </div>
   <div class="line-top bot">
-    <span class="label-input">y : </span>
-    <input ng-model="fixture.position.y" type="number" step="5"></input>
+    <span class="label-input">restit...: </span>
+    <input ng-model="fixture.restitution" type="number" step="0.1"></input>
+    <input ng-model="fixture.shape.radius" class="pull-right" type="number" step="1"></input>
+    <span class="pull-right label-input">radius: </span>
   </div>
 </script>
 <!-- !circle-shape -->
@@ -314,17 +321,27 @@
 <!-- polygon-shape -->
 <script type="text/ng-template" id="polygon-shape">
   <div class="line-top top">
-    <span class="label-input">x : </span>
+    <span class="label-input">x: </span>
     <input ng-model="fixture.position.x" type="number" step="5"></input>
     <input ng-model="fixture.position.y" class="pull-right" type="number" step="5"></input>
-    <span class="label-input pull-right">y : </span>
+    <span class="label-input pull-right">y: </span>
+  </div>
+  <div class="line-top">
+    <span class="label-input">friction: </span>
+    <input ng-model="fixture.friction" type="number" step="0.1"></input>
+    <input ng-model="fixture.density" class="pull-right" type="number" step="0.1"></input>
+    <span class="pull-right label-input">density: </span>
+  </div>
+  <div class="line-top">
+    <span class="label-input">restitution: </span>
+    <input ng-model="fixture.restitution" type="number" step="0.1"></input>
   </div>
   <div class="line-separator"></div>
   <div class="vertice-list">
     <div class="line-top bot" ng-repeat="vertex in fixture.shape.vertices" ngx-hover="view_show_delete_vertex">
-      <span class="label-input">x : </span>
+      <span class="label-input">x: </span>
       <input ng-model="vertex.x" type="number" step="5"></input>
-      <span id="pos-y" class="label-input">y : </span>
+      <span id="pos-y" class="label-input">y: </span>
       <input ng-model="vertex.y" type="number" step="5"></input>
       <button ng-click="delete_vertex(fixture, vertex)" ngx-visible="view_show_delete_vertex"
         class="btn btn-icon-tiny icon-delete label-input pull-right" ngx-tooltip="'delete vertex'"></button>

@@ -210,6 +210,8 @@ Entity.inherit kge.Entity,
 		size = size.clone().add(cc.Point.fromB2(shape.m_p, app.scaling).scale(scale))
 		ctx.lineWidth = 1 / @parent.scale
 		ctx.arc(size.x, size.y, shape.GetRadius() * app.scaling, 0, 2 * Math.PI)
+		ctx.moveTo(size.x, size.y)
+		ctx.lineTo(size.x + shape.GetRadius() * app.scaling, size.y)
 		ctx.strokeStyle = if fixture.highlighted then "yellow" else "#66FF66"
 
 	draw_polygon: (ctx, fixture, shape, size, scale) ->
@@ -226,21 +228,20 @@ Entity.prototype.draw = (ctx) ->
 	if @model_entity.model.enabled and @model_entity.model.visible
 		Entity.superclass.draw.apply @, arguments
 	if @model_entity.body.enabled and @model_entity.body.visible
-		scale = cc.Point.fromScale @
+		scale = cc.Point.fromScale(@)
 		size = cc.Point.fromSize(@contentSize).scale(scale).scale(0.5)
 		fixture = @body.GetFixtureList()
+		ctx.scale(1 / scale.x, 1 / scale.y)
 		while fixture
 			shape = fixture.GetShape()
 			type = shape.GetType()
 			ctx.beginPath()
-			ctx.scale(1 / scale.x, 1 / scale.y)
 			if type == b2Shape.e_circleShape
 				@draw_circle ctx, fixture, shape, size, scale
 			else if type == b2Shape.e_polygonShape
 				@draw_polygon ctx, fixture, shape, size, scale
 			ctx.stroke()
 			fixture = fixture.GetNext()
-
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # CC SelectCircle                                           #
@@ -290,7 +291,7 @@ VertexCircle = ->
   VertexCircle.superclass.constructor.apply this, arguments
 
 VertexCircle.inherit cc.Node,
-  radius: 10,
+  radius: 12,
 
   draw: (ctx) ->
     ctx.strokeStyle = "yellow";
@@ -351,6 +352,7 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 		return unless @entity
 		@entity.scaleX = @entity.model_entity.scale.x;
 		@entity.scaleY = @entity.model_entity.scale.y;
+		@entity_body_changed()
 
 	@entity_rotation_changed = =>
 		return unless @entity
@@ -359,10 +361,9 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 
 	@entity_enabled_changed = =>
 		return unless @entity
-		if !@entity.model_entity.enabled
-			@disabled[@entity.name] = @entity
-			@game_layer.removeChild {child: @entity, cleanup: false}
-		else
+		@disabled[@entity.name] = @entity
+		@game_layer.removeChild {child: @entity, cleanup: false}
+		if @entity.model_entity.enabled
 			@disabled = _(@disabled).remove @entity
 			@game_layer.addChild @entity
 
@@ -472,6 +473,15 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 				fixture = fixture.GetNext()
 			false
 
+	@fixture_clicked = (position) =>
+		fixture = @entity.body.GetFixtureList()
+		n_fixture = @entity.body.m_fixtureCount - 1
+		while fixture
+			return n_fixture if fixture.TestPoint(position.toB2(app.scaling))
+			fixture = fixture.GetNext()
+			--n_fixture
+		n_fixture
+
 	@transform_event_point = (e) =>
 		@ui_layer.convertToNodeSpace cc.Point.fromEvent(e).flipY()
 
@@ -528,19 +538,21 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 		app.scope.entity = @entity_clicked(this.transform_event_point e)?.model_entity
 
 	$scope.mousemove = (e) =>
-		return unless @entity and ++@mousemotion % 2 and @dragging.what != "vertex"
-		s = cc.Point.fromSize(@entity.contentSize).scale(0.5)
-		pos = @entity.convertToNodeSpace(cc.Point.fromEvent(e).flipY()).sub(s)
+		return unless @entity and @dragging.what != "vertex" and ++@mousemotion % 2
+		position = @transform_event_point e
 		fixture = @entity.body.GetFixtureList()
 		@ui_layer.vertex_circle.update null
-		n_fixture = 0
+		n_fixture = @entity.body.m_fixtureCount - 1
 		while fixture
 			if fixture.GetShape().GetType() == b2Shape.e_polygonShape
 				for vertex, n_vertex in fixture.GetShape().GetVertices()
-					if pos.dist(cc.Point.fromB2(vertex, app.scaling).div(@entity.scale)) < 10
-						@ui_layer.vertex_circle.update @transform_event_point(e)
-						@vertex = $scope.entity.body.fixtures[n_fixture].shape.vertices[n_vertex]
-			++n_fixture
+					vertex_position = cc.Point.fromB2(vertex, app.scaling).rotate(-@entity.rotation).add(@entity.position)
+					if position.dist(vertex_position) < 12
+						@ui_layer.vertex_circle.update vertex_position
+						@n_fixture = n_fixture
+						@n_vertex = n_vertex
+						return
+			--n_fixture
 			fixture = fixture.GetNext()
 		return
 
@@ -552,9 +564,12 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 			@dragging.what = 'camera'
 		else if $scope.view_mode == 'entity'
 			position = @transform_event_point e
-			if @ui_layer.vertex_circle.visible
+			if e.shiftKey and ~@n_fixture_clicked = @fixture_clicked position
+				@dragging.what = "fixture"
+				@dragging.position = cc.Point.fromObject $scope.entity.body.fixtures[@n_fixture_clicked].position
+			else if @ui_layer.vertex_circle.visible
 				@dragging.what = "vertex"
-				@dragging.position = cc.Point.fromObject @vertex
+				@dragging.position = cc.Point.fromObject $scope.entity.body.fixtures[@n_fixture].shape.vertices[@n_vertex]
 			else if @ui_layer.select_circle_clicked position
 				@dragging.position = position
 				@dragging.what = "rotation"
@@ -569,11 +584,17 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 		return unless $scope.game_state != 'play'
 		if @dragging.what == "camera"
 			$scope.level.camera.position = cc.Point.add(@dragging.position, cc.ccp(a.deltaX, -a.deltaY)).floor().toObject()
+		else if @dragging.what == "fixture"
+			fixture = $scope.entity.body.fixtures[@n_fixture_clicked]
+			fixture.position = cc.Point.add(@dragging.position, cc.ccp(a.deltaX, -a.deltaY).rotate(@ui_layer.rotation)
+			.scale(1 / @ui_layer.scale).rotate(@entity.rotation).scale(1 / @entity.scale).floor()).toObject()
 		else if @dragging.what == "vertex"
 			pos = cc.Point.add(@dragging.position, cc.ccp(a.deltaX, -a.deltaY).rotate(@ui_layer.rotation)
 			.scale(1 / @ui_layer.scale).rotate(@entity.rotation).scale(1 / @entity.scale).floor())
-			@ui_layer.vertex_circle.update cc.Point.add(@entity.position, @ui_layer.convertToNodeSpace pos)
-			@vertex.x = pos.x; @vertex.y = pos.y
+			fixture = $scope.entity.body.fixtures[@n_fixture]
+			vertex = fixture.shape.vertices[@n_vertex]
+			vertex.x = pos.x; vertex.y = pos.y
+			@ui_layer.vertex_circle.update pos.add(fixture.position).rotate(-@entity.rotation).add(@entity.position)
 		else if @dragging.what == "rotation"
 			$scope.entity.rotation = Math.floor(@dragging.rotation -
 			cc.Point.sub(@dragging.position, @ui_layer.select_circle.position)
