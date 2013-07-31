@@ -107,29 +107,28 @@
               / start: User Dropdown
               %li.dropdown
                 %a.btn.account.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
-                .avatar= image_tag("avatar.jpg")
-                .user
-                  %span.hello Welcome!
-                  %span.name Łukasz Holeczek
-                %ul.dropdown-menu
-                  %li.dropdown-menu-title
-                  %li
-                    %a{:href => "/#users/profile"}
-                      %i.icon-user
-                      Profile
-                  %li
-                    %a{:href => "/#settings"}
-                      %i.icon-cog
-                      Settings
-                  %li
-                    %a{:href => "/#messages"}
-                      %i.icon-envelope
-                      Messages
-                  %li
-                    = form_tag('/session', method: 'DELETE') do
-                      %input{:type => "submit"}/
-                      %i.icon-off
-                      Logout
+                  .avatar= image_tag("avatar.jpg")
+                  .user
+                    %span.hello Welcome!
+                    %span.name Łukasz Holeczek
+                  %ul.dropdown-menu
+                    %li.dropdown-menu-title
+                    %li
+                      %a{:href => "/#users/profile"}
+                        %i.icon-user
+                        Profile
+                    %li
+                      %a{:href => "/#settings"}
+                        %i.icon-cog
+                        Settings
+                    %li
+                      %a{:href => "/#messages"}
+                        %i.icon-envelope
+                        Messages
+                    %li
+                      %a(href="/session#sign_in")
+                        %i(class="icon-off")
+                        Logout
               / end: User Dropdown
           / end: Header Menu
     / start: Header
