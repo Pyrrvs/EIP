@@ -1,0 +1,77 @@
+.row-fluid
+	%div(class="span3 smallstat box mobileHalf" ontablet="span6" ondesktop="span3")
+		%i(class="icon-cogs blue")
+		%span(class="title")Projects
+		%span(class="value")4 589
+
+	%div(class="span3 smallstat box mobileHalf" ontablet="span6" ondesktop="span3")
+		%i(class="icon-star yellow")
+		%span(class="title")Followers
+		%span(class="value")789
+
+	%div(class="span3 smallstat box mobileHalf" ontablet="span6" ondesktop="span3")
+		%i(class="icon-eye-open green")
+		%span(class="title")Views
+		%span(class="value")20 000
+
+	%div(class="span3 smallstat box mobileHalf" ontablet="span6" ondesktop="span3")
+		%i(class="icon-comments red")
+		%span(class="title")Comments
+		%span(class="value")1 278
+
+.row-fluid
+	%div(class="box span8")
+		%div(class="smallchart")
+			%b
+				.title(style="color:black;") Projects
+		.box-content
+			%table(class="table table-striped")
+				%thead
+					%tr
+						%th Name
+						%th Date of creation
+						%th Privacy
+						%th Status
+				%tbody
+					%tr
+						%td
+							%a(href="#/projects/R-Type") R-Type
+						%td(class="center")2012/01/01
+						%td(class="center")Public
+						%td(class="center")
+							%span(class="label label-success")Completed
+					%tr
+						%td
+							%a(href="#/projects/Alpha_Game_Builder") Alpha Game Builder
+						%td(class="center")2012/01/01
+						%td(class="center")Private
+						%td(class="center")
+							%span(class="label label-warning")In Development
+					%tr
+						%td
+							%a(href="#/projects/Duke_Nukem_Forever") Duke Nukem Forever
+						%td(class="center")2012/01/01
+						%td(class="center")Public
+						%td(class="center")
+							%span(class="label")Abandonned
+
+	%div(class="box chat span4" style="float:right;")
+		.box-header
+			%h2
+				%i(class="icon-list")
+				Message Box
+		.conversation(style="float:right;width:100%")
+			.actions
+				%img(class="avatar" src="assets/avatar.jpg")
+				%img(class="avatar" src="assets/avatar3.jpg")
+				%img(class="avatar" src="assets/avatar4.jpg")
+			%ul(class="talk")
+				%li
+					%img(class="avatar" src="assets/avatar3.jpg")
+					%span(class="name")Sarah Croche
+					%span(class="time")1:32PM
+					.message
+						Wooow your Message Box is so cool !
+			.form
+				=form_tag("/fakepath", remote: true) do
+					=text_field_tag('message', '', class: 'write-message input-large', placeholder: 'Leave a message')

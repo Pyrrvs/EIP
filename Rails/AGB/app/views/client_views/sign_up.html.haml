@@ -1,0 +1,15 @@
+.login-box
+	%div(class="box span12")
+		%h2 Create your account
+		#sign_up_form
+			=text_field_tag('username', '', class: 'input-large span12', placeholder: 'Type username')
+			=text_field_tag('email', '', class: 'input-large span12', placeholder: 'Type email')
+			=password_field_tag('password', '', class: 'input-large span12', placeholder: 'Type password')
+			=password_field_tag('password_digest', '', class: 'input-large span12', placeholder: 'Confirm password')
+			.clearfix
+			=submit_tag('Register', class: 'btn btn-primary span12', :'ng-click' => "signUp()")
+		.clearfix
+		%h3 Already have an account?
+		%p
+			Then you just need to
+			%a(href="#/sign_in" style="color:green;")sign in.

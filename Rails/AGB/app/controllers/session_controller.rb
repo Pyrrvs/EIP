@@ -2,16 +2,21 @@ class SessionController < ApplicationController
 	def new
 	end
 
-	def create
-	  user = User.find_by_name(params[:name])
+	def show
+		render layout: 'session'
+	end
 
-   	  if (user && user.authenticate(params[:password]))
-   	 	set_current_user(user)
-   	 	session[:user_id] = user.id
-      end
-	  respond_to do |format|
-	    format.js
-      end
+	def create
+		user = User.find_by_name(params[:name])
+
+	   	if (user && user.authenticate(params[:password]))
+   	 		set_current_user(user)
+   	 		session[:user_id] = user.id
+   	 		json_resp = { status: 'success'}
+      	else
+   			json_resp = { status: 'failure', errors: { :'global-errors' => ["The username or password you entered is incorrect."] } }.to_json
+   		end
+		render json: json_resp
 	end
 
 	def destroy

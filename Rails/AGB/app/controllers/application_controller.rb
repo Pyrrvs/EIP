@@ -5,8 +5,12 @@ class ApplicationController < ActionController::Base
   before_filter :current_user
 
   def index
-  	respond_to do |format|
-  		format.html
+    if @current_user == nil
+      redirect_to controller: 'session', action: 'show'
+    else
+      respond_to do |format|
+  		  format.html
+      end
   	end
   end
 

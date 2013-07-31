@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+%html(lang="en" ng-app="agb")
+	%head
+		<!-- start: Meta -->
+		= csrf_meta_tags
+		%meta{charset: "utf-8"}
+		%title SimpliQ - Flat & Responsive Bootstrap Admin Template
+		%meta{name: "description", content: "SimpliQ - Flat & Responsive Bootstrap Admin Template."}
+		%meta{name: "author", content: "Łukasz Holeczek"}
+		%meta{name: "keyword", content: "SimpliQ, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina"}
+		<!-- end: Meta -->
+	
+		<!-- start: Mobile Specific -->
+		%meta{name: "viewport", content: "width=device-width, initial-scale=1"}
+		<!-- end: Mobile Specific -->
+	
+		<!-- start: CSS -->
+		= stylesheet_link_tag "bootstrap.min.css" 
+		= stylesheet_link_tag "bootstrap-responsive.min.css" 
+		= stylesheet_link_tag "style.min.css" 
+		= stylesheet_link_tag "style-responsive.min.css" 
+		= stylesheet_link_tag "retina.css" 
+		= stylesheet_link_tag "font-awesome.min.css"
+		= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans:400,300"
+		<!-- end: CSS -->
+	%body
+		.container-fluid-full(ng-controller='SessionController')
+		.row-fluid
+			.row-fluid
+				%div(class="box span12")
+					.box-header
+						%div(class="title center")
+							%h2 Alpha Game Builder
+				=yield
+
+		<!-- start: JavaScript-->
+		= javascript_include_tag "jquery-1.9.1.min.js"
+		= javascript_include_tag "jquery-migrate-1.0.0.min.js"  
+		= javascript_include_tag "jquery-ui-1.10.3.custom.min.js" 
+		= javascript_include_tag "jquery.ui.touch-punch.js" 
+		= javascript_include_tag "modernizr.js" 
+		= javascript_include_tag "bootstrap.min.js" 
+		= javascript_include_tag "jquery.cookie.js" 
+		= javascript_include_tag 'fullcalendar.min.js'  
+		= javascript_include_tag 'jquery.dataTables.min.js'
+		= javascript_include_tag "excanvas.js"
+		= javascript_include_tag "jquery.flot.js"
+		= javascript_include_tag "jquery.flot.pie.js"
+		= javascript_include_tag "jquery.flot.stack.js"
+		= javascript_include_tag "jquery.flot.resize.min.js"
+		= javascript_include_tag "jquery.flot.time.js"
+		  
+		= javascript_include_tag "gauge.min.js"
+		= javascript_include_tag "jquery.chosen.min.js" 
+		= javascript_include_tag "jquery.uniform.min.js"
+		= javascript_include_tag "jquery.cleditor.min.js" 
+		= javascript_include_tag "jquery.noty.js" 
+		= javascript_include_tag "jquery.elfinder.min.js" 
+		= javascript_include_tag "jquery.raty.min.js" 
+		= javascript_include_tag "jquery.iphone.toggle.js"  
+		= javascript_include_tag "jquery.uploadify-3.1.min.js"  
+		= javascript_include_tag "jquery.gritter.min.js"  
+		= javascript_include_tag "jquery.imagesloaded.js" 
+		= javascript_include_tag "jquery.masonry.min.js"  
+		= javascript_include_tag "jquery.knob.modified.js"  
+		= javascript_include_tag "jquery.sparkline.min.js"  
+		= javascript_include_tag "counter.min.js" 
+		= javascript_include_tag "raphael.2.1.0.min.js"
+		= javascript_include_tag "justgage.1.0.1.min.js"  
+		= javascript_include_tag "jquery.autosize.min.js" 
+		= javascript_include_tag "retina.js"
+		= javascript_include_tag "jquery.placeholder.min.js"
+		= javascript_include_tag "wizard.min.js"
+		= javascript_include_tag "core.min.js"  
+		= javascript_include_tag "charts.min.js"  
+		= javascript_include_tag "custom.min.js"
+		= javascript_include_tag "angular" 
+
+		= javascript_include_tag "session.js.coffee"
+		<!-- end: JavaScript-->
+
+

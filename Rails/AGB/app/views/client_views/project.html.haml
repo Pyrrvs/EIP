@@ -1,0 +1,47 @@
+%h1 {{project_id}}
+%a(href="#/projects/{{project_id}}/worldmaker")World Maker
+
+.row-fluid
+	.span8
+	%div(class="box span4")
+		%div(class="smallchart green")
+			%b
+				.title(style="color:black;") Assets
+		.box-content
+			%table(class="table table-striped")
+				%thead
+					%tr
+						%th Name
+						%th Type
+						%th Actions
+				%tbody
+					%tr
+						%td Box
+						%td(class="center") Image
+						%td(class="center")
+							%a(class="btn btn-success" href="#")
+								%i(class="icon-zoom-in")
+							%a(class="btn btn-info" href="#")
+								%i(class="icon-edit")
+							%a(class="btn btn-danger" href="#")
+								%i(class="icon-trash")
+					%tr
+						%td Soldier AI
+						%td(class="center") Script
+						%td(class="center")
+							%a(class="btn btn-success" href="#")
+								%i(class="icon-zoom-in")
+							%a(class="btn btn-info" href="#")
+								%i(class="icon-edit")
+							%a(class="btn btn-danger" href="#")
+								%i(class="icon-trash")
+					%tr
+						%td Explosion
+						%td(class="center") Sound
+						%td(class="center")
+							%a(class="btn btn-success" href="#")
+								%i(class="icon-zoom-in")
+							%a(class="btn btn-info" href="#")
+								%i(class="icon-edit")
+							%a(class="btn btn-danger" href="#")
+								%i(class="icon-trash")

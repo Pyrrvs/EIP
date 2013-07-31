@@ -1,0 +1,15 @@
+.login-box
+	%div(class="box span12")
+		%h2 Login to your account
+		#sign_in_form
+			=text_field_tag('username', '', class: 'input-large span12', placeholder: 'Type username')
+			=password_field_tag('password', '', class: 'input-large span12', placeholder: 'Type password')
+			.clearfix
+			=submit_tag('Login', class: 'btn btn-primary span12', :'ng-click' => 'signIn()')
+		.clearfix
+		%h3 Need an account?
+		%p
+			No problem,
+			%a(href="#/sign_up" style="color:green;")click here
+			to create one.
+

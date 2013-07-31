@@ -1,8 +1,9 @@
   <!DOCTYPE html>
-  <html lang="en">
+  <html lang="en" ng-app="agb">
   <head>
     
     <!-- start: Meta -->
+    <%= csrf_meta_tags %>
     <meta charset="utf-8">
     <title>AGB - Development plateform </title>
     <meta name="description" content="SimpliQ - Flat & Responsive Bootstrap Admin Template.">
@@ -58,13 +59,13 @@
           </a>
           <a id="main-menu-toggle" class="hidden-phone open"><i class="icon-reorder"></i></a>   
           <div class="row-fluid">
-          <a class="brand span2" href="index.html"><span>Alpha Game Builder</span></a>
+          <a class="brand span2" href="#/profile"><span>Alpha Game Builder</span></a>
           </div>    
           <!-- start: Header Menu -->
           <div class="nav-no-collapse header-nav">
             <ul class="nav pull-right">
               <li class="dropdown hidden-phone">
-                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                <a class="btn dropdown-toggle disabled" data-toggle="dropdown" href="#">
                   <i class="icon-warning-sign"></i>
                 </a>
                 <ul class="dropdown-menu notifications">
@@ -85,7 +86,7 @@
               </li>
               <!-- start: Notifications Dropdown -->
               <li class="dropdown hidden-phone">
-                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                <a class="btn dropdown-toggle disabled" data-toggle="dropdown" href="#">
                   <i class="icon-tasks"></i>
                 </a>
                 <ul class="dropdown-menu tasks">
@@ -109,7 +110,7 @@
               <!-- end: Notifications Dropdown -->
               <!-- start: Message Dropdown -->
               <li class="dropdown hidden-phone">
-                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                <a class="btn dropdown-toggle disabled" data-toggle="dropdown" href="#">
                   <i class="icon-envelope"></i>
                 </a>
                 <ul class="dropdown-menu messages">
@@ -136,7 +137,7 @@
               <!-- end: Message Dropdown -->
               <li>
                 <a class="btn" href="#">
-                  <i class="icon-wrench"></i>
+                  <i class="icon-cloud-upload"></i>
                 </a>
               </li>
               <!-- start: User Dropdown -->
@@ -152,10 +153,14 @@
                   <li class="dropdown-menu-title">
                     
                   </li>
-                  <li><a href="#"><i class="icon-user"></i> Profile</a></li>
-                  <li><a href="#"><i class="icon-cog"></i> Settings</a></li>
-                  <li><a href="#"><i class="icon-envelope"></i> Messages</a></li>
-                  <li><a href="login.html"><i class="icon-off"></i> Logout</a></li>
+                  <li><a href="/#profile"><i class="icon-user"></i> Profile</a></li>
+                  <li><a href="/#settings"><i class="icon-cog"></i> Settings</a></li>
+                  <li><a href="/#messages"><i class="icon-envelope"></i> Messages</a></li>
+                  <li>
+                    <%= form_tag('/session', method: 'DELETE') do %>
+                      <input type="submit"><i class="icon-off"></i> Logout</input>
+                    <% end %>
+                  </li>
                 </ul>
               </li>
               <!-- end: User Dropdown -->
@@ -182,17 +187,33 @@
           
           <div class="nav-collapse sidebar-nav">
             <ul class="nav nav-tabs nav-stacked main-menu">
-              <li><a href="index.html"><i class="icon-bar-chart"></i><span class="hidden-tablet"> Dashboard</span></a></li> 
-              <li><a href="ui.html"><i class="icon-eye-open"></i><span class="hidden-tablet"> UI Features</span></a></li>
-              <li><a href="widgets.html"><i class="icon-dashboard"></i><span class="hidden-tablet"> Widgets</span></a></li>
+              <li><a href="#/profile"><i class="icon-home"></i><span class="hidden-tablet"> Profile</span></a></li>
               <li>
-                <a class="dropmenu" href="#"><i class="icon-folder-close-alt"></i><span class="hidden-tablet"> Example Pages</span> <span class="label">3</span></a>
-                <ul>
-                  <li><a class="submenu" href="infrastructure.html"><i class="icon-hdd"></i><span class="hidden-tablet"> Infrastructure</span></a></li>
-                  <li><a class="submenu" href="messages.html"><i class="icon-envelope"></i><span class="hidden-tablet"> Messages</span></a></li>
-                  <li><a class="submenu" href="tasks.html"><i class="icon-tasks"></i><span class="hidden-tablet"> Tasks</span></a></li>
-                </ul> 
+                <a href="#" class="dropmenu"><i class="icon-folder-close"></i><span class="hidden-tablet"> Projects</span></a> 
+                <ul style="display: block;">
+                  <li>
+                    <a class="submenu" href="#/projects/R-Type">
+                      <i class="icon-cogs"></i>
+                      <span class="hidden-tablet"> R-Type</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="submenu" href="#/projects/Alpha_Game_Builder">
+                      <i class="icon-cogs"></i>
+                      <span class="hidden-tablet"> Alpha Game Builder</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="submenu" href="#/projects/Duke_Nukem_Forever">
+                      <i class="icon-cogs"></i>
+                      <span class="hidden-tablet"> Duke Nukem For...</span>
+                    </a>
+                  </li>
+                </ul>
               </li>
+              <li><a href="#/stats"><i class="icon-bar-chart"></i><span class="hidden-tablet">Stats</span></a></li>
+              <li><a href="#/users"><i class="icon-user"></i><span class="hidden-tablet"> Users</span></a></li>
+              <li><a href="#/games"><i class="icon-gamepad"></i><span class="hidden-tablet">Games</span></a></li>
             </ul>
           </div>
         </div>
@@ -275,6 +296,8 @@
     <%= javascript_include_tag "core.min.js"%>  
     <%= javascript_include_tag "charts.min.js"%>  
     <%= javascript_include_tag "custom.min.js"%>
+    <%= javascript_include_tag "angular" %>
+    <%= javascript_include_tag "application"%>
     <!-- end: JavaScript-->
 
     <%= yield :javascript %>

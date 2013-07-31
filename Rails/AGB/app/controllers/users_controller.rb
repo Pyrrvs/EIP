@@ -18,9 +18,10 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
 
-    @user.save
-    respond_to do |format|
-      format.js
+    if (@user.save == false)
+      render json: { status: 'failure', errors: @user.errors }.to_json
+    else
+      render json: { status: 'success'}.to_json
     end
   end
 
@@ -42,9 +43,5 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html { redirect_to root_path, notice: 'User was successfully deleted'}
     end
-  end
-
-  def self.input_size
-    20
   end
 end

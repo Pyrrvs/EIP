@@ -1,0 +1,2 @@
+module ClientViewsHelper
+end

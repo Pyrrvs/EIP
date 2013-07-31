@@ -1,0 +1,23 @@
+<div class="container-fluid-full" ng-controller="SessionController">
+    <div class="row-fluid">     
+        <div class="row-fluid">
+
+            <div class="login-box">
+                <div class="box span12">
+                        <div class="box-header">
+                            <div class="title center"><h2>Alpha Game Builder</h2></div>
+                        </div>
+                        %h1= "toto"
+                </div>                  
+                <h2>Login to your account</h2>
+
+                <hr>
+                <h3>Need an account?</h3>
+                <p>
+                    No problem, <a href="#sign_up">click here</a> to create one.
+                </p>
+            </div><!--/span-->
+        </div><!--/row-->
+        
+    </div><!--/fluid-row-->
+</div><!--/.fluid-container-->
