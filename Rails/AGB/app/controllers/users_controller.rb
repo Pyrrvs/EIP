@@ -19,9 +19,9 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
 
     if (@user.save == false)
-      render json: { status: 'failure', errors: @user.errors }.to_json
+      render json: { status: 'failure', errors: @user.errors }.to_json, status: 500
     else
-      render json: { status: 'success'}.to_json
+      render json: {}.to_json, status: 200
     end
   end
 

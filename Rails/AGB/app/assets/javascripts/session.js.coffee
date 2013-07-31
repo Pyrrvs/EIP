@@ -27,12 +27,9 @@ app.controller 'SessionController', ['$scope', '$location', '$http', ($scope, $l
 	$scope.signIn = () ->
 		request = name: $('#username').val(), password: $('#password').val()
 		$http.post("/session", request).success((data) ->
-				if data['status'] == 'success'
-					window.location.href = "/"
-				else
-					$location.path "/sign_in"
+			window.location.href = "/"
 		).error((data) ->
-			console.log 'Failure', data
+			$scope.errors = data.errors
 		)
 
 	$scope.signUp = () ->
@@ -44,15 +41,12 @@ app.controller 'SessionController', ['$scope', '$location', '$http', ($scope, $l
 						}
 		$http.post("/users", request).success((data) ->
 			$http.post("/session", { name: $('#username').val(), password: $('#password').val()}).success((data) ->
-				if data['status'] == 'success'
-					window.location.href = "/"
-				else
-					$location.path "/sign_in"
+				window.location.href = "/"
 			).error(() ->
-				console.log 'Failure', data
 				$location.path "/sign_in"
+				$scope.errors = data.errors
 			)
 		).error((data) ->
-			console.log 'Failure', data
+			$scope.errors = data.errors
 		)
 ]

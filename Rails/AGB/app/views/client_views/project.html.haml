@@ -1,9 +1,19 @@
 %h1 {{project_id}}
 %h2 Author: {{user_id}}
-%a(href="/#users/{{user_id}}/projects/{{project_id}}/worldmaker")World Maker
 
 .row-fluid
-	.span8
+	%div(class="box span8")
+		%div(class="smallchart yellow")
+			%b
+				.title(style="color:black;") Tools
+		.box-content
+			%ul{:style => "display: block;"}
+				%li
+					%a{href: "/#users/{{user_id}}/projects/{{project_id}}/worldmaker"}
+						%i.icon-wrench
+						%span.hidden-tablet World Maker
+
+
 	%div(class="box span4")
 		%div(class="smallchart green")
 			%b

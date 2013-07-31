@@ -2,22 +2,23 @@
 	%div(class="span3 smallstat box mobileHalf" ontablet="span6" ondesktop="span3")
 		%i(class="icon-cogs blue")
 		%span(class="title")Projects
-		%span(class="value")4 589
+		%span(class="value")
+			= @current_user.projects.length
 
 	%div(class="span3 smallstat box mobileHalf" ontablet="span6" ondesktop="span3")
 		%i(class="icon-star yellow")
 		%span(class="title")Followers
-		%span(class="value")789
+		%span(class="value") 0
 
 	%div(class="span3 smallstat box mobileHalf" ontablet="span6" ondesktop="span3")
 		%i(class="icon-eye-open green")
 		%span(class="title")Views
-		%span(class="value")20 000
+		%span(class="value") 0
 
 	%div(class="span3 smallstat box mobileHalf" ontablet="span6" ondesktop="span3")
 		%i(class="icon-comments red")
 		%span(class="title")Comments
-		%span(class="value")1 278
+		%span(class="value") 0
 
 .row-fluid
 	%div(class="box span8")
@@ -25,6 +26,25 @@
 			%b
 				.title(style="color:black;") Projects
 		.box-content
+			%a{"ngx-open-modal" => "#create-project-modal"}
+				%i(class="icon-plus-sign-alt")
+				create project
+
+			#create-project-modal.modal.hide.fade{"ngx-modal" => "view_create_project_modal", :tabindex => "-1"}
+				%div{"ngx-modal-header" => "'Create project'"}
+				%form{"ngx-close-modal" => "", "ngx-submit" => "create_project()"}
+					Name: 
+					%input{"id" => "name", "ng-model" => "input_project.name", :placeholder => "Name", :type => "text",
+					"style" => "color:black !important;"}
+					%br
+					Privacy: 
+					#privacy
+						%input{:name => "privacy", :type => "radio", :value => "public", :checked => ""} Public
+						%input{:name => "privacy", :type => "radio", :value => "private"} Private
+					.modal-footer
+						%input.btn{"ngx-close-modal" => "", :type => "button", :value => "Cancel"}
+						%input.btn.btn-primary{:type => "submit", :value => "Add"}
+
 			%table(class="table table-striped")
 				%thead
 					%tr
@@ -33,27 +53,16 @@
 						%th Privacy
 						%th Status
 				%tbody
-					%tr
-						%td
-							%a(href="/#users/Pyrrvs/projects/R-Type") R-Type
-						%td(class="center")2012/01/01
-						%td(class="center")Public
-						%td(class="center")
-							%span(class="label label-success")Completed
-					%tr
-						%td
-							%a(href="/#users/Pyrrvs/projects/Alpha_Game_Builder") Alpha Game Builder
-						%td(class="center")2012/01/01
-						%td(class="center")Private
-						%td(class="center")
-							%span(class="label label-warning")In Development
-					%tr
-						%td
-							%a(href="/#users/Pyrrvs/projects/Duke_Nukem_Forever") Duke Nukem Forever
-						%td(class="center")2012/01/01
-						%td(class="center")Public
-						%td(class="center")
-							%span(class="label")Abandonned
+					- @current_user.projects.each do |p|
+						%tr
+							%td
+								= link_to("#{p.name}", "/#users/#{@current_user.name}/projects/#{p.name}")
+							%td(class="center")
+								= p.created_at
+							%td(class="center")
+								= p.privacy
+							%td(class="center")
+								%span(class="label label-warning")In Development
 
 	%div(class="box chat span4" style="float:right;")
 		.box-header

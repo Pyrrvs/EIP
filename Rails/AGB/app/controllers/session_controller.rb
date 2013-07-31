@@ -12,11 +12,10 @@ class SessionController < ApplicationController
 	   	if (user && user.authenticate(params[:password]))
    	 		set_current_user(user)
    	 		session[:user_id] = user.id
-   	 		json_resp = { status: 'success'}
+   	 		render json: {}.to_json, status: 200
       	else
-   			json_resp = { status: 'failure', errors: { :'global-errors' => ["The username or password you entered is incorrect."] } }.to_json
+   			render json: { status: 'failure', errors: [ "The username or password you entered is incorrect." ] }.to_json, status: 500
    		end
-		render json: json_resp
 	end
 
 	def destroy

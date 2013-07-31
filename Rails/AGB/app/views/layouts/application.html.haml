@@ -48,7 +48,7 @@
           %a#main-menu-toggle.hidden-phone.open
             %i.icon-reorder
           .row-fluid
-            %a.brand.span2{:href => "/#users/Pyrrvs/profile"}
+            %a.brand.span2{:href => "/#users/#{@current_user.name}/profile"}
               %span Alpha Game Builder
           / start: Header Menu
           .nav-no-collapse.header-nav
@@ -142,7 +142,7 @@
           .nav-collapse.sidebar-nav
             %ul.nav.nav-tabs.nav-stacked.main-menu
               %li
-                %a{:href => "/#users/Pyrrvs/profile"}
+                %a{:href => "/#users/#{@current_user.name}/profile"}
                   %i.icon-home
                   %span.hidden-tablet Profile
               %li
@@ -150,18 +150,11 @@
                   %i.icon-folder-close
                   %span.hidden-tablet Projects
                 %ul{:style => "display: block;"}
-                  %li
-                    %a.submenu{:href => "/#users/Pyrrvs/projects/R-Type"}
-                      %i.icon-cogs
-                      %span.hidden-tablet R-Type
-                  %li
-                    %a.submenu{:href => "/#users/Pyrrvs/projects/Alpha_Game_Builder"}
-                      %i.icon-cogs
-                      %span.hidden-tablet Alpha Game Builder
-                  %li
-                    %a.submenu{:href => "/#users/Pyrrvs/projects/Duke_Nukem_Forever"}
-                      %i.icon-cogs
-                      %span.hidden-tablet Duke Nukem For...
+                  - @current_user.projects.each do |p|
+                    %li
+                      %a.submenu{:href => "/#users/#{@current_user.name}/projects/#{p.name}"}
+                        %i.icon-cogs
+                        %span.hidden-tablet #{p.name}
               %li
                 %a{:href => "/#stats"}
                   %i.icon-bar-chart
@@ -176,7 +169,8 @@
                   %span.hidden-tablet Games
         / end: Main Menu
         / start: Content
-        #content.span10
+        #content.span10(style="height:800px;")
+          #nameholder(style="visibility:hidden;") #{@current_user.name}
           = yield
         / end: Content
       / /fluid-row

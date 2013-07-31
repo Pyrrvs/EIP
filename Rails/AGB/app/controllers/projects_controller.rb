@@ -36,12 +36,10 @@ class ProjectsController < ApplicationController
     @project.user_id = @user.id
     @project.nb_stars = 0
 
-    respond_to do |format|
-      if (@project.save && !@project.errors.any?)
-        format.html { redirect_to [@project.user, @project] }
-      else
-        format.html { render action: "new" }
-      end
+    if (@project.save && !@project.errors.any?)
+      render json: {}.to_json, status: 200
+    else
+      render json: { errors: @project.errors }.to_json, status: 500
     end
   end
 

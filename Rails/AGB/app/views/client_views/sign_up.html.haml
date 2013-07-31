@@ -1,11 +1,14 @@
 .login-box
 	%div(class="box span12")
 		%h2 Create your account
+		%div(ng-repeat="err in errors" style="color:red;font-size:12px;")
+			%ul
+				%li {{err}}
 		#sign_up_form
-			=text_field_tag('username', '', class: 'input-large span12', placeholder: 'Type username')
-			=text_field_tag('email', '', class: 'input-large span12', placeholder: 'Type email')
-			=password_field_tag('password', '', class: 'input-large span12', placeholder: 'Type password')
-			=password_field_tag('password_digest', '', class: 'input-large span12', placeholder: 'Confirm password')
+			=text_field_tag('username', '', class: 'input-large span12', placeholder: 'Type username', style: "color:black !important;")
+			=text_field_tag('email', '', class: 'input-large span12', placeholder: 'Type email', style: "color:black !important;")
+			=password_field_tag('password', '', class: 'input-large span12', placeholder: 'Type password', style: "color:black !important;")
+			=password_field_tag('password_digest', '', class: 'input-large span12', placeholder: 'Confirm password', style: "color:black !important;")
 			.clearfix
 			=submit_tag('Register', class: 'btn btn-primary span12', :'ng-click' => "signUp()")
 		.clearfix

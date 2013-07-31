@@ -3,7 +3,7 @@
 # Configuration 
 
 @app.config ['$routeProvider', ($routeProvider) ->
-	$routeProvider.when "/users/:user_id/profile", {templateUrl: 'client_views/profile'}
+	$routeProvider.when "/users/:user_id/profile", {templateUrl: 'client_views/profile', controller: 'IndexController'}
 	$routeProvider.when "/users/:user_id/projects/:project_id", {templateUrl: 'client_views/project', controller: 'ProjectController'}
 	$routeProvider.when "/users/:user_id/projects/:project_id/worldmaker", {templateUrl: 'client_views/worldmaker'}
 	$routeProvider.when "/stats", {templateUrl: 'client_views/to_be_released'}
@@ -30,13 +30,26 @@
 
 # Controllers
 @app.controller 'IndexController', ['$scope', '$routeParams', '$location', '$http', ($scope, $routeParams, $location, $http, $window) ->	
-	$scope.user_id = $routeParams['user_id']
+	if $routeParams['user_id']
+		$scope.user_id = $routeParams['user_id']
+	else
+		$scope.user_id = $('#nameholder').text()
 	$location.path "/users/#{$scope.user_id}/profile" if $location.$$path == ""
 
+	$scope.create_project = () ->
+		request = name: $('#name').val(), privacy: $('#privacy input[name=privacy]:checked').val()
+		log request
+		$http.post("/users/#{$scope.user_id}/projects", request).success((data) ->
+			console.log 'Success', data
+			window.location = "/"
+		).error((data) ->
+			console.log 'Failure', data
+		)
 ]
 
 @app.controller 'ProjectController', ['$scope', '$routeParams', '$location', '$http', ($scope, $routeParams, $location, $http, $window) ->
 	$scope.user_id = $routeParams['user_id']
 	$scope.project_id = $routeParams['project_id']
+
 ]
 
