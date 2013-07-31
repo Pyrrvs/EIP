@@ -21,7 +21,7 @@
     <%= stylesheet_link_tag "style-responsive.min.css" %>
     <%= stylesheet_link_tag "retina.css" %>
     <%= stylesheet_link_tag "font-awesome.min.css"%>
-    <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans:400,300"%>
+    <%= stylesheet_link_tag "fonts.google.css"%>
     <!-- end: CSS -->
     
 
@@ -269,12 +269,11 @@
     <%= javascript_include_tag "raphael.2.1.0.min.js"%>
     <%= javascript_include_tag "justgage.1.0.1.min.js"%>  
     <%= javascript_include_tag "jquery.autosize.min.js"%> 
-    <%= javascript_include_tag "retina.js"%>
     <%= javascript_include_tag "jquery.placeholder.min.js"%>
     <%= javascript_include_tag "wizard.min.js"%>
     <%= javascript_include_tag "core.min.js"%>  
     <%= javascript_include_tag "charts.min.js"%>  
-    <%= javascript_include_tag "custom.min.js"%>
+    <!-- <%= javascript_include_tag "custom.min.js"%> -->
     <!-- end: JavaScript-->
 
     <%= yield :javascript %>

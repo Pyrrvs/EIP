@@ -1,32 +1,32 @@
-app = kangular 'app'
+app = angular.module 'app', ['k-angular']
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # LEVEL_MODEL                                               #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-app.model 'Level', ->
+kapp.model 'Level', ->
 	name: null
 	camera: {}
-	entities: -> [ app.models.Entity() ]
+	entities: -> [ kapp.models.Entity() ]
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # ENTITY_MODEL                                              #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-app.model 'Entity', ->
+kapp.model 'Entity', ->
 	name: -> "entity" + _(app.scope.world.levels).fold 1, (mem, v) -> mem + v.entities.length
 	enabled: true
 	position: x: 0, y: 0
 	scale: x: 1, y: 1
 	rotation: 0
-	model: app.models.Model()
-	body: app.models.Body()
+	model: kapp.models.Model()
+	body: kapp.models.Body()
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # MODEL_MODEL                                               #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-app.model 'Model', ->
+kapp.model 'Model', ->
 	enabled: true
 	visible: true
 	path: null
@@ -35,7 +35,7 @@ app.model 'Model', ->
 # BODY_MODEL                                                #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-app.model 'Body', ->
+kapp.model 'Body', ->
 	enabled: true
 	visible: true
 	type: '2' # dynamic
@@ -45,7 +45,7 @@ app.model 'Body', ->
 # FIXTURE_MODEL                                             #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-app.model 'Fixture', ->
+kapp.model 'Fixture', ->
 	position: x: 0, y: 0
 	type: null
 	density: 1
@@ -57,26 +57,26 @@ app.model 'Fixture', ->
 # CIRCLE_SHAPE_MODEL                                        #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-app.model 'CircleShape', ->
+kapp.model 'CircleShape', ->
 	radius: 10
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # POLYGON_SHAPE_MODEL                                       #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-app.model 'PolygonShape', ->
+kapp.model 'PolygonShape', ->
 	vertices: [
-		app.models.Vertex x: 10, y: 10
-		app.models.Vertex x: -10, y: 10
-		app.models.Vertex x: -10, y: -10
-		app.models.Vertex x: 10, y: -10
+		kapp.models.Vertex x: 10, y: 10
+		kapp.models.Vertex x: -10, y: 10
+		kapp.models.Vertex x: -10, y: -10
+		kapp.models.Vertex x: 10, y: -10
 	]
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # VERTEX_MODEL                                              #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-app.model 'Vertex', ->
+kapp.model 'Vertex', ->
 	x: 0
 	y: 0
 
@@ -133,7 +133,7 @@ app.controller 'LevelController', ['$scope', '$location', '$http', ($scope, $loc
 	$scope.create_level = ->
 		return $scope.error_level_name = "must not be blank" if !$scope.input_level_name
 		return $scope.error_level_name = "must be unique" if _($scope.world.levels).findWhere name: $scope.input_level_name
-		$scope.world.levels.push app.models.Level name: $scope.input_level_name
+		$scope.world.levels.push kapp.models.Level name: $scope.input_level_name
 
 	$scope.delete_level = (level) ->
 		$scope.world.levels = _.without $scope.world.levels, level
@@ -142,7 +142,7 @@ app.controller 'LevelController', ['$scope', '$location', '$http', ($scope, $loc
 		$scope.$parent.level = level
 
 	$scope.create_entity = (level) ->
-		level.entities.push app.models.Entity()
+		level.entities.push kapp.models.Entity()
 
 	$scope.delete_entity = (level, entity) ->
 		level.entities = _(level.entities).without entity
@@ -164,24 +164,25 @@ app.controller 'MenuController', ['$scope', ($scope) ->
 	$scope.fixture_types[b2Shape.e_circleShape] = 'circle'
 	$scope.fixture_types[b2Shape.e_polygonShape] = 'polygon'
 	$scope.input_fixture_type = 'circle'
-	$scope.bodies = ['ball', 'crate']
-	$scope.models = ['/assets/ball.png', '/assets/crate.jpg']
-	$scope.classes = ['ball', 'crate']
+	$scope.models = [
+		{name: 'ball', url: '/assets/ball.png'}
+		{name: 'crate', url: '/assets/crate.jpg'}
+	]
 
 	$scope.toggle_layers = (layer_type) ->
 		visible = !_($scope.level.entities).find (e) -> e[layer_type].visible
-		$scope.level.entities.each (e) -> e[layer_type] = visible
+		_($scope.level.entities).each (e) -> e[layer_type].visible = visible
 
 	$scope.create_fixture = ->
 		model = _($scope.input_fixture_type).capitalize() + 'Shape'
 		type = _($scope.fixture_types).invert()[$scope.input_fixture_type]
-		$scope.entity.body.fixtures.push app.models.Fixture {shape: app.models[model](), type: +type}
+		$scope.entity.body.fixtures.push kapp.models.Fixture {shape: kapp.models[model](), type: +type}
 
 	$scope.delete_fixture = (fixture) ->
 		$scope.entity.body.fixtures = _($scope.entity.body.fixtures).without fixture
 
 	$scope.create_vertex = (fixture) ->
-		fixture.shape.vertices.push app.models.Vertex()
+		fixture.shape.vertices.push kapp.models.Vertex()
 
 	$scope.delete_vertex = (fixture, vertex) ->
 		fixture.shape.vertices = _(fixture.shape.vertices).remove vertex
@@ -375,9 +376,11 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 		return unless @entity
 		@fixtures = []
 		@scene.world.DestroyBody(@entity.body) if @entity.body
-		@entity.body = @scene.world.CreateBody new b2BodyDef
-		@entity.body.SetType +@entity.model_entity.body.type
-		@fixture_added fixture for fixture in @entity.model_entity.body.fixtures
+		if @entity.model_entity.body.enabled
+			@entity.body = @scene.world.CreateBody new b2BodyDef
+			@entity.body.SetType +@entity.model_entity.body.type
+			@fixture_added fixture for fixture in @entity.model_entity.body.fixtures
+			@entity.body.SetPositionAndAngle(@entity.position.toB2(app.scaling), cc.degreesToRadians(-@entity.rotation))
 
 	@entity_added = (model_entity) =>
 		game_entity = model_entity.$game_entity = new Entity
@@ -407,7 +410,6 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 		game_fixture.SetDensity fixture_model.density
 		game_fixture.SetFriction fixture_model.friction
 		game_fixture.SetRestitution fixture_model.restitution
-		@entity.body.SetPositionAndAngle(@entity.position.toB2(app.scaling), cc.degreesToRadians(-@entity.rotation))
 
 	@fixture_added = (fixture_model) =>
 		fixdef = new b2FixtureDef
@@ -449,7 +451,9 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 		@entity_enabled_changed()
 		@ui_layer.entity_enabled_changed @entity
 
-	$scope.$watch 'entity.model', => @entity_model_changed()
+	$scope.$watch 'entity.model', (
+		=> @entity_model_changed()
+	), true
 
 	$scope.$watch 'entity.position', (=>
 		@entity_position_changed()
@@ -495,7 +499,7 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 		return @save = _({}).deep_extend $scope.level, $scope.is_model if before == 'stop'
 		cc.Director.sharedDirector.displayFPS = false
 		@scene.unscheduleUpdate()
-		_($scope.level.entities).each (model_entity, i) => app.$$apply $scope, =>
+		_($scope.level.entities).each (model_entity, i) => kapp.$apply $scope, =>
 			game_entity = model_entity.$game_entity
 			position = game_entity.position.clone().round()
 			model_entity.position.x = position.x
@@ -507,7 +511,7 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 		cc.Director.sharedDirector.displayFPS = false
 		@scene.unscheduleUpdate()
 		_($scope.level.camera).deep_extend @save.camera
-		_($scope.level.entities).each (model_entity, i) => app.$$apply $scope, =>
+		_($scope.level.entities).each (model_entity, i) => kapp.$apply $scope, =>
 			game_entity = model_entity.$game_entity
 			saved_entity = @save.entities[i]
 			model_entity.position.x = saved_entity.position.x
@@ -608,5 +612,6 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 		@dragging.what = null
 
 	$scope.$parent.highlight_fixture = (fixture, bool) =>
-		game_fixture = _(@fixtures).find_where(model: fixture).game.highlighted = bool
+		if fixture = _(@fixtures).find_where(model: fixture)
+			fixture.game.highlighted = bool
 ]
