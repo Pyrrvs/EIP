@@ -1,7 +1,0 @@
-<% if (current_user) %>
-	$("#authentication").hide();
-	$("#profile").show().find("span").text("<%= j current_user.name %>");
-<% else %>
-	$("#profile").hide();
-	$("#authentication").show();
-<% end %>

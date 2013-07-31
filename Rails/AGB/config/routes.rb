@@ -2,21 +2,32 @@ AGB::Application.routes.draw do
   
   root to: 'application#index', via: :get
 
+  get "session" => "session#show"
   post "session" => "session#create"
   delete "session" => "session#destroy"
 
-  constraints id: '[a-zA-Z0-9\_\-]+' do
-    get ":id/edit" => "users#edit", as: 'edit_user'
-    resources :users, except: [ :new, :index ], constraints: {user_id: '[a-zA-Z0-9\_\-]+'}, path: '/' do
-      resources :projects, except: [ :index ], constraints: {project_id: '.[a-zA-Z0-9\_\-]+'}, path: '/' do
-        get "worldmaker" => "worldmaker#index"
-        get "worldmaker/world" => "worldmaker#world"
-        put "worldmaker/world" => "worldmaker#update"
-        resources :resources
-        resources :project_comments
-      end
-    end
+  resources :users, except: [ :new, :index ]
+  resources :projects, except: [ :new, :index ] do
+    get "worldmaker" => "worldmaker#index"
+    get "worldmaker/world" => "worldmaker#world"
+    put "worldmaker/world" => "worldmaker#update"
   end
+  resources :resources
+  resources :projects_comments
+  resources :client_views, only: [:show]
+
+  # constraints id: '[a-zA-Z0-9\_\-]+' do
+  #   get ":id/edit" => "users#edit", as: 'edit_user'
+  #   resources :users, except: [ :new, :index ], constraints: {user_id: '[a-zA-Z0-9\_\-]+'}, path: '/' do
+  #     resources :projects, except: [ :index ], constraints: {project_id: '.[a-zA-Z0-9\_\-]+'}, path: '/' do
+  #       get "worldmaker" => "worldmaker#index"
+  #       get "worldmaker/world" => "worldmaker#world"
+  #       put "worldmaker/world" => "worldmaker#update"
+  #       resources :resources
+  #       resources :project_comments
+  #     end
+  #   end
+  # end
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
