@@ -24,7 +24,7 @@ class Project < ActiveRecord::Base
       Dir.mkdir(project_path, 0755)
       Dir.mkdir("#{project_path}/Resources", 0755)
       Dir.mkdir("#{project_path}/kFiles", 0755)
-      ResourcesController.create_world_file("#{project_path}/kFiles/world.js")
+      ResourcesController.create_world_file("#{project_path}/kFiles/world.json")
     rescue
       self.destroy
       self.errors[:internal] = "- Internal server error: Please contact an administrator."

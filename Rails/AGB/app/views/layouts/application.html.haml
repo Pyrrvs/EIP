@@ -1,0 +1,252 @@
+!!!
+%html{:lang => "en", "ng-app" => "agb"}
+  %head
+    / start: Meta
+    = csrf_meta_tags
+    %meta{:charset => "utf-8"}/
+    %title AGB - Development plateform
+    %meta{:content => "SimpliQ - Flat & Responsive Bootstrap Admin Template.", :name => "description"}/
+    %meta{:content => "Łukasz Holeczek", :name => "author"}/
+    %meta{:content => "SimpliQ, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina", :name => "keyword"}/
+    / end: Meta
+    / start: Mobile Specific
+    %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}/
+    / end: Mobile Specific
+    / start: CSS
+    = stylesheet_link_tag "bootstrap.min.css"
+    = stylesheet_link_tag "bootstrap-responsive.min.css"
+    = stylesheet_link_tag "style.min.css"
+    = stylesheet_link_tag "style-responsive.min.css"
+    = stylesheet_link_tag "retina.css"
+    = stylesheet_link_tag "font-awesome.min.css"
+    = stylesheet_link_tag "fonts.google.css"
+    = stylesheet_link_tag "worldmaker"
+    = yield :head
+    / end: CSS
+    / The HTML5 shim, for IE6-8 support of HTML5 elements
+    /[if lt IE 9]
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"%>
+      <link id="ie-style" href="css/ie.css" rel="stylesheet">
+    /[if IE 9]
+      <link id="ie9style" href="css/ie9.css" rel="stylesheet">
+    / start: Favicon and Touch Icons
+    %link{:href => "ico/apple-touch-icon-144-precomposed.png", :rel => "apple-touch-icon-precomposed", :sizes => "144x144"}/
+    %link{:href => "ico/apple-touch-icon-114-precomposed.png", :rel => "apple-touch-icon-precomposed", :sizes => "114x114"}/
+    %link{:href => "ico/apple-touch-icon-72-precomposed.png", :rel => "apple-touch-icon-precomposed", :sizes => "72x72"}/
+    %link{:href => "ico/apple-touch-icon-57-precomposed.png", :rel => "apple-touch-icon-precomposed"}/
+    %link{:href => "ico/favicon.png", :rel => "shortcut icon"}/
+    / end: Favicon and Touch Icons
+  %body
+    / start: Header
+    .navbar
+      .navbar-inner
+        .container-fluid
+          %a.btn.btn-navbar{"data-target" => ".top-nav.nav-collapse,.sidebar-nav.nav-collapse", "data-toggle" => "collapse"}
+            %span.icon-bar
+            %span.icon-bar
+            %span.icon-bar
+          %a#main-menu-toggle.hidden-phone.open
+            %i.icon-reorder
+          .row-fluid
+            %a.brand.span2{:href => "/#users/Pyrrvs/profile"}
+              %span Alpha Game Builder
+          / start: Header Menu
+          .nav-no-collapse.header-nav
+            %ul.nav.pull-right
+              %li.dropdown.hidden-phone
+                %a.btn.dropdown-toggle.disabled{"data-toggle" => "dropdown", :href => "#"}
+                  %i.icon-warning-sign
+                %ul.dropdown-menu.notifications
+                  %li.dropdown-menu-title
+                    %span You have ?? notifications
+                  %li
+                    %a{:href => "#"}
+                      %span.icon.blue
+                        %i.icon-user
+                      %span.message Notification example
+                      %span.time yesterday
+                  %li.dropdown-menu-sub-footer
+                    %a View all notifications
+              / start: Notifications Dropdown
+              %li.dropdown.hidden-phone
+                %a.btn.dropdown-toggle.disabled{"data-toggle" => "dropdown", :href => "#"}
+                  %i.icon-tasks
+                %ul.dropdown-menu.tasks
+                  %li
+                    %span.dropdown-menu-title You have ?? tasks in progress
+                  %li
+                    %a{:href => "#"}
+                      %span.header
+                        %span.title New blog posts
+                        %span.percent
+                    .taskProgress.progressSlim.progressPink 80
+                  %li
+                    %a.dropdown-menu-sub-footer View all tasks
+              / end: Notifications Dropdown
+              / start: Message Dropdown
+              %li.dropdown.hidden-phone
+                %a.btn.dropdown-toggle.disabled{"data-toggle" => "dropdown", :href => "#"}
+                  %i.icon-envelope
+                %ul.dropdown-menu.messages
+                  %li
+                    %span.dropdown-menu-title You have ?? messages
+                  %li
+                    %a{:href => "#"}
+                      %span.avatar= image_tag("avatar5.jpg")
+                      %span.header
+                        %span.from Jane Sanders
+                        %span.time Jul 25, 2012
+                      %span.message
+                        Lorem ipsum dolor sit amet consectetur adipiscing elit, et al commore
+                  %li
+                    %a.dropdown-menu-sub-footer View all messages
+              / end: Message Dropdown
+              %li
+                %a.btn{:href => "#"}
+                  %i.icon-cloud-upload
+              / start: User Dropdown
+              %li.dropdown
+                %a.btn.account.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
+                .avatar= image_tag("avatar.jpg")
+                .user
+                  %span.hello Welcome!
+                  %span.name Łukasz Holeczek
+                %ul.dropdown-menu
+                  %li.dropdown-menu-title
+                  %li
+                    %a{:href => "/#users/profile"}
+                      %i.icon-user
+                      Profile
+                  %li
+                    %a{:href => "/#settings"}
+                      %i.icon-cog
+                      Settings
+                  %li
+                    %a{:href => "/#messages"}
+                      %i.icon-envelope
+                      Messages
+                  %li
+                    = form_tag('/session', method: 'DELETE') do
+                      %input{:type => "submit"}/
+                      %i.icon-off
+                      Logout
+              / end: User Dropdown
+          / end: Header Menu
+    / start: Header
+    .container-fluid-full
+      .row-fluid
+        / start: Main Menu
+        #sidebar-left.span2
+          .row-fluid.actions
+            %input.search.span12{:placeholder => "...", :type => "text"}/
+          .nav-collapse.sidebar-nav
+            %ul.nav.nav-tabs.nav-stacked.main-menu
+              %li
+                %a{:href => "/#users/Pyrrvs/profile"}
+                  %i.icon-home
+                  %span.hidden-tablet Profile
+              %li
+                %a.dropmenu{:href => "#"}
+                  %i.icon-folder-close
+                  %span.hidden-tablet Projects
+                %ul{:style => "display: block;"}
+                  %li
+                    %a.submenu{:href => "/#users/Pyrrvs/projects/R-Type"}
+                      %i.icon-cogs
+                      %span.hidden-tablet R-Type
+                  %li
+                    %a.submenu{:href => "/#users/Pyrrvs/projects/Alpha_Game_Builder"}
+                      %i.icon-cogs
+                      %span.hidden-tablet Alpha Game Builder
+                  %li
+                    %a.submenu{:href => "/#users/Pyrrvs/projects/Duke_Nukem_Forever"}
+                      %i.icon-cogs
+                      %span.hidden-tablet Duke Nukem For...
+              %li
+                %a{:href => "/#stats"}
+                  %i.icon-bar-chart
+                  %span.hidden-tablet Stats
+              %li
+                %a{:href => "/#users"}
+                  %i.icon-user
+                  %span.hidden-tablet Users
+              %li
+                %a{:href => "/#games"}
+                  %i.icon-gamepad
+                  %span.hidden-tablet Games
+        / end: Main Menu
+        / start: Content
+        #content.span10
+          = yield
+        / end: Content
+      / /fluid-row
+      #myModal.modal.hide.fade
+        .modal-header
+          %button.close{"data-dismiss" => "modal", :type => "button"} ×
+          %h3 Settings
+        .modal-body
+          %p Here settings can be configured...
+        .modal-footer
+          %a.btn{"data-dismiss" => "modal", :href => "#"} Close
+          %a.btn.btn-primary{:href => "#"} Save changes
+      .clearfix
+      %footer
+        %p
+          %span{:style => "text-align:left;float:left"}
+            \© 2013
+            %a{:alt => "Bootstrap Themes", :href => "http://bootstrapmaster.com"} Alpha Game Builder
+          %span.hidden-phone{:style => "text-align:right;float:right"}
+            Powered by:
+            %a{:alt => "Bootstrap Admin Templates", :href => "http://admintemplates.co"} SimpliQ
+    / /.fluid-container
+    / start: JavaScript
+    = javascript_include_tag "jquery-1.9.1.min.js"
+    = javascript_include_tag "jquery-migrate-1.0.0.min.js"
+    = javascript_include_tag "jquery-ui-1.10.3.custom.min.js"
+    = javascript_include_tag "jquery.ui.touch-punch.js"
+    = javascript_include_tag "modernizr.js"
+    = javascript_include_tag "bootstrap.min.js"
+    = javascript_include_tag "jquery.cookie.js"
+    = javascript_include_tag 'fullcalendar.min.js'
+    = javascript_include_tag 'jquery.dataTables.min.js'
+    = javascript_include_tag "excanvas.js"
+    = javascript_include_tag "jquery.flot.js"
+    = javascript_include_tag "jquery.flot.pie.js"
+    = javascript_include_tag "jquery.flot.stack.js"
+    = javascript_include_tag "jquery.flot.resize.min.js"
+    = javascript_include_tag "jquery.flot.time.js"
+    = javascript_include_tag "gauge.min.js"
+    = javascript_include_tag "jquery.chosen.min.js"
+    = javascript_include_tag "jquery.uniform.min.js"
+    = javascript_include_tag "jquery.cleditor.min.js"
+    = javascript_include_tag "jquery.noty.js"
+    = javascript_include_tag "jquery.elfinder.min.js"
+    = javascript_include_tag "jquery.raty.min.js"
+    = javascript_include_tag "jquery.iphone.toggle.js"
+    = javascript_include_tag "jquery.uploadify-3.1.min.js"
+    = javascript_include_tag "jquery.gritter.min.js"
+    = javascript_include_tag "jquery.imagesloaded.js"
+    = javascript_include_tag "jquery.masonry.min.js"
+    = javascript_include_tag "jquery.knob.modified.js"
+    = javascript_include_tag "jquery.sparkline.min.js"
+    = javascript_include_tag "counter.min.js"
+    = javascript_include_tag "raphael.2.1.0.min.js"
+    = javascript_include_tag "justgage.1.0.1.min.js"
+    = javascript_include_tag "jquery.autosize.min.js"
+    = javascript_include_tag "jquery.placeholder.min.js"
+    = javascript_include_tag "wizard.min.js"
+    = javascript_include_tag "core.min.js"
+    = javascript_include_tag "charts.min.js"
+    / <haml:loud> javascript_include_tag &quot;custom.min.js&quot;</haml:loud>
+    = javascript_include_tag "underscore.min"
+    = javascript_include_tag "k-js"
+    = javascript_include_tag "jquery.event.drag-2.2"
+    = javascript_include_tag "angular"
+    = javascript_include_tag "k-angular"
+    = javascript_include_tag "application"
+    = javascript_include_tag "kge/js/cocos2d"
+    = javascript_include_tag "kge/js/box2d" 
+    = javascript_include_tag "kge/js/kge"
+    = javascript_include_tag "worldmaker"
+    = yield :javascript
+    / end: JavaScript

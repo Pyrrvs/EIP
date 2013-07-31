@@ -1,30 +1,130 @@
-#debug
-  display: none
-  position: absolute
-  z-index: 42
-  top: 0
-  left: 0
-  canvas
-    width: 640px
-    height: 640px
-
-.tip
-  background-color: white
-  padding: 2px 5px
-  border-radius: 2px
-  border: 1px solid #dddddd
-  white-space: pre
-  opacity: 1
-  font-size: 13px
-
 #worldmaker
+  #debug
+    display: none
+    position: absolute
+    z-index: 42
+    top: 0
+    left: 0
+    canvas
+      width: 640px
+      height: 640px
+
+  input[type="text"], input[type="password"], input[type="email"]
+    border-radius: 2px !important
+  input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, select:focus
+    box-shadow: 0 0 1px 1px #2ad
+    border-color: #dddddd
+
+  *[ng-cloak]
+    display: none
+
+  .btn-group
+    > .btn:first-child
+      -webkit-border-bottom-left-radius: 2px
+      border-bottom-left-radius: 2px
+      -webkit-border-top-left-radius: 2px
+      border-top-left-radius: 2px
+      -moz-border-radius-bottomleft: 2px
+      -moz-border-radius-topleft: 2px
+    > .btn:last-child
+      -webkit-border-top-right-radius: 2px
+      border-top-right-radius: 2px
+      -webkit-border-bottom-right-radius: 2px
+      border-bottom-right-radius: 2px
+      -moz-border-radius-topright: 2px
+      -moz-border-radius-bottomright: 2px
+
+  .box
+    border: 1px dotted #ddd
+    position: relative
+    border-radius: 2px
+    margin: 4px auto 24px auto
+    padding: 16px 14px 4px 14px
+    background-color: #f9f9f9
+    > span:first-child
+      background-color: inherit
+      padding: 0 8px
+      position: absolute
+      text-align: center
+      top: -12px
+    > span:first-child:after
+      border-radius: 2px
+      border: 1px dotted #ddd
+      position: absolute
+      background-color: inherit
+      content: ""
+      z-index: -1
+      top: -1px
+      left: -1px
+      right: -1px
+      bottom: 0
+
+  .tip
+    background-color: white
+    padding: 2px 5px
+    border-radius: 2px
+    border: 1px solid #dddddd
+    white-space: pre
+    opacity: 1
+    font-size: 13px
+
+  .select
+    position: relative
+    display: inline-block
+    vertical-align: top
+    select
+      line-height: 20px
+      border-radius: 2px
+      background: white
+      -webkit-appearance: none
+  .select:after
+    font-family: FontAwesome
+    background-color: white
+    pointer-events: none
+    position: absolute
+    vertical-align: middle !important
+    line-height: 29px
+    content: "\f078"
+    height: 27px
+    padding-left: 10px
+    color: #666
+    width: 20px
+    right: 5px
+    top: 1px
+  .select:hover:after
+    color: #999
+
+  .btn-icon, .btn-icon-tiny
+    font-size: 15px
+    cursor: pointer
+    opacity: 0.7
+    margin-top: 4px
+    margin-right: 3px
+  .btn-icon:hover, .btn-icon-tiny:hover
+    opacity: 0.3
+  .btn-icon-tiny
+    position: relative
+    font-size: 11px
+    top: 3px
+
   width: 1176px
   margin: auto
+  font-size: 11px
+  label
+    margin: 0
   select
     height: 22px
   *[disabled="disabled"]
     color: #999
     cursor: not-allowed
+  .well
+    background-color: #f9f9f9
+  .box
+    -webkit-box-shadow: none
+    box-shadow: none
+    overflow: visible
+    span:first-child
+      top: -10px
   .btn-micro
     padding: 0px
     font-size: 7pt
@@ -35,40 +135,21 @@
     background: url("/assets/icon-delete.png") no-repeat top left
   .accordion-group a
     text-decoration: none
-  .btn-icon, .btn-icon-tiny
-    padding: 0px
-    width: 22px
-    height: 22px
-    background-size: 20px 20px
-    background-position: 0px 0px
-    border-radius: 10px
-  .btn-icon:hover, .btn-icon-tiny:hover
-    background-position: 0px 0px
-    box-shadow: 0px 0px 2px gray
-  .btn-icon-tiny
-    width: 16px
-    height: 16px
-    background-size: 14px 14px
   .btn-tiny
     font-size: 8pt
     padding: 0px 5px !important
   .line-top
     position: relative
-    margin-top: 10px
-    margin-bottom: 10px
+    margin-bottom: 4px
   .line-right
     position: absolute
     right: -95px
-  .line-top.semi-top
-    margin-top: 5px
-  .line-top.semi-bot
-    margin-bottom: 5px
-  .line-top.top
-    margin-top: 0px
   .line-top.bot
     margin-bottom: 0px
+  .line-top.top
+    margin-top: 5px
   .line-top > *
-    display: inline-block
+    display: inline
     vertical-align: top
   .line-top input[type="text"]
     margin-top: 0px
@@ -79,15 +160,12 @@
     margin-right: 8px
   .line-separator
     width: 100%
-    height: 1px
-    border-radius: 10px
-    background-color: rgba(200, 200, 200, 1)
+    border-top: 1px dotted #ddd
   .input-thin
     padding: 0px 5px !important
   .line-top input[type="checkbox"]
     margin-top: 5px
   .line-top input[type="number"]
-    width: 25%
     padding: 0px 2px
     margin: 0px
   .separator
@@ -116,7 +194,7 @@
   #save
     width: 100%
   input[type="text"]
-    width: 80%
+    width: 110px
   #level-list
     height: 455px
     overflow: scroll        
@@ -127,19 +205,15 @@
         margin-bottom: 0
         list-style: none
       .entity
-        border-radius: 4px
+        border: 1px #f9f9f9 solid
+        border-radius: 2px
         padding: 0 6px
-        border: 1px #f5f5f5 solid
+        cursor: pointer
       .entity:hover
         background-color: #e0e0e0
       .entity.selected
         border: 1px #dfdfdf solid
         background-color: #f0f0f0
-      .btn
-        margin: -18px 2px
-      a
-        display: block
-        border-radius: 5px
 
 #game-view
   margin-left: 15px
@@ -157,8 +231,46 @@
   height: 516px
   margin-left: 15px
   margin-right: 2px
+  padding-bottom: 0
+  .btn-mini
+    background: white
+    border: 1px solid #ddd
+  .select:after
+    line-height: 17px
+    height: 16px
+    right: 1px
+    top: 3px
+  .select
+    float: right
+  input[type="number"]
+    width: 60px
   select
-    width: 100px
+    margin: 0
+    font-size: 11px
+    border-color: #ddd
+    line-height: 11px
+    width: 140px
+    height: 22px
+    cursor: pointer
+  .box
+    margin-bottom: 10px
+  label
+    font-size: 11px
+    cursor: pointer
+  input
+    font-size: 11px
+  .accordion-group
+    border: 0
+  input[type="checkbox"]
+    vertical-align: top
+    position: relative
+    margin-left: 10px
+    top: -2px
+  #name
+    width: 140px
+    color: black !important
+  #create-fixture
+    margin-right: 6px
   #tabs
     margin-bottom: 10px
   .nav-tabs > li > a
@@ -176,7 +288,14 @@
     margin-top: -1px
   .radio-group span
     margin-left: 5px
-  .fixture.highlight
-    border: 1px solid #08c
-  .fixture #pos-y
-    margin-left: 36px
+  #toggle-layers
+    margin-top: 10px
+  .fixture
+    > .accordion-heading
+      margin-top: 2px
+    > .highlight
+      background: lightyellow
+    #pos-y
+      margin-left: 36px
+    .vertex-list
+      margin-top: 5px

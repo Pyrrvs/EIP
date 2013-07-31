@@ -1,0 +1,241 @@
+-# :javascript
+
+%div{"ng-controller" => "WorldMakerController", "ngx-keydown" => "key_actions($event)", "ng-cloak"=> ''}
+  #worldmaker
+
+    / level-view
+    #level-view.inline-top.well.well-small{"ng-controller" => "LevelController"}
+      .line-top
+        %button#save.btn.btn-primary.btn-small{"ng-click" => "save_world()", "ngx-disabled" => "game_state != 'stop'",
+        "ngx-shortcut" => "shift+83"} {{saving || 'save'}}
+      %form.line-top{"ng-submit" => "create_level()"}
+        %input.input-thin{"ng-model" => "input_level_name", "ngx-popover" => "error_level_name",
+        "ngx-popover-placement" => "top", :placeholder => "level name", :type => "text"}/
+        %i.icon-plus.btn-icon.pull-right{"ngx-tooltip" => "'create level'"}
+
+      / level-list
+      #level-list.accordion
+        .accordion-group{"ng-repeat" => "l in world.levels", "ngx-hover" => "view.level_over[$index]"}
+          .accordion-heading
+            %a.accordion-toggle{"ngx-accordion-toggle" => ""} {{l.name | stroke:20}}
+            .btn-accordion
+              %i.btn-icon-tiny.icon-plus{"ng-click" => "create_entity(l)",
+              "ng-show" => "view.level_over[$index]", "ngx-tooltip" => "'create entity'"}
+              %i.btn-icon-tiny.icon-minus.label-input{"ng-click" => "delete_level(l)",
+              "ng-show" => "view.level_over[$index]", "ngx-tooltip" => "'delete level'"}
+            %span.caret
+          .accordion-body.collapse{"ngx-events" => "hidden shown", "ngx-first" => "in",
+          "ngx-on-hidden" => "select_level(null)", "ngx-on-shown" => "select_level(l)"}
+            .accordion-inner
+              %ul
+                %li.entity{"ng-class" => "{selected: e == entity}", "ng-repeat" => "e in level.entities",
+                "ngx-hover" => "view.entity_over[$index]"}
+                  %a{:href => "", "ng-click" => "select_entity(e)"} {{ e.name }}
+                  %i#delete.btn-icon-tiny.icon-minus.pull-right{"ng-click" => "delete_entity(level, e)",
+                  "ng-show" => "view.entity_over[$index]", "ngx-tooltip" => "'delete entity'"}
+      / !level-list
+    / !level-view
+
+    / game-view
+    #game-view.inline-top.well.well-small{"ng-controller" => "GameController"}
+      #menu.line-top
+        .btn-group{"ng-model" => "view_mode", "ngx-all-disabled" => "game_state == 'play'", "ngx-radio" => ""}
+          %button.btn.btn-primary.btn-small.active{"ngx-disabled" => "!level", "ngx-shortcut" => "shift+81"} camera
+          %button.btn.btn-primary.btn-small{"ngx-disabled" => "!level || !entity", "ngx-shortcut" => "shift+87"} entity
+        .btn-group.pull-right{"ng-model" => "$parent.game_state", "ngx-all-disabled" => "!level", "ngx-radio" => ""}
+          %button.btn.btn-primary.btn-small{"ngx-shortcut" => "shift+49"} play
+          %button.btn.btn-primary.btn-small{"ngx-shortcut" => "shift+50"} pause
+          %button.btn.btn-primary.btn-small{"ngx-shortcut" => "shift+51"} stop
+
+      / canvas-view
+      #canvas-view.line-top.bot{"ng-mousemove" => "mousemove($event)", "ngx-events" => "mousewheel dragstart drag dragend click",
+      "ngx-on-click" => "click($event)", "ngx-on-drag" => "drag($event, $attr)", "ngx-on-dragend" => "dragend($event)",
+      "ngx-on-dragstart" => "dragstart($event)", "ngx-on-mousewheel" => "wheel($event)"}
+
+      / !canvas-view
+    / !game-view
+
+    / menu-view
+    #menu-view.inline-top.well.well-small{"ng-controller" => "MenuController"}
+      %ul#tabs.nav.nav-tabs{"ngx-tab" => "tab"}
+        %li{"ngx-disabled" => "!entity || run == 'play'"}
+          %a{:href => "", "ngx-tab-pane" => "#tab-entity"} entity
+        %li{"ngx-disabled" => "!level || run == 'play'"}
+          %a{:href => "", "ngx-tab-pane" => "#tab-level"} level
+      .tab-content
+
+        / tab-entity
+        #tab-entity.tab-pane{"ngx-all-disabled" => "!entity || game_state == 'play'"}
+
+          / section-charac
+          #section-charac.box
+            %span characteristics
+            .line-top
+              %span enabled:
+              %input.pull-right{"ng-model" => "entity.enabled", :type => "checkbox"}/
+            .line-top
+              %span name:
+              %input#name.input-thin.pull-right{"ng-model" => "entity.name", :placeholder => "name", :type => "text"}/
+            .line-top.clearfix
+              %div
+                %span.label-input x:
+                %input{"ng-model" => "entity.position.x", :step => "5", :type => "number"}/
+              .pull-right.right
+                %span.label-input scale x:
+                %input{"ng-model" => "entity.scale.x", :step => "0.1", :type => "number"}/
+            .line-top
+              %div
+                %span.label-input y:
+                %input{"ng-model" => "entity.position.y", :step => "5", :type => "number"}/
+              .pull-right.right
+                %span.label-input scale y:
+                %input{"ng-model" => "entity.scale.y", :step => "0.1", :type => "number"}/
+            .line-top.clearfix
+              .pull-right
+                %span.label-input rotation:
+                %input{"ng-model" => "entity.rotation", :step => "5", :type => "number"}/
+          / !section-charac
+
+          / section-model
+          #section-model.box
+            %span model
+            .line-top.clearfix
+              %label.pull-left
+                %span enabled:
+                %input{"ng-model" => "entity.model.enabled", :type => "checkbox"}/
+              %label.pull-right
+                %span visible:
+                %input{"ng-model" => "entity.model.visible", :type => "checkbox"}/
+            .line-top
+              %span models:
+              %select{"ng-model" => "entity.model.path", "ng-options" => "model.url as model.name for model in models", "ngx-select" => ""}
+          / !section-model
+
+          / section-body
+          #section-body.box
+            %span body
+            .line-top.clearfix
+              %label.pull-left
+                %span enabled:
+                %input{"ng-model" => "entity.body.enabled", :type => "checkbox"}/
+              %label.pull-right
+                %span visible:
+                %input{"ng-model" => "entity.body.visible", :type => "checkbox"}/
+            .line-top
+              %span type:
+              %select{"ng-model" => "entity.body.type",
+              "ng-options" => "body_type as body_type_name for (body_type, body_type_name) in body_types", "ngx-select" => ""}
+            .line-top
+              %span fixtures:
+              .pull-right
+                %select{"ng-model" => "input_fixture_type",
+                "ng-options" => "type_name for (type, type_name) in fixture_types", "ngx-select" => ""}
+                %button#create-fixture.btn.btn-mini{"ng-click" => "create_fixture()"} create
+
+            / fixture-list
+            #fixture-list.line-top.top.bot
+              .accordion-group.fixture.clearfix{"ng-mouseenter" => "highlight_fixture(fixture, true)",
+              "ng-mouseleave" => "highlight_fixture(fixture, false)", "ng-repeat" => "fixture in entity.body.fixtures",
+              "ngx-hover" => "view_hover_fixture"}
+                .accordion-heading{"ng-class" => "{highlight: view_hover_fixture}"}
+                  %a.accordion-toggle.inline-top{"ngx-accordion-toggle" => ""} {{fixture_types[fixture.type]}}
+                  .pull-right.btn-accordion.inline-top
+                    %i.btn-icon-tiny.icon-minus.label-input{"ng-click" => "delete_fixture(fixture)",
+                    "ng-show" => "view_hover_fixture", "ngx-tooltip" => "'delete ' + fixture_types[fixture.type]"}
+                  %span.caret
+                .accordion-body.in{"ng-class" => "{highlight: view_hover_fixture}"}
+                  .accordion-inner{"ng-include" => "fixture_types[fixture.type] + '-shape'"}
+
+            / !fixture-list
+          / !section-body
+        / !tab-entity
+
+        / tab-level
+        #tab-level.tab-pane{"ngx-all-disabled" => "!level"}
+          .well.well-small
+            .line-top.top
+              %span name:
+              %input.input-thin.pull-right{"ng-model" => "level.name", :placeholder => "name", :type => "text"}/
+            .line-top
+              %span camera:
+            .line-top
+              %span.label-input x:
+              %input{"ng-model" => "level.camera.position.x", :step => "5", :type => "number"}/
+              %input.pull-right{"ng-model" => "level.camera.scale", :step => "0.1", :type => "number"}/
+              %span.pull-right.label-input scale:
+            .line-top
+              %span.label-input y:
+              %input{"ng-model" => "level.camera.position.y", :step => "5", :type => "number"}/
+              %input.pull-right{"ng-model" => "level.camera.rotation", :step => "5", :type => "number"}/
+              %span.pull-right.label-input rotation:
+            #toggle-layers.line-top.top.bot
+              %button.btn.btn-primary.btn-tiny{"ng-click" => "toggle_layers('model')"} toggle model layers
+              %button.btn.btn-primary.pull-right.btn-tiny{"ng-click" => "toggle_layers('body')"} toggle body layers
+        / !tab-level
+
+        / tab-classes
+        #tab-classes.tab-pane
+          .well.well-small
+        / !tab-classes
+
+        / tab-models
+        #tab-models.tab-pane
+          .well.well-small
+            %ul.media-grid
+        / !tab-models
+
+        / tab-bodies
+        #tab-bodies.tab-pane
+          .well.well-small
+        / !tab-bodies
+    / !menu-view
+
+    / debug
+    #debug.well.well-small
+      %canvas{:heigh => "480px", :width => "640px"}
+    / !debug
+
+  / circle-shape
+  %script#circle-shape{:type => "text/ng-template"}
+    .line-top
+      %span.label-input x:
+      %input{"ng-model" => "fixture.position.x", :step => "5", :type => "number"}
+      %input.pull-right{"ng-model" => "fixture.position.y", :step => "5", :type => "number"}
+      %span.pull-right.label-input y:
+    .line-top
+      %span.label-input friction:
+      %input{"ng-model" => "fixture.friction", :step => "0.1", :type => "number"}
+      %input.pull-right{"ng-model" => "fixture.density", :step => "0.1", :type => "number"}
+      %span.pull-right.label-input density:
+    .line-top.bot
+      %span.label-input restit...:
+      %input{"ng-model" => "fixture.restitution", :step => "0.1", :type => "number"}
+      %input.pull-right{"ng-model" => "fixture.shape.radius", :step => "1", :type => "number"}
+      %span.pull-right.label-input radius:
+  / !circle-shape
+
+  / polygon-shape
+  %script#polygon-shape{:type => "text/ng-template"}
+    .line-top
+      %span.label-input density:
+      %input{"ng-model" => "fixture.density", :step => "0.1", :type => "number"}
+      %input.pull-right{"ng-model" => "fixture.position.x", :step => "5", :type => "number"}
+      %span.pull-right.label-input x:
+    .line-top
+      %span.label-input friction:
+      %input{"ng-model" => "fixture.friction", :step => "0.1", :type => "number"}
+      %input.pull-right{"ng-model" => "fixture.position.y", :step => "5", :type => "number"}
+      %span.label-input.pull-right y:
+    .line-top
+      %span.label-input restitution:
+      %input{"ng-model" => "fixture.restitution", :step => "0.1", :type => "number"}
+    .line-separator
+    .vertex-list
+      .line-top{"ng-repeat" => "vertex in fixture.shape.vertices", "ngx-hover" => "view_show_delete_vertex"}
+        %span.label-input x:
+        %input{"ng-model" => "vertex.x", :step => "5", :type => "number"}
+        %span#pos-y.label-input y:
+        %input{"ng-model" => "vertex.y", :step => "5", :type => "number"}
+        %i.btn-icon-tiny.icon-minus.label-input.pull-right{"ng-click" => "delete_vertex(fixture, vertex)",
+        "ngx-tooltip" => "'delete vertex'", "ngx-visible" => "view_show_delete_vertex"}
+  / !polygon-shape
