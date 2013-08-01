@@ -31,9 +31,8 @@ class ProjectsController < ApplicationController
 
   # POST /projects
   def create
-    @project = Project.new(params[:project])
     @user = User.find_by_name(params[:user_id])
-    @project.user_id = @user.id
+    @project = @user.projects.new params[:project]
     @project.nb_stars = 0
 
     if (@project.save && !@project.errors.any?)

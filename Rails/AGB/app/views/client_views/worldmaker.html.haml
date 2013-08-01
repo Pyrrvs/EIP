@@ -1,5 +1,3 @@
--# :javascript
-
 %div{"ng-controller" => "WorldMakerController", "ngx-keydown" => "key_actions($event)", "ng-cloak"=> ''}
   #worldmaker
 
@@ -24,8 +22,7 @@
               %i.btn-icon-tiny.icon-minus.label-input{"ng-click" => "delete_level(l)",
               "ng-show" => "view.level_over[$index]", "ngx-tooltip" => "'delete level'"}
             %span.caret
-          .accordion-body.collapse{"ngx-events" => "hidden shown", "ngx-first" => "in",
-          "ngx-on-hidden" => "select_level(null)", "ngx-on-shown" => "select_level(l)"}
+          .accordion-body.collapse{"ngx-events" => "hidden shown", "ngx-on-hidden" => "select_level(null)", "ngx-on-shown" => "select_level(l)"}
             .accordion-inner
               %ul
                 %li.entity{"ng-class" => "{selected: e == entity}", "ng-repeat" => "e in level.entities",

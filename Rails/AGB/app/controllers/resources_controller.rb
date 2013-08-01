@@ -2,7 +2,7 @@ class ResourcesController < ApplicationController
   
   def self.create_world_file(path)
     File.open(path, "w") do |f|
-      f.puts ''
+      f.puts '{"levels": []}'
     end
   end
 

@@ -4,7 +4,10 @@
 
 kapp.model 'Level', ->
 	name: null
-	camera: {}
+	camera:
+		position: x: 320, y: 240
+		scale: 1
+		rotation: 0
 	entities: -> [ kapp.models.Entity() ]
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -91,6 +94,7 @@ app.controller 'WorldMakerController', ['$scope', '$location', '$http', ($scope,
 	$http.get("#{$location.path()}/world.json").success (data) ->
 		log "world", data
 		$scope.world = data
+		$scope.world.levels = $scope.world.levels || []
 		$scope.level = $scope.world.levels[0]
 		$scope.entity = $scope.level?.entities[0]
 	$scope.$watch 'level', -> $scope.entity = null if !$scope.level
@@ -324,7 +328,7 @@ uiLayer.inherit cc.Layer,
 		Math.abs(pos.dist(@select_circle.position) - @select_circle.radius) < 5 / @scale
 
 	entity_enabled_changed: (entity) ->
-		return unless entity
+		return @select_circle.visible = false unless entity
 		@select_circle.visible = entity.model_entity.enabled
 		@select_circle.update entity if entity.model_entity.enabled		
 
@@ -373,6 +377,7 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 	@entity_body_changed = =>
 		return unless @entity
 		@fixtures = []
+		@entity.model_entity.body.fixtures = @entity.model_entity.body.fixtures || []
 		@scene.world.DestroyBody(@entity.body) if @entity.body
 		if @entity.model_entity.body.enabled
 			@entity.body = @scene.world.CreateBody new b2BodyDef
