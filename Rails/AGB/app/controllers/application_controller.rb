@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   before_filter :current_user
 
   def index
+    puts @current_user
     if @current_user == nil
       redirect_to controller: 'session', action: 'show'
     else

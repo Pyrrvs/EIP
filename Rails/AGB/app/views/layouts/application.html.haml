@@ -110,7 +110,7 @@
                   .avatar= image_tag("avatar.jpg")
                   .user
                     %span.hello Welcome!
-                    %span.name Łukasz Holeczek
+                    %span.name #{@current_user.name}
                   %ul.dropdown-menu
                     %li.dropdown-menu-title
                     %li
@@ -126,7 +126,7 @@
                         %i.icon-envelope
                         Messages
                     %li
-                      %a(href="/session#sign_in")
+                      %a(href="/session#sign_in" ng-click="logOut()")
                         %i(class="icon-off")
                         Logout
               / end: User Dropdown
