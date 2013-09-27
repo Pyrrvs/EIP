@@ -31,6 +31,7 @@ kapp.model 'Model', ->
 	enabled: true
 	visible: true
 	path: null
+	z: 0
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # BODY_MODEL                                                #
@@ -110,18 +111,22 @@ app.controller 'WorldMakerController', ['$scope', '$location', '$http', ($scope,
 			_.delay (-> $scope.$apply -> $scope.saving = false), 2000
 
 	$scope.key_actions = (e) ->
-		return unless e.shiftKey and $scope.game_state != "playing"
-		if e.keyCode == 78 and $scope.level
+		return unless $scope.game_state != "playing"
+		if e.keyCode == 67 and e.shiftKey
+			$scope.duplicate_entity()
+		return unless e.shiftKey
+		if e.keyCode == 78 and $scope.level and $scope.entity
 			$scope.entity = _($scope.level.entities).next($scope.entity)
 		else if e.keyCode == 80 and $scope.level
 			$scope.entity = _($scope.level.entities).prev($scope.entity)
-		else if e.keyCode == 37 and $scope.entity
+		return unless $scope.entity
+		if e.keyCode == 37 
 			--$scope.entity.position.x
-		else if e.keyCode == 38 and $scope.entity
+		else if e.keyCode == 38
 			++$scope.entity.position.y
-		else if e.keyCode == 39 and $scope.entity
+		else if e.keyCode == 39
 			++$scope.entity.position.x
-		else if e.keyCode == 40 and $scope.entity
+		else if e.keyCode == 40
 			--$scope.entity.position.y
 ]
 
@@ -167,8 +172,11 @@ app.controller 'MenuController', ['$scope', ($scope) ->
 	$scope.fixture_types[b2Shape.e_polygonShape] = 'polygon'
 	$scope.input_fixture_type = 'circle'
 	$scope.models = [
-		{name: 'ball', url: '/assets/ball.png'}
-		{name: 'crate', url: '/assets/crate.jpg'}
+		{name: 'background', url: "/assets/nightsky.png"}
+		{name: 'block', url: '/assets/wallolt.png'}
+		{name: 'paddle', url: '/assets/paddle.png'}
+		{name: 'ball', url: '/assets/ballwd.png'}
+		{name: 'board', url: '/assets/board.png'}
 	]
 
 	$scope.toggle_layers = (layer_type) ->
@@ -316,8 +324,13 @@ uiLayer = ($scope) ->
 	@addChild @select_circle = new SelectCircle
 	@addChild @vertex_circle = new VertexCircle
 	@vertex_circle.visible = @select_circle.visible = false
-	$scope.$watch 'game_state', (state) => @select_circle.visible = state != 'play'
-	$scope.$watch 'entity', => @select_circle.visible = !!$scope.entity
+	$scope.$watch 'game_state', (state) =>
+		@select_circle.visible = state != 'play'
+		@update $scope.entity		
+	$scope.$watch 'entity', =>
+		@select_circle.visible = !!$scope.entity
+		@update $scope.entity
+	@zOrder = 1
 	return
 
 uiLayer.inherit cc.Layer,
@@ -344,6 +357,7 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 	@dragging = what: null, position: cc.ccp(0, 0), rotation: 0
 	@mousemotion = 0
 	@fixtures = []
+	@count = 0
 
 	@entity_position_changed = =>
 		return unless @entity
@@ -372,22 +386,62 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 
 	@entity_model_changed = =>
 		return unless @entity
+		@game_layer.reorderChild {child: @entity, z: @entity.model_entity.model.z}
 		@entity.setUrl @entity.model_entity.model.path
 
 	@entity_body_changed = =>
 		return unless @entity
 		@fixtures = []
 		@entity.model_entity.body.fixtures = @entity.model_entity.body.fixtures || []
-		@scene.world.DestroyBody(@entity.body) if @entity.body
+		@scene.world.DestroyBody @entity.body if @entity.body
 		if @entity.model_entity.body.enabled
 			@entity.body = @scene.world.CreateBody new b2BodyDef
 			@entity.body.SetType +@entity.model_entity.body.type
 			@fixture_added fixture for fixture in @entity.model_entity.body.fixtures
 			@entity.body.SetPositionAndAngle(@entity.position.toB2(app.scaling), cc.degreesToRadians(-@entity.rotation))
 
+	background = null
+	paddle_right = null
+	paddle_left = null
 	@entity_added = (model_entity) =>
 		game_entity = model_entity.$game_entity = new Entity
 		game_entity.model_entity = model_entity
+		@game_layer.addChild game_entity
+		if model_entity.name == 'ball'
+			ball = game_entity
+			_(=>
+				ball.body.SetBullet true
+			).defer()
+		else if model_entity.name == 'background'
+			background = game_entity
+		else if model_entity.name == 'paddle-right'
+			paddle_right = game_entity
+			_(=>
+				paddle_right.body.SetBullet true
+				revoluteJointDef = new b2RevoluteJointDef
+				revoluteJointDef.bodyA = paddle_right.body
+				revoluteJointDef.bodyB = background.body
+				revoluteJointDef.enableLimit = true
+				revoluteJointDef.referenceAngle = -180 * 3.14 / 180
+				revoluteJointDef.upperAngle = 20 * 3.14 / 180
+				revoluteJointDef.lowerAngle = -20 * 3.14 / 180
+				revoluteJointDef.localAnchorB.Set 53 / app.scaling, -97 / app.scaling
+				@scene.world.CreateJoint revoluteJointDef
+			).defer()
+		else if model_entity.name == 'paddle-left'
+			paddle_left = game_entity
+			_(=>
+				paddle_left.body.SetBullet true
+				revoluteJointDef = new b2RevoluteJointDef
+				revoluteJointDef.bodyA = paddle_left.body
+				revoluteJointDef.bodyB = background.body
+				revoluteJointDef.enableLimit = true
+				revoluteJointDef.referenceAngle = 0 * 3.14 / 180
+				revoluteJointDef.upperAngle = 20 * 3.14 / 180
+				revoluteJointDef.lowerAngle = -20 * 3.14 / 180
+				revoluteJointDef.localAnchorB.Set -90 / app.scaling, -97 / app.scaling
+				@scene.world.CreateJoint revoluteJointDef
+			).defer()
 		prev_entity = @entity
 		@entity = game_entity
 		@entity_body_changed()
@@ -413,6 +467,9 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 		game_fixture.SetDensity fixture_model.density
 		game_fixture.SetFriction fixture_model.friction
 		game_fixture.SetRestitution fixture_model.restitution
+		game_fixture.m_body.ResetMassData()
+		game_fixture.m_body.SetLinearVelocity new b2Vec2(0,0)
+		game_fixture.m_body.SetAngularVelocity 0
 
 	@fixture_added = (fixture_model) =>
 		fixdef = new b2FixtureDef
@@ -431,6 +488,36 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 	@scene.addChild {child: @ui_layer = new uiLayer($scope), z: 1}
 	cc.Director.sharedDirector.runWithScene @scene
 
+	@game_layer.keyDown = (e) ->
+		paddle_right.body.SetAwake(true)
+		paddle_left.body.SetAwake(true)
+		if e.keyCode == 39
+			paddle_right.body.SetAngularVelocity(-69)
+		else if e.keyCode == 37
+			paddle_left.body.SetAngularVelocity(69)
+	@game_layer.isKeyboardEnabled = true
+	# @game_layer.keyUp = (e) ->
+		# v = ball.body.GetLinearVelocity()
+		# if e.keyCode == 39
+		# 	ball.state.right = false
+		# 	ball.body.SetLinearVelocity new b2Vec2((if v.x - 10 < 0 then 0 else v.x - 10), v.y)
+		# else if e.keyCode == 37
+		# 	ball.state.left = false
+		# 	ball.body.SetLinearVelocity new b2Vec2((if v.x + 10 > 0 then 0 else v.x + 10), v.y)
+
+	$scope.$parent.duplicate_entity = ->
+		name = $scope.entity.name
+		i = name.length
+		while --i >= 0 and name[i] >= '0' and name[i] <= '9' then
+		clone = _({}).deep_extend $scope.entity, $scope.is_model
+		clone.name = if (i < 0 or i == name.length - 1) then "#{name}#2" else
+			name.substr(0, i) + '#' + ((+name.substr(i + 1, name.length)) + 1)
+		clone.position.x += 12
+		clone.position.y -= 8
+		clone.model.z += 0.0001
+		$scope.level.entities.push clone
+		$scope.$parent.entity = clone
+
 	$scope.$watch 'level', =>
 		@disabled = {}
 		@game_layer.removeChildren cleanup: true
@@ -447,38 +534,50 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 	), true
 
 	$scope.$watch 'entity', =>
+		@count = 6
 		@entity = $scope.entity?.$game_entity
 		$scope.view_mode = if $scope.entity then 'entity' else 'camera'
 
 	$scope.$watch 'entity.enabled', =>
+		return unless --@count < 0
 		@entity_enabled_changed()
 		@ui_layer.entity_enabled_changed @entity
 
-	$scope.$watch 'entity.model', (
-		=> @entity_model_changed()
+	$scope.$watch 'entity.model', ( =>
+		return unless --@count < 0
+		@entity_model_changed()
 	), true
 
 	$scope.$watch 'entity.position', (=>
+		return unless --@count < 0
 		@entity_position_changed()
 		@ui_layer.update @entity
 	), true
 
 	$scope.$watch 'entity.rotation', =>
+		return unless --@count < 0
 		@entity_rotation_changed()
 		@ui_layer.update @entity
 
-	$scope.$watch 'entity.scale', (=> @entity_scale_changed()), true
+	$scope.$watch 'entity.scale', (=>
+		return unless --@count < 0
+		@entity_scale_changed()
+	), true
 
-	$scope.$watch 'entity.body', (=> @entity_body_changed()), true
+	$scope.$watch 'entity.body', (=>
+		return unless --@count < 0
+		@entity_body_changed()
+	), true
 
 	@entity_clicked = (position) =>
-		_(@game_layer.children).find_if (entity) ->
+		_.chain(@game_layer.children).filter((entity) ->
 			return true if cc.rectContainsPoint entity.boundingBox, position
 			fixture = entity.body.GetFixtureList()
 			while fixture
 				return true if fixture.TestPoint(position.toB2(app.scaling))
 				fixture = fixture.GetNext()
 			false
+		).max((entity) -> entity.model_entity.model.z).value()
 
 	@fixture_clicked = (position) =>
 		fixture = @entity.body.GetFixtureList()
@@ -531,7 +630,7 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 
 	$scope.$watch 'game_state', (now, before) => @["game_#{now}"] before
 
-	$scope.wheel = (e) ->
+	$scope.wheel = (e) =>
 		return false if $scope.game_state == 'play'
 		if $scope.view_mode == 'camera'
 			$scope.level.camera.scale = Math.range(Math.precise($scope.level.camera.scale + e.originalEvent.wheelDeltaY / 1000, 2), 0.1, 10)
@@ -542,7 +641,7 @@ app.controller 'GameController', ['$scope', 'array', ($scope, array) ->
 
 	$scope.click = (e) =>
 		return unless $scope.game_state != 'play'
-		app.scope.entity = @entity_clicked(this.transform_event_point e)?.model_entity
+		app.scope.entity = @entity_clicked(@transform_event_point e)?.model_entity
 
 	$scope.mousemove = (e) =>
 		return unless @entity and @dragging.what != "vertex" and ++@mousemotion % 2

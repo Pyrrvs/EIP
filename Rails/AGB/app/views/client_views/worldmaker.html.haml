@@ -106,6 +106,9 @@
             .line-top
               %span models:
               %select{"ng-model" => "entity.model.path", "ng-options" => "model.url as model.name for model in models", "ngx-select" => ""}
+            .line-top
+              %span.label-input z: 
+              %input{"ng-model" => "entity.model.z", :type => "number"}/
           / !section-model
 
           / section-body

@@ -12,7 +12,7 @@ function DynamicScene(worldScaling) {
 
     DynamicScene.superclass.constructor.call(this);
     this.worldScaling = worldScaling;
-	this.world = new b2World(new b2Vec2(0, -10), true);
+	this.world = new b2World(new b2Vec2(0, -20), true);
 }
 
 DynamicScene.inherit(cc.Scene, {
@@ -30,6 +30,8 @@ DynamicScene.inherit(cc.Scene, {
 	            if (entity.body) {
 	                entity.position = cc.Point.scale(entity.body.GetPosition(), this.worldScaling);
 		            entity.rotation = cc.radiansToDegrees(-entity.body.GetAngle());
+								if (entity.update)
+									entity.update(dt)
 		        }
 	        }.bind(this));
 		}.bind(this));

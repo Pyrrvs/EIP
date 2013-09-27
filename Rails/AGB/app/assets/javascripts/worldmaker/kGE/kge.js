@@ -47,6 +47,8 @@ define([], function() {
 	        this.world.ClearForces();
 	        this.children.forEach(function(layer) {
 				layer.children.forEach(function(entity) {
+								if (entity.update)
+									entity.update(dt)
 		            if (entity.body) {
 		                entity.position = cc.Point.scale(entity.body.GetPosition(), this.worldScaling);
 			            entity.rotation = cc.radiansToDegrees(-entity.body.GetAngle());
